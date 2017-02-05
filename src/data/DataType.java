@@ -17,5 +17,11 @@ public class DataType {
         extensionlist = new LinkedList<>();
     }
 
+    void removeExtension(Extension aThis) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
+    void addExtension(Extension aThis) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
