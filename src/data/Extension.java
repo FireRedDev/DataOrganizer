@@ -42,12 +42,3 @@ private DataType dataType;
     }
   
 }
-//if( neu != extension) {
-//            if (extension!= null) {
-//                extension.removeExtension(this);
-//            }
-//            extension = neu;
-//            if(neu != null) {
-//                neu.addExtension(this);
-//            }
-//        }
