@@ -8,8 +8,8 @@ package mover;
 import data.DataType;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
@@ -19,15 +19,16 @@ import org.apache.commons.io.FilenameUtils;
 public class DataMover {
 
     private File Ordner;
-    private DataType datatype;
+    private List<DataType> datatype;
     private static int id;
 
     public DataMover(DataType datatyp) {
-        File dir = new File("zusortierend_" + this.getId());
+        File dir = new File("Zusortierende_Dateien" + getId());
+        datatype = new LinkedList<>();
         //Ordner Erstellen
         dir.mkdir();
         setOrdner(dir);
-        datatype = datatyp;
+        datatype.add(datatyp);
     }
 
     public static int getId() {
@@ -36,16 +37,17 @@ public class DataMover {
     }
 
     public void sort() throws IOException {
-//Sortierfunktion ist fertig ISI
-//Derzeit nur mit einem einzigem Dateityp -> müsste eine Liste werden
+
         File[] directoryListing = Ordner.listFiles();
         if (directoryListing != null) {
             for (File child : directoryListing) {
-                for (int num = 0; num < datatype.getExtensionlist().size(); num++) {
-                    System.out.print(FilenameUtils.getExtension(child.getName()));
-                    System.out.print(datatype.getExtensionlist().get(num).getExtension());
-                    if (FilenameUtils.getExtension(child.getName()).equals(datatype.getExtensionlist().get(num).getExtension())) {
-                        FileUtils.moveFileToDirectory(child, Ordner, false);
+                for (DataType type : datatype) {
+                    for (int num = 0; num < type.getExtensionlist().size(); num++) {
+                        //System.out.print(FilenameUtils.getExtension(child.getName()));
+                        //System.out.print(type.getExtensionlist().get(num).getExtension());
+                        if (FilenameUtils.getExtension(child.getName()).equals(type.getExtensionlist().get(num).getExtension())) {
+                            FileUtils.moveFileToDirectory(child, type.getOrdner(), false);
+                        }
                     }
                 }
             }
@@ -61,8 +63,11 @@ public class DataMover {
         return Ordner;
     }
 
-    public void setOrdner(File Ordner) {
+    private void setOrdner(File Ordner) {
         this.Ordner = Ordner;
     }
 
+    public void addDataType(DataType typ) {
+        datatype.add(typ);
+    }
 }

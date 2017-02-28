@@ -16,9 +16,12 @@ public class DataType {
     private LinkedList<Extension> extensionlist;
     private File Ordner;
 
-    public DataType() {
+    private String name;
+
+    public DataType(String name) {
+        this.name = name;
         extensionlist = new LinkedList<>();
-        File dir = new File("Dateityp");
+        File dir = new File(name);
         dir.mkdir();
         setOrdner(dir);
     }

@@ -3,23 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package data;
 
 /**
-* C.G
+ * C.G
  */
 public class Extension {
-private String extension;
-private DataType dataType;
+
+    private String extension;
+    private DataType dataType;
 
     public Extension(String Extension) {
-       setExtension(Extension);
+        setExtension(Extension);
     }
 
-    
-    
-    
     public String getExtension() {
         return extension;
     }
@@ -28,17 +25,16 @@ private DataType dataType;
         this.extension = extension;
     }
 
-
     public void setDataTyp(DataType neu) {
-        if( neu != dataType) {
-            if (dataType!= null) {
+        if (neu != dataType) {
+            if (dataType != null) {
                 dataType.removeExtension(this);
             }
             dataType = neu;
-            if(neu != null) {
+            if (neu != null) {
                 neu.addExtension(this);
             }
         }
     }
-  
+
 }
