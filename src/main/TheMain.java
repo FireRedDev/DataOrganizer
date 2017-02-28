@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.stage.Stage;
-import mover.DataMover;
+import mover.DataMover1;
 import viewController.GeneralController;
 
 /**

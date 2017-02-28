@@ -22,7 +22,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import main.TheMain;
-import mover.DataMover;
+import mover.DataMover1;
 
 /**
  * FXML Controller class
@@ -32,7 +32,7 @@ import mover.DataMover;
 public class GeneralController {
 
     private final static String VIEWNAME = "GeneralV.fxml";
-    private DataMover mover;
+    private DataMover1 mover;
 
     public static void show(Stage stage) {
         try {
@@ -103,7 +103,7 @@ public class GeneralController {
         audio.addExtension(new Extension("wma"));
         audio.addExtension(new Extension("ogg"));
         audio.addExtension(new Extension("flac"));
-        mover = new DataMover(bilder);
+        mover = new DataMover1(bilder);
         mover.addDataType(documente);
         mover.addDataType(video);
         mover.addDataType(audio);
@@ -114,7 +114,7 @@ public class GeneralController {
 
     private void sortieren() {
         try {
-           // System.out.println("Log:");
+            // System.out.println("Log:");
             mover.sort();
             //System.out.println("Files Sorted");
         } catch (IOException ex) {
