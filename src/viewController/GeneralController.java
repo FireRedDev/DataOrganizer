@@ -7,21 +7,18 @@ package viewController;
 
 import data.DataType;
 import data.Extension;
+import einstellungViewC.ErweitertC;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
-import main.TheMain;
 import mover.DataMover1;
 
 /**
@@ -33,6 +30,11 @@ public class GeneralController {
 
     private final static String VIEWNAME = "GeneralV.fxml";
     private DataMover1 mover;
+
+    @FXML
+    private Button sortBt;
+    @FXML
+    private Button erweiternBt;
 
     public static void show(Stage stage) {
         try {
@@ -69,8 +71,6 @@ public class GeneralController {
             System.exit(2);
         }
     }
-    @FXML
-    private Button sortBt;
 
     @FXML
     private void sort(ActionEvent event) {
@@ -108,8 +108,8 @@ public class GeneralController {
         mover.addDataType(video);
         mover.addDataType(audio);
         System.out.println("Ordner Erstellt, Bitte gebe jetzt deine Dateien in den Ordner mit dem Namen 'zusortierend'.");
-        System.out.println("Hast du das getan, drücke Enter:");
-        sc.nextLine();
+//        System.out.println("Hast du das getan, drücke Enter:");
+//        sc.nextLine();
     }
 
     private void sortieren() {
@@ -120,6 +120,15 @@ public class GeneralController {
         } catch (IOException ex) {
             Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @FXML
+    private void erweitern(ActionEvent event) {
+        erweitern();
+    }
+
+    private void erweitern() {
+        ErweitertC.show(null);
     }
 
 }

@@ -16,11 +16,7 @@
         <Button layoutX="487.0" layoutY="20.0" mnemonicParsing="false" text="Auswählen" />
         <Button layoutX="487.0" layoutY="56.0" mnemonicParsing="false" text="Auswählen" />
         <Label layoutY="218.0" prefHeight="36.0" prefWidth="575.0" text="Wähle eine Option aus ;-)" />
-        <Button fx:id="sortBt" layoutX="423.0" layoutY="153.0" mnemonicParsing="false" onAction="#sort" prefHeight="60.0" prefWidth="132.0" text="Sortieren">
-            <font>
-                <Font size="17.0" />
-            </font>
-        </Button>
-        <Button layoutX="354.0" layoutY="188.0" mnemonicParsing="false" text="Erweitert" />
+        <Button fx:id="sortBt" layoutX="487.0" layoutY="188.0" mnemonicParsing="false" onAction="#sort" prefHeight="25.0" prefWidth="74.0" text="Sortieren" />
+        <Button fx:id="erweiternBt" layoutX="451.0" layoutY="188.0" mnemonicParsing="false" onAction="#erweitern" text="✱" />
     </children>
 </AnchorPane>

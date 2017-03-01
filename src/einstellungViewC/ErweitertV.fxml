@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="338.0" prefWidth="497.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="einstellungViewC.ErweitertC">
+   <children>
+      <VBox layoutX="5.0" layoutY="10.0" prefHeight="341.0" prefWidth="487.0">
+         <children>
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="217.0" minWidth="10.0" prefWidth="71.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="384.0" minWidth="10.0" prefWidth="213.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="384.0" minWidth="10.0" prefWidth="164.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label text="Bilder: " fx:id = "lbBilder" />
+                  <TextField fx:id = "tfBilder" GridPane.columnIndex="1" />
+                  <ChoiceBox fx:id = "cbBilder" prefHeight="25.0" prefWidth="111.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+                  <Label fx:id = "lbVideos" prefHeight="17.0" prefWidth="74.0" text="Videos:" GridPane.rowIndex="1" />
+                  <ChoiceBox fx:id = "cbVideos" prefHeight="25.0" prefWidth="110.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                  <ChoiceBox fx:id = "cbAudio" prefHeight="25.0" prefWidth="110.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                  <ChoiceBox fx:id = "cbDokumente" prefHeight="25.0" prefWidth="110.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                  <Label fx:id = "lbAudio" text="Audio:" GridPane.rowIndex="2" />
+                  <Label fx:id = "lbDokumente" text="Dokumente:" GridPane.rowIndex="3" />
+                  <TextField fx:id = "tfVideos" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id = "tfAudio" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField fx:id = "tfDokumente" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+               </children>
+               <VBox.margin>
+                  <Insets left="20.0" right="20.0" top="30.0" />
+               </VBox.margin>
+            </GridPane>
+            <HBox prefHeight="46.0" prefWidth="487.0">
+               <children>
+                  <CheckBox fx:id = "checkbDays" mnemonicParsing="false">
+                     <HBox.margin>
+                        <Insets left="15.0" top="15.0" />
+                     </HBox.margin>
+                  </CheckBox>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Alle">
+                     <HBox.margin>
+                        <Insets left="4.0" right="4.0" top="15.0" />
+                     </HBox.margin>
+                  </Text>
+                  <ChoiceBox fx:id = "cbDays" minHeight="-Infinity" minWidth="-Infinity" prefHeight="21.0" prefWidth="53.0">
+                     <HBox.margin>
+                        <Insets left="2.0" top="12.0" />
+                     </HBox.margin>
+                  </ChoiceBox>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tage sortieren.">
+                     <HBox.margin>
+                        <Insets left="8.0" top="15.0" />
+                     </HBox.margin>
+                  </Text>
+               </children>
+            </HBox>
+            <HBox prefHeight="26.0" prefWidth="487.0">
+               <children>
+                  <CheckBox fx:id = "checkbLetter" mnemonicParsing="false">
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                  </CheckBox>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Dateien nach Anfangsbuchstaben in Ordnern (A - Z) sortieren.">
+                     <HBox.margin>
+                        <Insets left="4.0" />
+                     </HBox.margin>
+                  </Text>
+               </children>
+            </HBox>
+            <AnchorPane prefHeight="74.0" prefWidth="487.0">
+               <children>
+                  <Button fx:id = "btCancel" cancelButton="true" layoutX="404.0" layoutY="25.0" mnemonicParsing="false" text="Abbrechen" />
+                  <Button fx:id = "btSave" layoutX="325.0" layoutY="25.0" mnemonicParsing="false" text="Sortieren" />
+               </children>
+            </AnchorPane>
+            <TextField fx:id = "tfMsg" />
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets top="20.0" />
+   </padding>
+</AnchorPane>
