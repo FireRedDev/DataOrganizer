@@ -40,11 +40,13 @@ public class DataMover1 {
         id = id + 1;
         return id;
     }
-public void order () {
-    for(DataType typ: datatype) {
-        typ.order();
+
+    public void order() {
+        for (DataType typ : datatype) {
+            typ.order();
+        }
     }
-}
+
     public void sort() throws IOException {
 
         File[] directoryListing = Ordner.listFiles();

@@ -5,7 +5,10 @@
  */
 package einstellungViewC;
 
+import data.DataType;
+import data.Extension;
 import java.io.IOException;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -28,6 +31,7 @@ import viewController.GeneralController;
  */
 public class ErweitertC {
 
+    private DataMover1 mover;
     private Label label;
     @FXML
     private Label lbBilder;
@@ -68,7 +72,7 @@ public class ErweitertC {
 
     private final static String VIEWNAME = "ErweitertV.fxml";
 
-    public static void show(Stage stage) {
+    public static void show(Stage stage, DataMover1 mover) {
         try {
             // View und Controller erstellen
             FXMLLoader loader = new FXMLLoader(ErweitertC.class.getResource(VIEWNAME));
@@ -86,6 +90,7 @@ public class ErweitertC {
 
             // Controller ermitteln
             ErweitertC controller = (ErweitertC) loader.getController();
+            controller.init(mover);
 
             // View initialisieren
             //controller.init();
@@ -107,18 +112,24 @@ public class ErweitertC {
 
     }
 
-    private void init() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void init(DataMover1 mover) {
+        this.mover = mover;
     }
 
     @FXML
     private void sort(ActionEvent event) {
-        try {
-            DataMover1 mover=new DataMover1();
-            mover.sort();
-        } catch (IOException ex) {
-            Logger.getLogger(ErweitertC.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        sortieren();
     }
 
+    private void sortieren() {
+        try {
+            // System.out.println("Log:");
+            mover.sort();
+            mover.order();
+
+            //System.out.println("Files Sorted");
+        } catch (IOException ex) {
+            Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

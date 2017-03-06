@@ -29,7 +29,8 @@ import mover.DataMover1;
 public class GeneralController {
 
     private final static String VIEWNAME = "GeneralV.fxml";
-    private DataMover1 mover;
+
+    public DataMover1 mover;
 
     @FXML
     private Button sortBt;
@@ -77,7 +78,7 @@ public class GeneralController {
         sortieren();
     }
 
-    private void init() {
+    public void init() {
         Scanner sc = new Scanner(System.in);
         System.out.println("DataOrganizer - Sortiert ihre Dateien via Dateitypen(Diese haben eine oder Mehrere Dateiendungen abgespeichert)");
 
@@ -111,14 +112,12 @@ public class GeneralController {
 //        System.out.println("Hast du das getan, drücke Enter:");
 //        sc.nextLine();
     }
-private void order() {
-    mover.order();
-}
+
     private void sortieren() {
         try {
             // System.out.println("Log:");
-            mover.sort(); mover.order();
-            
+            mover.sort();
+
             //System.out.println("Files Sorted");
         } catch (IOException ex) {
             Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);
@@ -131,7 +130,11 @@ private void order() {
     }
 
     private void erweitern() {
-        ErweitertC.show(null);
+        ErweitertC.show(null,mover);
+    }
+
+    public DataMover1 getMover() {
+        return mover;
     }
 
 }

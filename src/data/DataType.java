@@ -7,6 +7,7 @@ package data;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ public class DataType {
     private File Ordner;
 
     private String name;
+    private String[] monat;
 
     public DataType(String name) {
         this.name = name;
@@ -34,6 +36,19 @@ public class DataType {
         File dir = new File(name);
         dir.mkdir();
         setOrdner(dir);
+        monat = new String[12];
+        monat[0] = "Jänner";
+        monat[1] = "Februar";
+        monat[2] = "Maerz";
+        monat[3] = "April";
+        monat[4] = "Mai";
+        monat[5] = "Juni";
+        monat[6] = "Juli";
+        monat[7] = "August";
+        monat[8] = "September";
+        monat[9] = "Oktober";
+        monat[10] = "November";
+        monat[11] = "Dezember";
     }
 
     public void order() {
@@ -44,11 +59,12 @@ public class DataType {
 
                 try {
                     BasicFileAttributes attr = Files.readAttributes(child.toPath(), BasicFileAttributes.class);
+
                     LocalDateTime date = LocalDateTime.ofInstant(attr.creationTime().toInstant(), ZoneId.systemDefault());
-                    System.out.print(date);
-                    String name = date.getMonth().toString() + "_" + date.getYear();
-                    System.out.println(name);
-                    File diry = new File(Ordner.getPath(), name);
+                    System.out.println(date + " " + child);
+                    String filename = monat[date.getMonthValue() - 1] + "_" + date.getYear();
+                    //System.out.println(name);
+                    File diry = new File(Ordner.getPath(), filename);
                     diry.mkdir();
                     try {
                         FileUtils.moveFileToDirectory(child, diry, false);
