@@ -1,14 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package einstellungViewC;
 
-import data.DataType;
-import data.Extension;
 import java.io.IOException;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -16,22 +8,21 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
-import mover.DataMover1;
+import mover.DataMover;
 import viewController.GeneralController;
 
 /**
- *
- * @author sarah
+ * ErweitertC
+ * <p>
+ * Controller für das Einstellungsfenster.
+ * Der Sortierbutton sortiert nach Dateiendungen und danach nach Monat.
+ * </p>
  */
 public class ErweitertC {
 
-    private DataMover1 mover;
+    private DataMover mover;
     private Label label;
     @FXML
     private Label lbBilder;
@@ -72,7 +63,7 @@ public class ErweitertC {
 
     private final static String VIEWNAME = "ErweitertV.fxml";
 
-    public static void show(Stage stage, DataMover1 mover) {
+    public static void show(Stage stage, DataMover mover) {
         try {
             // View und Controller erstellen
             FXMLLoader loader = new FXMLLoader(ErweitertC.class.getResource(VIEWNAME));
@@ -112,7 +103,7 @@ public class ErweitertC {
 
     }
 
-    private void init(DataMover1 mover) {
+    private void init(DataMover mover) {
         this.mover = mover;
     }
 
@@ -121,6 +112,12 @@ public class ErweitertC {
         sortieren();
     }
 
+    /**
+     * sortieren
+     * <p>
+     * Sortieren und in Datumsordner verschieben.
+     * </p>
+     */
     private void sortieren() {
         try {
             // System.out.println("Log:");

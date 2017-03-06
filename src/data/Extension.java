@@ -1,12 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package data;
 
 /**
- * C.G
+ * Extension
+ * <p>
+ * Dateiendung als String speichern und merken zu welchen Datentyp die
+ * Dateiendung gehört.
+ * </p>
  */
 public class Extension {
 

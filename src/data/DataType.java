@@ -1,34 +1,32 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package data;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import static java.time.temporal.TemporalQueries.zone;
+import java.time.*;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 
 /**
- * C.G
+ * DataType
+ * <p>
+ * Datentyp ist eine Sammlung von Extensions. Der Name vom Datentyp ist
+ * gleichzeitig der Ordnername nach dem sortieren.
+ * </p>
  */
 public class DataType {
 
     private LinkedList<Extension> extensionlist;
     private File Ordner;
 
-    private String name;
-    private String[] monat;
+    private final String name;
+
+    //Um Deutsche Monatsnamen zue erhalten
+    private final String[] monat = {"Jänner", "Februar", "Maerz", "April", "Mai",
+        "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"};
 
     public DataType(String name) {
         this.name = name;
@@ -36,21 +34,15 @@ public class DataType {
         File dir = new File(name);
         dir.mkdir();
         setOrdner(dir);
-        monat = new String[12];
-        monat[0] = "Jänner";
-        monat[1] = "Februar";
-        monat[2] = "Maerz";
-        monat[3] = "April";
-        monat[4] = "Mai";
-        monat[5] = "Juni";
-        monat[6] = "Juli";
-        monat[7] = "August";
-        monat[8] = "September";
-        monat[9] = "Oktober";
-        monat[10] = "November";
-        monat[11] = "Dezember";
     }
 
+    /**
+     * Order
+     * <p>
+     * Mithilfe dieser Funktion werden Dateien in den Dateitypordnern in
+     * Monatsordner sortiert.
+     * </p>
+     */
     public void order() {
 
         File[] directoryListing = Ordner.listFiles();
@@ -60,7 +52,7 @@ public class DataType {
                 try {
                     BasicFileAttributes attr = Files.readAttributes(child.toPath(), BasicFileAttributes.class);
 
-                    LocalDateTime date = LocalDateTime.ofInstant(attr.creationTime().toInstant(), ZoneId.systemDefault());
+                    LocalDateTime date = LocalDateTime.ofInstant(attr.creationTime().toInstant(), ZoneId.of("GMT"));
                     System.out.println(date + " " + child);
                     String filename = monat[date.getMonthValue() - 1] + "_" + date.getYear();
                     //System.out.println(name);
@@ -72,7 +64,7 @@ public class DataType {
                         System.out.println(ex.getMessage());
                     }
 
-//System.out.println("creationTime: " + attr.creationTime());
+                    //System.out.println("creationTime: " + attr.creationTime());
                 } catch (IOException ex) {
                     Logger.getLogger(DataType.class.getName()).log(Level.SEVERE, null, ex);
                 }

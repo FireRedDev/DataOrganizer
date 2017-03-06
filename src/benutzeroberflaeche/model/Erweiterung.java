@@ -3,6 +3,11 @@ package benutzeroberflaeche.model;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+/**
+ * Javadoc bitte schreiben
+ * 
+ * Isabella
+ */
 public class Erweiterung {
 
     private final StringProperty bilderPfad = new SimpleStringProperty();

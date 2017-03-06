@@ -82,8 +82,8 @@
             </HBox>
             <AnchorPane prefHeight="74.0" prefWidth="487.0">
                <children>
-                  <Button fx:id="btCancel" cancelButton="true" layoutX="404.0" layoutY="25.0" mnemonicParsing="false" text="Abbrechen" />
-                  <Button fx:id="btSave" layoutX="325.0" layoutY="25.0" mnemonicParsing="false" onAction="#sort" text="Sortieren" />
+                  <Button fx:id="btCancel" cancelButton="true" layoutX="307.0" layoutY="25.0" mnemonicParsing="false" text="Abbrechen" />
+                  <Button fx:id="btSave" layoutX="397.0" layoutY="25.0" mnemonicParsing="false" onAction="#sort" text="Sortieren" />
                </children>
             </AnchorPane>
             <TextField fx:id="tfMsg" />

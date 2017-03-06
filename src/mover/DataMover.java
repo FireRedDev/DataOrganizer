@@ -1,44 +1,34 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mover;
 
 import data.DataType;
-import java.io.File;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.comparator.DefaultFileComparator;
-import org.apache.commons.io.comparator.NameFileComparator;
+import java.io.*;
+import java.util.*;
+import org.apache.commons.io.*;
 
 /**
- * C.G
+ * DataMover
+ * <p>
+ * DataMover ist das Herzstück von Dataorganizer, da hier Dateien sortiert
+ * werden. DataMover kennt eine Dateitypliste. 
+ * Es werden Dateien aus dem Ordner ZusortieredeDateien sortiert.
+ * Alle Dateien aus diesem Ordner werden je nach Extension und somit Dateityp
+ * in einen eigenen Ordner (Dokumente,Bilder,..) verschoben.
+ * </p>
  */
-public class DataMover1 {
+public class DataMover {
 
     private File Ordner;
     private List<DataType> datatype;
     private static int id;
 
-    public DataMover1() {
-    }
-
-    public DataMover1(DataType datatyp) {
-        File dir = new File("Zusortierende_Dateien" + getId());
+    public DataMover(DataType datatyp) {
+        File dir = new File("ZusortierendeDateien");
         datatype = new LinkedList<>();
+        
         //Ordner Erstellen
         dir.mkdir();
         setOrdner(dir);
         datatype.add(datatyp);
-    }
-
-    public static int getId() {
-        id = id + 1;
-        return id;
     }
 
     public void order() {
@@ -47,6 +37,11 @@ public class DataMover1 {
         }
     }
 
+    /**
+     * sortieren nach Dateityp
+     * 
+     * @throws IOException 
+     */
     public void sort() throws IOException {
 
         File[] directoryListing = Ordner.listFiles();

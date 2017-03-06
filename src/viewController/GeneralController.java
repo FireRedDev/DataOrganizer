@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package viewController;
 
 import data.DataType;
@@ -19,18 +14,19 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
-import mover.DataMover1;
+import mover.DataMover;
 
 /**
- * FXML Controller class
- *
- * @author Isabella
+ * GeneralController
+ * <p>
+ * Controller zur ersten einfachen View.
+ * </p>
  */
 public class GeneralController {
 
     private final static String VIEWNAME = "GeneralV.fxml";
 
-    public DataMover1 mover;
+    public DataMover mover;
 
     @FXML
     private Button sortBt;
@@ -104,12 +100,12 @@ public class GeneralController {
         audio.addExtension(new Extension("wma"));
         audio.addExtension(new Extension("ogg"));
         audio.addExtension(new Extension("flac"));
-        mover = new DataMover1(bilder);
+        mover = new DataMover(bilder);
         mover.addDataType(documente);
         mover.addDataType(video);
         mover.addDataType(audio);
         System.out.println("Ordner Erstellt, Bitte gebe jetzt deine Dateien in den Ordner mit dem Namen 'zusortierend'.");
-//        System.out.println("Hast du das getan, drücke Enter:");
+//        System.out.println("Hast du das gemacht, drücke Enter:");
 //        sc.nextLine();
     }
 
@@ -130,10 +126,10 @@ public class GeneralController {
     }
 
     private void erweitern() {
-        ErweitertC.show(null,mover);
+        ErweitertC.show(null, mover);
     }
 
-    public DataMover1 getMover() {
+    public DataMover getMover() {
         return mover;
     }
 
