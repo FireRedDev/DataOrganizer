@@ -25,18 +25,18 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="Bilder: " fx:id = "lbBilder" />
-                  <TextField fx:id = "tfBilder" GridPane.columnIndex="1" />
-                  <ChoiceBox fx:id = "cbBilder" prefHeight="25.0" prefWidth="111.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
-                  <Label fx:id = "lbVideos" prefHeight="17.0" prefWidth="74.0" text="Videos:" GridPane.rowIndex="1" />
-                  <ChoiceBox fx:id = "cbVideos" prefHeight="25.0" prefWidth="110.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
-                  <ChoiceBox fx:id = "cbAudio" prefHeight="25.0" prefWidth="110.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
-                  <ChoiceBox fx:id = "cbDokumente" prefHeight="25.0" prefWidth="110.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
-                  <Label fx:id = "lbAudio" text="Audio:" GridPane.rowIndex="2" />
-                  <Label fx:id = "lbDokumente" text="Dokumente:" GridPane.rowIndex="3" />
-                  <TextField fx:id = "tfVideos" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextField fx:id = "tfAudio" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <TextField fx:id = "tfDokumente" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label fx:id="lbBilder" text="Bilder: " />
+                  <TextField fx:id="tfBilder" GridPane.columnIndex="1" />
+                  <ChoiceBox fx:id="cbBilder" prefHeight="25.0" prefWidth="111.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+                  <Label fx:id="lbVideos" prefHeight="17.0" prefWidth="74.0" text="Videos:" GridPane.rowIndex="1" />
+                  <ChoiceBox fx:id="cbVideos" prefHeight="25.0" prefWidth="110.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                  <ChoiceBox fx:id="cbAudio" prefHeight="25.0" prefWidth="110.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                  <ChoiceBox fx:id="cbDokumente" prefHeight="25.0" prefWidth="110.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                  <Label fx:id="lbAudio" text="Audio:" GridPane.rowIndex="2" />
+                  <Label fx:id="lbDokumente" text="Dokumente:" GridPane.rowIndex="3" />
+                  <TextField fx:id="tfVideos" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="tfAudio" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField fx:id="tfDokumente" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                </children>
                <VBox.margin>
                   <Insets left="20.0" right="20.0" top="30.0" />
@@ -44,7 +44,7 @@
             </GridPane>
             <HBox prefHeight="46.0" prefWidth="487.0">
                <children>
-                  <CheckBox fx:id = "checkbDays" mnemonicParsing="false">
+                  <CheckBox fx:id="checkbDays" mnemonicParsing="false">
                      <HBox.margin>
                         <Insets left="15.0" top="15.0" />
                      </HBox.margin>
@@ -54,7 +54,7 @@
                         <Insets left="4.0" right="4.0" top="15.0" />
                      </HBox.margin>
                   </Text>
-                  <ChoiceBox fx:id = "cbDays" minHeight="-Infinity" minWidth="-Infinity" prefHeight="21.0" prefWidth="53.0">
+                  <ChoiceBox fx:id="cbDays" minHeight="-Infinity" minWidth="-Infinity" prefHeight="21.0" prefWidth="53.0">
                      <HBox.margin>
                         <Insets left="2.0" top="12.0" />
                      </HBox.margin>
@@ -68,7 +68,7 @@
             </HBox>
             <HBox prefHeight="26.0" prefWidth="487.0">
                <children>
-                  <CheckBox fx:id = "checkbLetter" mnemonicParsing="false">
+                  <CheckBox fx:id="checkbLetter" mnemonicParsing="false">
                      <HBox.margin>
                         <Insets left="15.0" />
                      </HBox.margin>
@@ -82,11 +82,11 @@
             </HBox>
             <AnchorPane prefHeight="74.0" prefWidth="487.0">
                <children>
-                  <Button fx:id = "btCancel" cancelButton="true" layoutX="404.0" layoutY="25.0" mnemonicParsing="false" text="Abbrechen" />
-                  <Button fx:id = "btSave" layoutX="325.0" layoutY="25.0" mnemonicParsing="false" text="Sortieren" />
+                  <Button fx:id="btCancel" cancelButton="true" layoutX="404.0" layoutY="25.0" mnemonicParsing="false" text="Abbrechen" />
+                  <Button fx:id="btSave" layoutX="325.0" layoutY="25.0" mnemonicParsing="false" onAction="#sort" text="Sortieren" />
                </children>
             </AnchorPane>
-            <TextField fx:id = "tfMsg" />
+            <TextField fx:id="tfMsg" />
          </children>
       </VBox>
    </children>

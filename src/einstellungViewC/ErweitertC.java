@@ -19,6 +19,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import mover.DataMover1;
 import viewController.GeneralController;
 
 /**
@@ -108,6 +109,16 @@ public class ErweitertC {
 
     private void init() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @FXML
+    private void sort(ActionEvent event) {
+        try {
+            DataMover1 mover=new DataMover1();
+            mover.sort();
+        } catch (IOException ex) {
+            Logger.getLogger(ErweitertC.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

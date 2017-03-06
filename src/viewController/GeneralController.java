@@ -111,11 +111,14 @@ public class GeneralController {
 //        System.out.println("Hast du das getan, drücke Enter:");
 //        sc.nextLine();
     }
-
+private void order() {
+    mover.order();
+}
     private void sortieren() {
         try {
             // System.out.println("Log:");
-            mover.sort();
+            mover.sort(); mover.order();
+            
             //System.out.println("Files Sorted");
         } catch (IOException ex) {
             Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);

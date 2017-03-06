@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.comparator.DefaultFileComparator;
+import org.apache.commons.io.comparator.NameFileComparator;
 
 /**
  * C.G
@@ -21,6 +23,9 @@ public class DataMover1 {
     private File Ordner;
     private List<DataType> datatype;
     private static int id;
+
+    public DataMover1() {
+    }
 
     public DataMover1(DataType datatyp) {
         File dir = new File("Zusortierende_Dateien" + getId());
@@ -35,7 +40,11 @@ public class DataMover1 {
         id = id + 1;
         return id;
     }
-
+public void order () {
+    for(DataType typ: datatype) {
+        typ.order();
+    }
+}
     public void sort() throws IOException {
 
         File[] directoryListing = Ordner.listFiles();
@@ -46,7 +55,7 @@ public class DataMover1 {
                         //System.out.print(FilenameUtils.getExtension(child.getName()));
                         //System.out.print(type.getExtensionlist().get(num).getExtension());
                         if (FilenameUtils.getExtension(child.getName()).equals(type.getExtensionlist().get(num).getExtension())) {
-                            FileUtils.moveFileToDirectory(child, type.getOrdner(), false);                          
+                            FileUtils.moveFileToDirectory(child, type.getOrdner(), false);
                         }
                     }
                 }
