@@ -46,7 +46,7 @@ public class DataMover1 {
                         //System.out.print(FilenameUtils.getExtension(child.getName()));
                         //System.out.print(type.getExtensionlist().get(num).getExtension());
                         if (FilenameUtils.getExtension(child.getName()).equals(type.getExtensionlist().get(num).getExtension())) {
-                            FileUtils.moveFileToDirectory(child, type.getOrdner(), false);
+                            FileUtils.moveFileToDirectory(child, type.getOrdner(), false);                          
                         }
                     }
                 }
