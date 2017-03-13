@@ -7,23 +7,15 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.stage.Stage;
 import mover.DataMover;
 import java.io.File;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
@@ -45,8 +37,12 @@ public class GeneralController {
     private Button erweiternBt;
     @FXML
     private Button ordnerBt;
+    @FXML
+    private TextField ordnerTf;
+    
     private Stage stage;
-    public File selectedDirectory;
+    private File selectedDirectory;
+    private String filestring;
 
     public static void show(Stage stage) {
         try {
@@ -130,9 +126,11 @@ public class GeneralController {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Data Organizer");
         selectedDirectory = chooser.showDialog(stage);
-        
-        System.out.println(selectedDirectory);
-       
+        //ordnerTf.setText(selectedDirectory);
+    }
+    
+    public String toString(){
+        return filestring;
     }
 
     public File getDirectory(){
