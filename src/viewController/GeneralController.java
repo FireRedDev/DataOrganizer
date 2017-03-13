@@ -15,6 +15,17 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import mover.DataMover;
+import java.io.File;
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 
 /**
  * GeneralController
@@ -32,6 +43,10 @@ public class GeneralController {
     private Button sortBt;
     @FXML
     private Button erweiternBt;
+    @FXML
+    private Button ordnerBt;
+    private Stage stage;
+    public File selectedDirectory;
 
     public static void show(Stage stage) {
         try {
@@ -109,6 +124,21 @@ public class GeneralController {
 //        sc.nextLine();
     }
 
+    @FXML
+    private void ordnerBtOnAction(ActionEvent event) {
+        
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Data Organizer");
+        selectedDirectory = chooser.showDialog(stage);
+        
+        System.out.println(selectedDirectory);
+       
+    }
+
+    public File getDirectory(){
+        return selectedDirectory;
+    }
+    
     private void sortieren() {
         try {
             // System.out.println("Log:");

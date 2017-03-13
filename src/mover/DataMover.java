@@ -4,6 +4,7 @@ import data.DataType;
 import java.io.*;
 import java.util.*;
 import org.apache.commons.io.*;
+import viewController.*;
 
 /**
  * DataMover
@@ -22,7 +23,9 @@ public class DataMover {
     private static int id;
 
     public DataMover(DataType datatyp) {
-        File dir = new File("ZusortierendeDateien");
+        File dir = GeneralController.selectedDirectory
+                
+                ;
         datatype = new LinkedList<>();
         
         //Ordner Erstellen
