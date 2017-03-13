@@ -126,10 +126,15 @@ public class GeneralController {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Data Organizer");
         selectedDirectory = chooser.showDialog(stage);
-        //ordnerTf.setText(selectedDirectory);
+        //Msg();
     }
     
-    public String toString(){
+    /*private void Msg(){
+        ordnerTf.setText("hallo");
+    }*/
+    
+    public String getString(){
+        filestring = selectedDirectory.toString();
         return filestring;
     }
 
