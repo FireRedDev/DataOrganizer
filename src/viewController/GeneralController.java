@@ -14,6 +14,7 @@ import mover.DataMover;
 import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
@@ -39,7 +40,7 @@ public class GeneralController {
     private Button ordnerBt;
     @FXML
     private TextField ordnerTf;
-    
+
     private Stage stage;
     private File selectedDirectory;
     private String filestring;
@@ -122,32 +123,32 @@ public class GeneralController {
 
     @FXML
     private void ordnerBtOnAction(ActionEvent event) {
-        
+
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Data Organizer");
         selectedDirectory = chooser.showDialog(stage);
         //Msg();
     }
-    
+
     /*private void Msg(){
-        ordnerTf.setText("hallo");
-    }*/
-    
-    public String getString(){
+     ordnerTf.setText("hallo");
+     }*/
+    public String getString() {
         filestring = selectedDirectory.toString();
         return filestring;
     }
 
-    public File getDirectory(){
+    public File getDirectory() {
         return selectedDirectory;
     }
-    
+
     private void sortieren() {
         try {
             // System.out.println("Log:");
             mover.sort();
-
-            //System.out.println("Files Sorted");
+            Alert alConfirm = new Alert(Alert.AlertType.INFORMATION);
+            alConfirm.setHeaderText("Dateien wurden sortiert!");
+            alConfirm.show();
         } catch (IOException ex) {
             Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);
         }

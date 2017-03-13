@@ -23,9 +23,7 @@ public class DataMover {
     private static int id;
 
     public DataMover(DataType datatyp) {
-        File dir = GeneralController.selectedDirectory
-                
-                ;
+         File dir = new File("ZusortierendeDateien");
         datatype = new LinkedList<>();
         
         //Ordner Erstellen
@@ -55,7 +53,11 @@ public class DataMover {
                         //System.out.print(FilenameUtils.getExtension(child.getName()));
                         //System.out.print(type.getExtensionlist().get(num).getExtension());
                         if (FilenameUtils.getExtension(child.getName()).equals(type.getExtensionlist().get(num).getExtension())) {
-                            FileUtils.moveFileToDirectory(child, type.getOrdner(), false);
+                           try {
+                                FileUtils.moveFileToDirectory(child, type.getOrdner(), false);
+                            } catch (FileExistsException ex) {
+                                System.out.println("File exists. Continuing");
+                            }
                         }
                     }
                 }

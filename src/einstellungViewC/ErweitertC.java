@@ -16,8 +16,8 @@ import viewController.GeneralController;
 /**
  * ErweitertC
  * <p>
- * Controller für das Einstellungsfenster.
- * Der Sortierbutton sortiert nach Dateiendungen und danach nach Monat.
+ * Controller für das Einstellungsfenster. Der Sortierbutton sortiert nach
+ * Dateiendungen und danach nach Monat.
  * </p>
  */
 public class ErweitertC {
@@ -123,8 +123,9 @@ public class ErweitertC {
             // System.out.println("Log:");
             mover.sort();
             mover.order();
-
-            //System.out.println("Files Sorted");
+            Alert alConfirm = new Alert(Alert.AlertType.INFORMATION);
+            alConfirm.setHeaderText("Dateien wurden sortiert!");
+            alConfirm.show();
         } catch (IOException ex) {
             Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);
         }
