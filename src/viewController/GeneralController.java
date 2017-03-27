@@ -3,6 +3,14 @@ package viewController;
 import data.DataType;
 import data.Extension;
 import einstellungViewC.ErweitertC;
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -36,10 +44,6 @@ public class GeneralController {
     private Button sortBt;
     @FXML
     private Button erweiternBt;
-    @FXML
-    private Button ordnerBt;
-    @FXML
-    private TextField ordnerTf;
 
     private Stage stage;
     private File selectedDirectory;
@@ -86,7 +90,8 @@ public class GeneralController {
         sortieren();
     }
 
-    public void init() {
+    public void init() throws IOException {
+       
         Scanner sc = new Scanner(System.in);
         System.out.println("DataOrganizer - Sortiert ihre Dateien via Dateitypen(Diese haben eine oder Mehrere Dateiendungen abgespeichert)");
 
@@ -117,6 +122,8 @@ public class GeneralController {
         mover.addDataType(video);
         mover.addDataType(audio);
         System.out.println("Ordner Erstellt, Bitte gebe jetzt deine Dateien in den Ordner mit dem Namen 'zusortierend'.");
+ ActionListenerVar listener = new ActionListenerVar(mover);
+        initializeSystemTray(listener);
 //        System.out.println("Hast du das gemacht, drücke Enter:");
 //        sc.nextLine();
     }
@@ -152,6 +159,53 @@ public class GeneralController {
         } catch (IOException ex) {
             Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private static void initializeSystemTray(ActionListenerVar listener) throws IOException {
+        TrayIcon trayIcon = null;
+        if (SystemTray.isSupported()) {
+            // get the SystemTray instance
+            SystemTray tray = SystemTray.getSystemTray();
+            // load an image
+            Image image = Toolkit.getDefaultToolkit().getImage("icon.png");
+            //D:\\Schule\\OneDrive\\3tes Jahr\\SEW\\Programme\\dataorganizer\\src\\icon.png"
+            System.out.print(new java.io.File(".").getCanonicalPath() + "\\src\\icon.png");
+            // create a action listener to listen for default action executed on the tray icon
+           
+  
+            // create a popup menu
+            PopupMenu popup = new PopupMenu();
+            // create menu item for the default action
+            MenuItem defaultItem = new MenuItem("Sortieren");
+            defaultItem.addActionListener(listener);
+            popup.add(defaultItem);
+            /// ... add other items
+            // construct a TrayIcon
+            trayIcon = new TrayIcon(image, "DataOrganizer", popup);
+            trayIcon.setImageAutoSize(true);
+
+            // set the TrayIcon properties
+            trayIcon.addActionListener(listener);
+            // ...
+            // add the tray image
+            try {
+                tray.add(trayIcon);
+            } catch (AWTException e) {
+                System.err.println(e);
+            }
+            // ...
+        } else {
+            // disable tray option in your application or
+            // perform other actions
+
+        }
+        // ...
+        // some time later
+        // the application state has changed - update the image
+        if (trayIcon != null) {
+            // trayIcon.setImage(updatedImage);
+        }
+
     }
 
     @FXML
