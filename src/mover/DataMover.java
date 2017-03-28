@@ -3,6 +3,8 @@ package mover;
 import data.DataType;
 import java.io.*;
 import java.util.*;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import org.apache.commons.io.*;
 import viewController.*;
 
@@ -10,10 +12,10 @@ import viewController.*;
  * DataMover
  * <p>
  * DataMover ist das Herzstück von Dataorganizer, da hier Dateien sortiert
- * werden. DataMover kennt eine Dateitypliste. 
- * Es werden Dateien aus dem Ordner ZusortieredeDateien sortiert.
- * Alle Dateien aus diesem Ordner werden je nach Extension und somit Dateityp
- * in einen eigenen Ordner (Dokumente,Bilder,..) verschoben.
+ * werden. DataMover kennt eine Dateitypliste. Es werden Dateien aus dem Ordner
+ * ZusortieredeDateien sortiert. Alle Dateien aus diesem Ordner werden je nach
+ * Extension und somit Dateityp in einen eigenen Ordner (Dokumente,Bilder,..)
+ * verschoben.
  * </p>
  */
 public class DataMover {
@@ -23,9 +25,9 @@ public class DataMover {
     private static int id;
 
     public DataMover(DataType datatyp) {
-         File dir = new File("ZusortierendeDateien");
+        File dir = new File("ZusortierendeDateien");
         datatype = new LinkedList<>();
-        
+
         //Ordner Erstellen
         dir.mkdir();
         setOrdner(dir);
@@ -40,8 +42,8 @@ public class DataMover {
 
     /**
      * sortieren nach Dateityp
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void sort() throws IOException {
 
@@ -53,7 +55,7 @@ public class DataMover {
                         //System.out.print(FilenameUtils.getExtension(child.getName()));
                         //System.out.print(type.getExtensionlist().get(num).getExtension());
                         if (FilenameUtils.getExtension(child.getName()).equals(type.getExtensionlist().get(num).getExtension())) {
-                           try {
+                            try {
                                 FileUtils.moveFileToDirectory(child, type.getOrdner(), false);
                             } catch (FileExistsException ex) {
                                 System.out.println("File exists. Continuing");
@@ -62,6 +64,11 @@ public class DataMover {
                     }
                 }
             }
+            Platform.runLater(() -> {
+                Alert alConfirm = new Alert(Alert.AlertType.INFORMATION);
+                alConfirm.setHeaderText("Dateien wurden sortiert!");
+                alConfirm.show();
+            });
         } else {
             // Handle the case where dir is not really a directory.
             // Checking dir.isDirectory() above would not be sufficient

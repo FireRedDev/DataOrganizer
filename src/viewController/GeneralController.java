@@ -91,7 +91,7 @@ public class GeneralController {
     }
 
     public void init() throws IOException {
-       
+
         Scanner sc = new Scanner(System.in);
         System.out.println("DataOrganizer - Sortiert ihre Dateien via Dateitypen(Diese haben eine oder Mehrere Dateiendungen abgespeichert)");
 
@@ -122,7 +122,7 @@ public class GeneralController {
         mover.addDataType(video);
         mover.addDataType(audio);
         System.out.println("Ordner Erstellt, Bitte gebe jetzt deine Dateien in den Ordner mit dem Namen 'zusortierend'.");
- ActionListenerVar listener = new ActionListenerVar(mover);
+        ActionListenerVar listener = new ActionListenerVar(mover);
         initializeSystemTray(listener);
 //        System.out.println("Hast du das gemacht, drücke Enter:");
 //        sc.nextLine();
@@ -153,9 +153,6 @@ public class GeneralController {
         try {
             // System.out.println("Log:");
             mover.sort();
-            Alert alConfirm = new Alert(Alert.AlertType.INFORMATION);
-            alConfirm.setHeaderText("Dateien wurden sortiert!");
-            alConfirm.show();
         } catch (IOException ex) {
             Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -168,11 +165,6 @@ public class GeneralController {
             SystemTray tray = SystemTray.getSystemTray();
             // load an image
             Image image = Toolkit.getDefaultToolkit().getImage("icon.png");
-            //D:\\Schule\\OneDrive\\3tes Jahr\\SEW\\Programme\\dataorganizer\\src\\icon.png"
-            System.out.print(new java.io.File(".").getCanonicalPath() + "\\src\\icon.png");
-            // create a action listener to listen for default action executed on the tray icon
-           
-  
             // create a popup menu
             PopupMenu popup = new PopupMenu();
             // create menu item for the default action
