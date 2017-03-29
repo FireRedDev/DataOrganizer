@@ -3,8 +3,6 @@ package mover;
 import data.DataType;
 import java.io.*;
 import java.util.*;
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import org.apache.commons.io.*;
 import viewController.GeneralController;
 
@@ -22,16 +20,16 @@ public class DataMover {
 
     private File Ordner;
     private List<DataType> datatype;
-    private static int id;
     GeneralController controller;
 
     public DataMover(DataType datatyp, GeneralController controller) {
-        File dir = new File("ZusortierendeDateien");
+//        File dir = new File("ZusortierendeDateien");
+        
         datatype = new LinkedList<>();
 
         //Ordner Erstellen
-        dir.mkdir();
-        setOrdner(dir);
+//        dir.mkdir();
+//        setOrdner(dir);
         datatype.add(datatyp);
         this.controller = controller;
     }
@@ -48,8 +46,7 @@ public class DataMover {
      * @throws IOException
      */
     public void sort() throws IOException {
-
-        File[] directoryListing = Ordner.listFiles();
+        File[] directoryListing = new File(controller.getAusProp()).listFiles();
         if (directoryListing != null) {
             for (File child : directoryListing) {
                 for (DataType type : datatype) {
