@@ -1,32 +1,23 @@
 package viewController;
 
+import nuetzlich.ActionListenerVar;
+import nuetzlich.PrintToTextField;
 import data.DataType;
 import data.Extension;
 import einstellungViewC.ErweitertC;
-import java.awt.AWTException;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.Toolkit;
-import java.awt.TrayIcon;
-import java.awt.event.ActionListener;
+import java.awt.*;
 import java.io.IOException;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+import java.util.logging.*;
+import javafx.fxml.*;
 import javafx.scene.Parent;
 import mover.DataMover;
 import java.io.File;
+import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
+import javafx.stage.*;
 
 /**
  * GeneralController
@@ -44,10 +35,19 @@ public class GeneralController {
     private Button sortBt;
     @FXML
     private Button erweiternBt;
+    @FXML
+    private TextField tfMsg;
+    @FXML
+    private TextField ausOrdner;
+    @FXML
+    private TextField zielOrdner;
 
     private Stage stage;
-    private File selectedDirectory;
-    private String filestring;
+    private File selectedDirectory, selectOutDirectory;
+    private String filestring, fileOutstring;
+
+    private final StringProperty ausProp = new SimpleStringProperty();
+    private final StringProperty zielProp = new SimpleStringProperty();
 
     public static void show(Stage stage) {
         try {
@@ -75,78 +75,58 @@ public class GeneralController {
             stage.show();
         } catch (IOException ex) {
             Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);
-            System.err.println("Something wrong with " + VIEWNAME + "!");
-            ex.printStackTrace(System.err);
+            System.out.println("Something wrong with " + VIEWNAME + "!");
+            ex.printStackTrace(System.out);
             System.exit(1);
         } catch (Exception ex) {
             Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace(System.err);
+            ex.printStackTrace(System.out);
             System.exit(2);
         }
     }
 
-    @FXML
-    private void sort(ActionEvent event) {
-        sortieren();
-    }
-
     public void init() throws IOException {
+        ausOrdner.textProperty().bindBidirectional(this.ausProp);
+        zielOrdner.textProperty().bindBidirectional(this.zielProp);
 
-        Scanner sc = new Scanner(System.in);
-        System.out.println("DataOrganizer - Sortiert ihre Dateien via Dateitypen(Diese haben eine oder Mehrere Dateiendungen abgespeichert)");
+        PrintToTextField.create(tfMsg);
+
+        System.out.println("DataOrganizer - Sortiert ihre Dateien via Dateitypen");
 
         DataType bilder = new DataType("Bilder");
-        //könnte sein das der punkt weggehört
         bilder.addExtension(new Extension("jpg"));
         bilder.addExtension(new Extension("png"));
         bilder.addExtension(new Extension("gif"));
         bilder.addExtension(new Extension("jpeg"));
+
         DataType documente = new DataType("Dokumente");
         documente.addExtension(new Extension("pdf"));
         documente.addExtension(new Extension("docx"));
         documente.addExtension(new Extension("vsd"));
         documente.addExtension(new Extension("xlsx"));
         documente.addExtension(new Extension("zip"));
+
         DataType video = new DataType("Video");
         video.addExtension(new Extension("mp4"));
         video.addExtension(new Extension("mpeg"));
         video.addExtension(new Extension("avi"));
         video.addExtension(new Extension("wmv"));
+
         DataType audio = new DataType("Audio");
         audio.addExtension(new Extension("mp3"));
         audio.addExtension(new Extension("wma"));
         audio.addExtension(new Extension("ogg"));
         audio.addExtension(new Extension("flac"));
-        mover = new DataMover(bilder);
+
+        mover = new DataMover(bilder, this);
         mover.addDataType(documente);
         mover.addDataType(video);
         mover.addDataType(audio);
-        System.out.println("Ordner Erstellt, Bitte gebe jetzt deine Dateien in den Ordner mit dem Namen 'zusortierend'.");
+
         ActionListenerVar listener = new ActionListenerVar(mover);
         initializeSystemTray(listener);
 //        System.out.println("Hast du das gemacht, drücke Enter:");
 //        sc.nextLine();
-    }
-
-    @FXML
-    private void ordnerBtOnAction(ActionEvent event) {
-
-        DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Data Organizer");
-        selectedDirectory = chooser.showDialog(stage);
-        //Msg();
-    }
-
-    /*private void Msg(){
-     ordnerTf.setText("hallo");
-     }*/
-    public String getString() {
-        filestring = selectedDirectory.toString();
-        return filestring;
-    }
-
-    public File getDirectory() {
-        return selectedDirectory;
     }
 
     private void sortieren() {
@@ -200,6 +180,44 @@ public class GeneralController {
 
     }
 
+    public DataMover getMover() {
+        return mover;
+    }
+
+    public String getAusProp() {
+        return ausProp.get();
+    }
+
+    public final void setAusProp(String value) {
+        ausProp.set(value);
+    }
+
+    public String getZielProp() {
+        return zielProp.get();
+    }
+
+    public final void setZielProp(String value) {
+        zielProp.set(value);
+    }
+
+    public String getString() {
+        filestring = selectedDirectory.toString();
+        return filestring;
+    }
+
+    public String getSelectOutDirectory() {
+        fileOutstring = selectOutDirectory.toString();
+        return fileOutstring;
+    }
+
+    public File getDirectory() {
+        return selectedDirectory;
+    }
+
+    public File getOutDirectory() {
+        return selectOutDirectory;
+    }
+
     @FXML
     private void erweitern(ActionEvent event) {
         erweitern();
@@ -209,8 +227,38 @@ public class GeneralController {
         ErweitertC.show(null, mover);
     }
 
-    public DataMover getMover() {
-        return mover;
+    @FXML
+    private void sort(ActionEvent event) {
+        sortieren();
     }
 
+    private void ausOrdner(ActionEvent event) {
+
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Data Organizer");
+        selectOutDirectory = chooser.showDialog(stage);
+        this.setZielProp(selectOutDirectory.toString());
+        //Msg();
+    }
+
+    /*private void Msg(){
+     ordnerTf.setText("hallo");
+     }*/
+    @FXML
+    private void ordnerBtAus(ActionEvent event) {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Data Organizer");
+        selectedDirectory = chooser.showDialog(stage);
+        this.setAusProp(selectedDirectory.toString());
+        //Msg();
+    }
+
+    @FXML
+    private void ordnerBtZiel(ActionEvent event) {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Data Organizer");
+        selectedDirectory = chooser.showDialog(stage);
+        this.setZielProp(selectedDirectory.toString());
+        //Msg();
+    }
 }

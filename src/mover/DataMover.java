@@ -6,7 +6,7 @@ import java.util.*;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.apache.commons.io.*;
-import viewController.*;
+import viewController.GeneralController;
 
 /**
  * DataMover
@@ -23,8 +23,9 @@ public class DataMover {
     private File Ordner;
     private List<DataType> datatype;
     private static int id;
+    GeneralController controller;
 
-    public DataMover(DataType datatyp) {
+    public DataMover(DataType datatyp, GeneralController controller) {
         File dir = new File("ZusortierendeDateien");
         datatype = new LinkedList<>();
 
@@ -32,6 +33,7 @@ public class DataMover {
         dir.mkdir();
         setOrdner(dir);
         datatype.add(datatyp);
+        this.controller = controller;
     }
 
     public void order() {
@@ -52,23 +54,22 @@ public class DataMover {
             for (File child : directoryListing) {
                 for (DataType type : datatype) {
                     for (int num = 0; num < type.getExtensionlist().size(); num++) {
-                        //System.out.print(FilenameUtils.getExtension(child.getName()));
-                        //System.out.print(type.getExtensionlist().get(num).getExtension());
                         if (FilenameUtils.getExtension(child.getName()).equals(type.getExtensionlist().get(num).getExtension())) {
                             try {
-                                FileUtils.moveFileToDirectory(child, type.getOrdner(), false);
-                            } catch (FileExistsException ex) {
+                                FileUtils.moveFileToDirectory(child, new File(controller.getZielProp() + "\\" + type.getOrdner()), true);
+                            } catch (Exception ex) {
                                 System.out.println("File exists. Continuing");
                             }
                         }
                     }
                 }
             }
-            Platform.runLater(() -> {
-                Alert alConfirm = new Alert(Alert.AlertType.INFORMATION);
-                alConfirm.setHeaderText("Dateien wurden sortiert!");
-                alConfirm.show();
-            });
+//            Platform.runLater(() -> {
+//                Alert alConfirm = new Alert(Alert.AlertType.INFORMATION);
+//                alConfirm.setHeaderText("Dateien wurden sortiert!");
+//                alConfirm.show();
+//            });
+            System.out.println("Dateien sortiert!");
         } else {
             // Handle the case where dir is not really a directory.
             // Checking dir.isDirectory() above would not be sufficient
