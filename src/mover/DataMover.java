@@ -18,13 +18,13 @@ import viewController.GeneralController;
  */
 public class DataMover {
 
-    private File Ordner;
+    //private File Ordner;
     private List<DataType> datatype;
     GeneralController controller;
 
     public DataMover(DataType datatyp, GeneralController controller) {
 //        File dir = new File("ZusortierendeDateien");
-        
+
         datatype = new LinkedList<>();
 
         //Ordner Erstellen
@@ -46,14 +46,30 @@ public class DataMover {
      * @throws IOException
      */
     public void sort() throws IOException {
-        File[] directoryListing = new File(controller.getAusProp()).listFiles();
+        File[] directoryListing;
+        String aus = controller.getAusProp();
+
+        //Falls kein Ausgangsordner gewählt wurde, wird User-Verzeichnis\ZusoriterendeDateien verwendet
+        if (aus != null) {
+            directoryListing = new File(controller.getAusProp()).listFiles();
+        } else {
+            controller.setAusProp(FileUtils.getUserDirectoryPath() + "\\ZusortierendeDateien");
+            directoryListing = new File(FileUtils.getUserDirectoryPath() + "\\ZusortierendeDateien").listFiles();
+        }
+
         if (directoryListing != null) {
             for (File child : directoryListing) {
                 for (DataType type : datatype) {
                     for (int num = 0; num < type.getExtensionlist().size(); num++) {
                         if (FilenameUtils.getExtension(child.getName()).equals(type.getExtensionlist().get(num).getExtension())) {
                             try {
-                                FileUtils.moveFileToDirectory(child, new File(controller.getZielProp() + "\\" + type.getOrdner()), true);
+                                //Falls kein Zielordner gewählt wurde, wird User-Verzeichnis\sortiert verwendet
+                                if (controller.getZielProp() == null) {
+                                    controller.setZielProp(FileUtils.getUserDirectoryPath() + "\\sortiert");
+                                }
+                                File f = new File(controller.getZielProp() + "\\" + type.getOrdner());
+                                //zum testen nur kopieren und nicht verschieben
+                                FileUtils.copyFileToDirectory(child, f, true);
                             } catch (Exception ex) {
                                 System.out.println("File exists. Continuing");
                             }
@@ -66,22 +82,17 @@ public class DataMover {
 //                alConfirm.setHeaderText("Dateien wurden sortiert!");
 //                alConfirm.show();
 //            });
-            System.out.println("Dateien sortiert!");
-        } else {
-            // Handle the case where dir is not really a directory.
-            // Checking dir.isDirectory() above would not be sufficient
-            // to avoid race conditions with another process that deletes
-            // directories.
+            System.out.println("Dateien von " + controller.getAusProp() + " nach " + controller.getZielProp() + " sortiert!");
         }
     }
-
-    public File getOrdner() {
-        return Ordner;
-    }
-
-    private void setOrdner(File Ordner) {
-        this.Ordner = Ordner;
-    }
+//
+//    public File getOrdner() {
+//        return Ordner;
+//    }
+//
+//    private void setOrdner(File Ordner) {
+//        this.Ordner = Ordner;
+//    }
 
     public void addDataType(DataType typ) {
         datatype.add(typ);

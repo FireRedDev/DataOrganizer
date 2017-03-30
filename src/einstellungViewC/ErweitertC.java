@@ -123,9 +123,6 @@ public class ErweitertC {
             // System.out.println("Log:");
             mover.sort();
             mover.order();
-            Alert alConfirm = new Alert(Alert.AlertType.INFORMATION);
-            alConfirm.setHeaderText("Dateien wurden sortiert!");
-            alConfirm.show();
         } catch (IOException ex) {
             Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);
         }

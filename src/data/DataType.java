@@ -32,7 +32,6 @@ public class DataType {
         this.name = name;
         extensionlist = new LinkedList<>();
         File dir = new File(name);
-        dir.mkdir();
         setOrdner(dir);
     }
 
@@ -53,7 +52,7 @@ public class DataType {
                     BasicFileAttributes attr = Files.readAttributes(child.toPath(), BasicFileAttributes.class);
 
                     LocalDateTime date = LocalDateTime.ofInstant(attr.creationTime().toInstant(), ZoneId.of("GMT"));
-                    System.out.println(date + " " + child);
+                    
                     String filename = monat[date.getMonthValue() - 1] + "_" + date.getYear();
                     //System.out.println(name);
                     File diry = new File(Ordner.getPath(), filename);
