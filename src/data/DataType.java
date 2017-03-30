@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
+import viewController.GeneralController;
 
 /**
  * DataType
@@ -42,9 +43,19 @@ public class DataType {
      * Monatsordner sortiert.
      * </p>
      */
-    public void order() {
+    public void order(GeneralController controller) {
 
-        File[] directoryListing = Ordner.listFiles();
+        File[] directoryListing;
+        String aus = controller.getZielProp();
+
+        //Falls kein Ausgangsordner gewählt wurde, wird User-Verzeichnis\ZusoriterendeDateien verwendet
+        if (aus != null) {
+            directoryListing = new File(aus + "\\" + Ordner).listFiles();
+        } else {
+            controller.setAusProp(FileUtils.getUserDirectoryPath() + "\\" + Ordner);
+            directoryListing = new File(FileUtils.getUserDirectoryPath() + "\\" + Ordner).listFiles();
+        }
+
         if (directoryListing != null) {
             for (File child : directoryListing) {
 
@@ -52,13 +63,16 @@ public class DataType {
                     BasicFileAttributes attr = Files.readAttributes(child.toPath(), BasicFileAttributes.class);
 
                     LocalDateTime date = LocalDateTime.ofInstant(attr.creationTime().toInstant(), ZoneId.of("GMT"));
-                    
+
                     String filename = monat[date.getMonthValue() - 1] + "_" + date.getYear();
                     //System.out.println(name);
-                    File diry = new File(Ordner.getPath(), filename);
+                    if (controller.getZielProp() == null) {
+                        controller.setZielProp(FileUtils.getUserDirectoryPath() + "\\sortiert");
+                    }
+                    File diry = new File(controller.getZielProp() + "\\" + Ordner.getPath(), filename);
                     diry.mkdir();
                     try {
-                        FileUtils.moveFileToDirectory(child, diry, false);
+                        FileUtils.moveFileToDirectory(child, diry, true);
                     } catch (java.io.IOException ex) {
                         System.out.println(ex.getMessage());
                     }

@@ -36,7 +36,7 @@ public class DataMover {
 
     public void order() {
         for (DataType typ : datatype) {
-            typ.order();
+            typ.order(controller);
         }
     }
 
