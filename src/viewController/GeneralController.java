@@ -18,7 +18,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.*;
-import nuetzlich.PrintError;
 
 /**
  * GeneralController
@@ -91,7 +90,6 @@ public class GeneralController {
         zielOrdner.textProperty().bindBidirectional(this.zielProp);
 
         PrintToTextField.create(tfMsg);
-        PrintError.create(tfMsg);
 
         System.out.println("DataOrganizer - Sortiert ihre Dateien via Dateitypen");
 

@@ -11,7 +11,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import mover.DataMover;
-import nuetzlich.PrintError;
 import nuetzlich.PrintToTextField;
 import viewController.GeneralController;
 
@@ -108,7 +107,6 @@ public class ErweitertC {
     private void init(DataMover mover) {
         this.mover = mover;
         PrintToTextField.create(tfMsg);
-        PrintError.create(tfMsg);
     }
 
     @FXML
