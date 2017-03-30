@@ -4,7 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
+import static java.time.temporal.ChronoField.YEAR;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,8 +65,10 @@ public class DataType {
 
                 try {
                     BasicFileAttributes attr = Files.readAttributes(child.toPath(), BasicFileAttributes.class);
+                    Instant creationTime = attr.lastModifiedTime().toInstant();
 
-                    LocalDateTime date = LocalDateTime.ofInstant(attr.creationTime().toInstant(), ZoneId.of("GMT"));
+                    //String filename = monat[creationTime.get(MONTH_OF_YEAR) - 1] + "_" +creationTime.get(YEAR);
+                     LocalDateTime date = LocalDateTime.ofInstant(creationTime, ZoneOffset.UTC);
 
                     String filename = monat[date.getMonthValue() - 1] + "_" + date.getYear();
                     //System.out.println(name);
@@ -88,6 +94,7 @@ public class DataType {
             // to avoid race conditions with another process that deletes
             // directories.
         }
+        System.out.println("Dateien von " + controller.getAusProp() + " nach " + controller.getZielProp() + " nach Monat sortiert!");
     }
 
     public void addExtension(Extension aThis) {

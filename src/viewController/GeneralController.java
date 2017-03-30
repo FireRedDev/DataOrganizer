@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.*;
+import nuetzlich.PrintError;
 
 /**
  * GeneralController
@@ -75,7 +76,7 @@ public class GeneralController {
             stage.show();
         } catch (IOException ex) {
             Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("Something wrong with " + VIEWNAME + "!");
+            System.err.println("Something wrong with " + VIEWNAME + "!");
             ex.printStackTrace(System.out);
             System.exit(1);
         } catch (Exception ex) {
@@ -90,6 +91,7 @@ public class GeneralController {
         zielOrdner.textProperty().bindBidirectional(this.zielProp);
 
         PrintToTextField.create(tfMsg);
+        PrintError.create(tfMsg);
 
         System.out.println("DataOrganizer - Sortiert ihre Dateien via Dateitypen");
 
