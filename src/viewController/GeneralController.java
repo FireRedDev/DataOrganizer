@@ -232,15 +232,6 @@ public class GeneralController {
         sortieren();
     }
 
-    private void ausOrdner(ActionEvent event) {
-
-        DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Data Organizer");
-        selectOutDirectory = chooser.showDialog(stage);
-        this.setZielProp(selectOutDirectory.toString());
-        //Msg();
-    }
-
     /*private void Msg(){
      ordnerTf.setText("hallo");
      }*/
