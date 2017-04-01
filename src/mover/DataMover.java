@@ -18,7 +18,6 @@ import viewController.GeneralController;
  */
 public class DataMover {
 
-    //private File Ordner;
     private List<DataType> datatype;
     GeneralController controller;
 
@@ -77,6 +76,7 @@ public class DataMover {
                     }
                 }
             }
+//            Alert Box
 //            Platform.runLater(() -> {
 //                Alert alConfirm = new Alert(Alert.AlertType.INFORMATION);
 //                alConfirm.setHeaderText("Dateien wurden sortiert!");
@@ -85,14 +85,6 @@ public class DataMover {
             System.out.println("Dateien von " + controller.getAusProp() + " nach " + controller.getZielProp() + " sortiert!");
         }
     }
-//
-//    public File getOrdner() {
-//        return Ordner;
-//    }
-//
-//    private void setOrdner(File Ordner) {
-//        this.Ordner = Ordner;
-//    }
 
     public void addDataType(DataType typ) {
         datatype.add(typ);

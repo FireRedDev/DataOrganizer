@@ -7,8 +7,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
-import static java.time.temporal.ChronoField.YEAR;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
