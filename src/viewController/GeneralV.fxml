@@ -15,7 +15,7 @@
         <TextField fx:id="zielOrdner" layoutX="120.0" layoutY="56.0" prefHeight="25.0" prefWidth="365.0" text="default" />
         <Button id="ordnerBtAus" layoutX="487.0" layoutY="20.0" mnemonicParsing="false" onAction="#ordnerBtAus" text="Auswählen" />
         <Button id="ordnerBtZiel" layoutX="487.0" layoutY="56.0" mnemonicParsing="false" onAction="#ordnerBtZiel" text="Auswählen" />
-        <TextField fx:id="tfMsg" layoutX="14.0" layoutY="220.0" prefHeight="25.0" prefWidth="548.0" />
+        <TextField fx:id="tfMsg" layoutX="14.0" layoutY="220.0" prefHeight="25.0" prefWidth="548.0" editable="false" />
         <Button fx:id="sortBt" layoutX="487.0" layoutY="188.0" mnemonicParsing="false" onAction="#sort" prefHeight="25.0" prefWidth="74.0" text="Sortieren" />
         <Button fx:id="erweiternBt" layoutX="451.0" layoutY="188.0" mnemonicParsing="false" onAction="#erweitern" text="✱" />
     </children>

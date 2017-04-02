@@ -3,6 +3,13 @@ package nuetzlich;
 import java.io.PrintStream;
 import javafx.scene.control.TextField;
 
+/**
+ * PrintToTextField
+ * <p>
+ * Gibt Ausgaben anstelle auf der Kommandline im Messagefeld aus.
+ * </p>
+ * @author Isabella
+ */
 public abstract class PrintToTextField {
 
     public static void create(TextField textfield) {

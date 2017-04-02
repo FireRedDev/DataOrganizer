@@ -3,8 +3,6 @@ package nuetzlich;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mover.DataMover;
 
 /**
@@ -26,7 +24,6 @@ public class ActionListenerVar implements ActionListener {
         } catch (IOException ex) {
             System.out.println("Fehler beim sortieren!");
         }
-        System.out.println("sorted");
 
     }
 
