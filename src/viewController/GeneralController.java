@@ -86,7 +86,9 @@ public class GeneralController {
     }
 
     public void init() throws IOException {
+        ausOrdner.setEditable(false);
         ausOrdner.textProperty().bindBidirectional(this.ausProp);
+        zielOrdner.setEditable(false);
         zielOrdner.textProperty().bindBidirectional(this.zielProp);
 
         PrintToTextField.create(tfMsg);
