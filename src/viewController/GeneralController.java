@@ -1,7 +1,7 @@
 package viewController;
 
-import nuetzlich.ActionListenerVar;
-import nuetzlich.PrintToTextField;
+import utility.ActionListenerVar;
+import utility.PrintToTextField;
 import data.DataType;
 import data.Extension;
 import einstellungViewC.ErweitertC;
