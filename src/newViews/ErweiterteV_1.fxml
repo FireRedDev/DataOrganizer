@@ -13,7 +13,7 @@
         <Button fx:id="sortBt" layoutX="487.0" layoutY="188.0" mnemonicParsing="false" onAction="#sort" prefHeight="25.0" prefWidth="74.0" text="Speichern" />
         <Button fx:id="erweiternBt" layoutX="403.0" layoutY="188.0" mnemonicParsing="false" onAction="#erweitern" text="Abbrechen" />
       <CheckBox layoutX="27.0" layoutY="24.0" mnemonicParsing="false" text="Dateibennenung nach Datum" />
-      <Button layoutX="237.0" layoutY="188.0" mnemonicParsing="false" text="Datentyp Ordner zuweisen" />
+      <Button layoutX="240.0" layoutY="188.0" mnemonicParsing="false" text="Dateityp Ordner zuweisen" />
       <CheckBox layoutX="27.0" layoutY="51.0" mnemonicParsing="false" text="Verschieben" />
     </children>
 </AnchorPane>
