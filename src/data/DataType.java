@@ -27,10 +27,8 @@ public class DataType {
 
     private final String name;
 
-    //Um Deutsche Monatsnamen zue erhalten
-    private final String[] monat = {"Jänner", "Februar", "Maerz", "April", "Mai",
-        "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"};
-
+    //Um Deutsche Monatsnamen zu erhalten
+//    private final String[] monat = {"Jänner", "Februar", "Maerz", "April", "Mai","Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"};
     public DataType(String name) {
         this.name = name;
         extensionlist = new LinkedList<>();
@@ -44,6 +42,7 @@ public class DataType {
      * Mithilfe dieser Funktion werden Dateien in den Dateitypordnern in
      * Monatsordner sortiert.
      * </p>
+     * @param controller
      */
     public void order(GeneralController controller) {
 
@@ -66,9 +65,13 @@ public class DataType {
                     Instant creationTime = attr.lastModifiedTime().toInstant();
 
                     //String filename = monat[creationTime.get(MONTH_OF_YEAR) - 1] + "_" +creationTime.get(YEAR);
-                     LocalDateTime date = LocalDateTime.ofInstant(creationTime, ZoneOffset.UTC);
+                    LocalDateTime date = LocalDateTime.ofInstant(creationTime, ZoneOffset.UTC);
 
-                    String filename = monat[date.getMonthValue() - 1] + "_" + date.getYear();
+                    String monat = Integer.toString(date.getMonthValue());
+                    if (date.getMonthValue() < 10) {
+                        monat = "0" + date.getMonthValue();
+                    }
+                    String filename = date.getYear() + "_" + monat;
                     //System.out.println(name);
                     if (controller.getZielProp() == null) {
                         controller.setZielProp(FileUtils.getUserDirectoryPath() + "\\sortiert");
