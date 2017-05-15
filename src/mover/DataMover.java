@@ -3,6 +3,8 @@ package mover;
 import data.DataType;
 import java.io.*;
 import java.util.*;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import org.apache.commons.io.*;
 import viewController.GeneralController;
 
@@ -47,14 +49,15 @@ public class DataMover {
     public void sort() throws IOException {
         File[] directoryListing;
         String aus = controller.getAusProp();
-
+        String ein = controller.getZielProp();
+        if(aus != null&&ein !=null){
         //Falls kein Ausgangsordner gewählt wurde, wird User-Verzeichnis\ZusoriterendeDateien verwendet
-        if (aus != null) {
+//        if (aus != null) {
             directoryListing = new File(controller.getAusProp()).listFiles();
-        } else {
-            controller.setAusProp(FileUtils.getUserDirectoryPath() + "\\ZusortierendeDateien");
-            directoryListing = new File(FileUtils.getUserDirectoryPath() + "\\ZusortierendeDateien").listFiles();
-        }
+//        } else {
+//            controller.setAusProp(FileUtils.getUserDirectoryPath() + "\\ZusortierendeDateien");
+//            directoryListing = new File(FileUtils.getUserDirectoryPath() + "\\ZusortierendeDateien").listFiles();
+//        }
 
         if (directoryListing != null) {
             for (File child : directoryListing) {
@@ -63,9 +66,9 @@ public class DataMover {
                         if (FilenameUtils.getExtension(child.getName()).equals(type.getExtensionlist().get(num).getExtension())) {
                             try {
                                 //Falls kein Zielordner gewählt wurde, wird User-Verzeichnis\sortiert verwendet
-                                if (controller.getZielProp() == null) {
-                                    controller.setZielProp(FileUtils.getUserDirectoryPath() + "\\sortiert");
-                                }
+//                                if (controller.getZielProp() == null) {
+//                                    controller.setZielProp(FileUtils.getUserDirectoryPath() + "\\sortiert");
+//                                }
                                 File f = new File(controller.getZielProp() + "\\" + type.getOrdner());
                                 //zum testen nur kopieren und nicht verschieben
                                 FileUtils.copyFileToDirectory(child, f, true);
@@ -83,6 +86,14 @@ public class DataMover {
 //                alConfirm.show();
 //            });
             System.out.println("Dateien von " + controller.getAusProp() + " nach " + controller.getZielProp() + " sortiert!");
+        }
+        }
+        else{
+            Platform.runLater(() -> {
+                Alert alConfirm = new Alert(Alert.AlertType.ERROR);
+                alConfirm.setHeaderText("Ausgangs- und/oder Zielordner nicht definiert!");
+                alConfirm.show();
+            });
         }
     }
 

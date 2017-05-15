@@ -14,6 +14,7 @@ import mover.DataMover;
 import java.io.File;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -64,6 +65,11 @@ public class GeneralController {
             }
             stage.setScene(scene);
             stage.setTitle("DataOrganizer");
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                public void handle(WindowEvent we) {
+                    System.exit(1);
+                }
+            });
 
             // Controller ermitteln
             GeneralController controller = (GeneralController) loader.getController();

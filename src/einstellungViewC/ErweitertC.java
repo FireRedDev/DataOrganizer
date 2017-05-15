@@ -24,41 +24,10 @@ import viewController.GeneralController;
 public class ErweitertC {
 
     private DataMover mover;
-    private Label label;
     @FXML
-    private Label lbBilder;
+    private Button sortBt;
     @FXML
-    private TextField tfBilder;
-    @FXML
-    private ChoiceBox<?> cbBilder;
-    @FXML
-    private Label lbVideos;
-    @FXML
-    private ChoiceBox<?> cbVideos;
-    @FXML
-    private ChoiceBox<?> cbAudio;
-    @FXML
-    private ChoiceBox<?> cbDokumente;
-    @FXML
-    private Label lbAudio;
-    @FXML
-    private Label lbDokumente;
-    @FXML
-    private TextField tfVideos;
-    @FXML
-    private TextField tfAudio;
-    @FXML
-    private TextField tfDokumente;
-    @FXML
-    private CheckBox checkbDays;
-    @FXML
-    private ChoiceBox<?> cbDays;
-    @FXML
-    private CheckBox checkbLetter;
-    @FXML
-    private Button btCancel;
-    @FXML
-    private Button btSave;
+    private Button erweiternBt;
     @FXML
     private TextField tfMsg;
 
@@ -98,10 +67,6 @@ public class ErweitertC {
             ex.printStackTrace(System.err);
             System.exit(2);
         }
-    }
-
-    private void handleButtonAction(ActionEvent event) {
-
     }
 
     private void init(DataMover mover) {
