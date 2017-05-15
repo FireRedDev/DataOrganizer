@@ -248,8 +248,10 @@ public class GeneralController {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Data Organizer");
         selectedDirectory = chooser.showDialog(stage);
-        this.setAusProp(selectedDirectory.toString());
-        //Msg();
+        if (selectedDirectory != null) {
+            this.setAusProp(selectedDirectory.toString());
+             //Msg();
+        }
     }
 
     @FXML
@@ -257,7 +259,9 @@ public class GeneralController {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Data Organizer");
         selectedDirectory = chooser.showDialog(stage);
-        this.setZielProp(selectedDirectory.toString());
-        //Msg();
+        if (selectedDirectory != null) {
+            this.setZielProp(selectedDirectory.toString());
+            //Msg();
+        }
     }
 }
