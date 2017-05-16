@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.stage.Stage;
-import org.apache.commons.io.FileUtils;
 import viewController.GeneralController;
 
 /**
@@ -15,9 +14,8 @@ import viewController.GeneralController;
  */
 public class TheMain extends Application {
 
-    private static final boolean test = true;
-
     public static void main(String[] args) {
+        final boolean test = true;
         try {
             if (test) {
                 //Inhalt der Ordner wird gelöscht

@@ -1,9 +1,9 @@
 package viewController;
 
-import utility.ActionListenerVar;
 import data.DataType;
 import data.Extension;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.logging.*;
 import javafx.fxml.*;
@@ -11,15 +11,16 @@ import javafx.scene.Parent;
 import mover.DataMover;
 import java.io.File;
 import java.util.LinkedList;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.*;
-import utility.PrintToTextField;
 
 /**
  * GeneralController
@@ -30,6 +31,7 @@ import utility.PrintToTextField;
 public class GeneralController {
 
     private final static String VIEWNAME = "GeneralV.fxml";
+    private Stage stage;
 
     public DataMover mover;
 
@@ -67,7 +69,6 @@ public class GeneralController {
     private final StringProperty typProp = new SimpleStringProperty();
     private LinkedList<DataType> typeList;
 
-    private Stage stage;
     private File selectedDirectory, selectOutDirectory;
     private String filestring, fileOutstring;
 
@@ -92,10 +93,6 @@ public class GeneralController {
             }
             stage.setScene(scene);
             stage.setTitle("DataOrganizer");
-
-            stage.setOnCloseRequest((WindowEvent we) -> {
-                System.exit(1);
-            });
 
             // Controller ermitteln
             GeneralController controller = (GeneralController) loader.getController();
@@ -135,6 +132,10 @@ public class GeneralController {
         getApErweitert().visibleProperty().bind(ErweitertDisplayProperty());
         getApDateityp().visibleProperty().bind(DateiDisplayProperty());
 
+        stage.setOnCloseRequest((WindowEvent we) -> {
+            stage.hide();
+        });
+
         generalDisplay.set(true);
         erweitertDisplay.set(false);
         dateiDisplay.set(false);
@@ -148,9 +149,7 @@ public class GeneralController {
         OrderByDatePropProperty().bind(orderByDate.selectedProperty());
         VerschiebenPropProperty().bind(verschieben.selectedProperty());
 
-        PrintToTextField.create(tfMsg);
-
-        System.out.println("DataOrganizer - Sortiert ihre Dateien via Dateitypen");
+        this.showSuccessMessage("DataOrganizer - Sortiert ihre Dateien via Dateitypen");
 
         DataType bilder = new DataType(new File("Bilder").getAbsoluteFile());
         bilder.addExtension(new Extension("jpg"));
@@ -187,8 +186,7 @@ public class GeneralController {
         ausOrdnerTyp.textProperty().bindBidirectional(this.ausOrdnerTypProp);
         tfTyp.textProperty().bindBidirectional(typProp);
 
-        ActionListenerVar listener = new ActionListenerVar(stage);
-        initializeSystemTray(listener);
+        initializeSystemTray();
 //        System.out.println("Hast du das gemacht, drücke Enter:");
 //        sc.nextLine();
     }
@@ -214,26 +212,45 @@ public class GeneralController {
      * @param listener
      * @throws IOException
      */
-    private static void initializeSystemTray(ActionListenerVar listener) throws IOException {
+    private void initializeSystemTray() throws IOException {
         TrayIcon trayIcon = null;
         if (SystemTray.isSupported()) {
             // get the SystemTray instance
-            SystemTray tray = SystemTray.getSystemTray();
-            // load an image 
+            final SystemTray tray = SystemTray.getSystemTray();
+            // load an image
             Image image = Toolkit.getDefaultToolkit().getImage("icon.png");
             // create a popup menu
             PopupMenu popup = new PopupMenu();
             // create menu item for the default action
             MenuItem defaultItem = new MenuItem("Programm öffnen");
-            defaultItem.addActionListener(listener);
+
             popup.add(defaultItem);
+            MenuItem close = new MenuItem("Programm schließen");
+
+            popup.add(close);
             /// ... add other items
             // construct a TrayIcon
             trayIcon = new TrayIcon(image, "DataOrganizer", popup);
             trayIcon.setImageAutoSize(true);
 
             // set the TrayIcon properties
-            trayIcon.addActionListener(listener);
+            trayIcon.addActionListener((java.awt.event.ActionEvent e) -> {
+                Platform.runLater(() -> {
+                    stage.show();
+                });
+            });
+
+            final TrayIcon i = trayIcon;
+
+            defaultItem.addActionListener((java.awt.event.ActionEvent e) -> {
+                Platform.runLater(() -> {
+                    stage.show();
+                });
+            });
+
+            close.addActionListener((java.awt.event.ActionEvent e) -> {
+                tray.remove(i);
+            });
             // ...
             // add the tray image
             try {
@@ -253,7 +270,6 @@ public class GeneralController {
         if (trayIcon != null) {
             // trayIcon.setImage(updatedImage);
         }
-
     }
 
     public DataMover getMover() {
@@ -478,7 +494,7 @@ public class GeneralController {
                     type.addExtension(extension);
                     mover.addDataType(type);
                     eingabefehler = true;
-                    System.out.println("Neue Extension wurde gespeichert!");
+                    showSuccessMessage("Neue Extension wurde gespeichert!");
                 }
                 LinkedList<Extension> extensionlist = type.getExtensionlist();
                 for (Extension e : extensionlist) {
@@ -504,11 +520,11 @@ public class GeneralController {
                 if (!eingabefehler) {
                     typ.addExtension(extension);
                     mover.addDataType(typ);
-                    System.out.println("Neue Extension wurde gespeichert!");
+                    showSuccessMessage("Neue Extension wurde gespeichert!");
                 }
             }
         } else {
-            System.err.println("Eingabefehler!");
+            showErrorMessage("Eingabefehler!");
         }
 //        if (!typeList.contains(new DataType(typProp.toString()))) {
 //            DataType newType = new DataType(typProp.toString());

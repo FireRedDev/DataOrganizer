@@ -95,9 +95,9 @@ public class DataMover {
                                         FileUtils.copyFile(child, f);
                                     }
                                 } catch (IOException ex) {
-                                    System.out.println("IOException");
+                                    controller.showErrorMessage("IOException");
                                 } catch (NullPointerException e) {
-                                    System.out.println("NullPointerException");
+                                    controller.showErrorMessage("NullPointerException");
                                 }
                             }
                         }
@@ -109,10 +109,9 @@ public class DataMover {
 //                alConfirm.setHeaderText("Dateien wurden sortiert!");
 //                alConfirm.show();
 //            });
-                System.out.println("Dateien von " + controller.getAusProp() + " sortiert!");
+                controller.showSuccessMessage("Dateien von " + controller.getAusProp() + " sortiert!");
             } else {
-
-                System.out.println("Ausgangsordner nicht definiert!");
+                controller.showErrorMessage("Ausgangsordner nicht definiert!");
             }
         }
     }

@@ -74,7 +74,7 @@ public class DataType {
             // to avoid race conditions with another process that deletes
             // directories.
         }
-        System.out.println("Dateien von " + controller.getAusProp() + " sortiert!");
+//        System.out.println("Dateien von " + controller.getAusProp() + " sortiert!");
     }
 
     private String datum(File child) throws IOException {
