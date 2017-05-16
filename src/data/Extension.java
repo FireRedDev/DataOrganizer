@@ -16,14 +16,29 @@ public class Extension {
         setExtension(Extension);
     }
 
+    /**
+     * Get Extension
+     *
+     * @return extension
+     */
     public String getExtension() {
         return extension;
     }
 
+    /**
+     * Set the extension, jpg is possible
+     *
+     * @param Extension
+     */
     public void setExtension(String extension) {
         this.extension = extension;
     }
 
+    /**
+     * Set DataTyp
+     *
+     * @param neu
+     */
     public void setDataTyp(DataType neu) {
         if (neu != dataType) {
             if (dataType != null) {
@@ -34,6 +49,16 @@ public class Extension {
                 neu.addExtension(this);
             }
         }
+    }
+
+    /**
+     * ToString
+     *
+     * @return Extension
+     */
+    @Override
+    public String toString() {
+        return extension;
     }
 
 }

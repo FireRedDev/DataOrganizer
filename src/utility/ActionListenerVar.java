@@ -2,37 +2,36 @@ package utility;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import mover.DataMover;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.stage.Stage;
 
 /**
- * C.G
+ * ActionListener, ruft sortierfunktion eines DataMover auf.
  */
 public class ActionListenerVar implements ActionListener {
 
-    private DataMover mover;
+    private Stage stage;
 
-    public ActionListenerVar(DataMover page) {
-        this.mover = page;
+    public ActionListenerVar(Stage stage) {
+        this.stage = stage;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        try {
-            mover.sort();
-        } catch (IOException ex) {
-            System.out.println("Fehler beim sortieren!");
+        // Anzeigen
+        if (!stage.isShowing()) {
+            Platform.runLater(() -> {
+                stage.show();
+            });
+        } else {
+            Platform.runLater(() -> {
+                Alert alConfirm = new Alert(Alert.AlertType.INFORMATION);
+                alConfirm.setHeaderText("Fenster ist schon geöffnet!");
+                alConfirm.show();
+            });
         }
 
-    }
-
-    public DataMover getMover() {
-        return mover;
-    }
-
-    public void setMover(DataMover mover) {
-        this.mover = mover;
     }
 
 }
