@@ -1,13 +1,12 @@
 package mover;
 
 import data.DataType;
+import data.Extension;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.io.*;
 import viewController.GeneralController;
 
@@ -22,7 +21,7 @@ import viewController.GeneralController;
  * </p>
  */
 public class DataMover {
-
+    
     private List<DataType> datatype;
     GeneralController controller;
 
@@ -65,15 +64,15 @@ public class DataMover {
     public void sort() throws IOException {
         boolean rename = controller.isDateNamingProp();
         boolean verschieben = controller.isVerschiebenProp();
-
+        
         int anz = 0;
         File f;
-
+        
         File[] directoryListing;
         String aus = controller.getAusProp();
         if (aus != null) {
             directoryListing = new File(controller.getAusProp()).listFiles();
-
+            
             if (directoryListing != null) {
                 for (File child : directoryListing) {
                     for (DataType type : datatype) {
@@ -83,7 +82,7 @@ public class DataMover {
                                     if (rename) {
                                         String filename = datum(child);
                                         f = new File(type.toString() + "\\" + filename + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
-
+                                        
                                     } else {
                                         f = new File(type.toString() + "\\" + child.getName());
                                     }
@@ -153,13 +152,23 @@ public class DataMover {
      * @param typ DataType
      */
     public void addDataType(DataType typ) {
-        datatype.add(typ);
+        if (!datatype.contains(typ)) {
+            datatype.add(typ);
+            typ.setMover(this);
+        }
     }
-
+    
+    public void removeDataType(DataType typ) {
+        if (datatype.contains(typ)) {
+            datatype.remove(typ);
+            typ.setMover(this);
+        }
+    }
+    
     public List<DataType> getDatatype() {
         return datatype;
     }
-
+    
     public boolean contains(DataType d) {
         return datatype.contains(d);
     }
