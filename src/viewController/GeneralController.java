@@ -5,7 +5,6 @@ import data.Extension;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.logging.*;
 import javafx.fxml.*;
 import javafx.scene.Parent;
 import mover.DataMover;
@@ -15,8 +14,6 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -38,16 +35,11 @@ public class GeneralController {
     private final BooleanProperty generalDisplay = new SimpleBooleanProperty();
     private final BooleanProperty erweitertDisplay = new SimpleBooleanProperty();
     private final BooleanProperty dateiDisplay = new SimpleBooleanProperty();
-    @FXML
-    private Button sortBt;
-    @FXML
-    private Button erweiternBt;
+
     @FXML
     private TextField tfMsg;
     @FXML
     private TextField ausOrdner;
-//    @FXML
-//    private TextField zielOrdner;
     @FXML
     private AnchorPane apGeneral;
     @FXML
@@ -67,7 +59,6 @@ public class GeneralController {
 
     private final StringProperty ausOrdnerTypProp = new SimpleStringProperty();
     private final StringProperty typProp = new SimpleStringProperty();
-    private LinkedList<DataType> typeList;
 
     private File selectedDirectory, selectOutDirectory;
     private String filestring, fileOutstring;
@@ -110,12 +101,10 @@ public class GeneralController {
 //                alConfirm.show();
 //            });
         } catch (IOException ex) {
-            Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("Something wrong with " + VIEWNAME + "!");
             ex.printStackTrace(System.out);
             System.exit(1);
         } catch (Exception ex) {
-            Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace(System.out);
             System.exit(2);
         }
@@ -125,16 +114,13 @@ public class GeneralController {
      * Initialisierungsfunktion, Füllt einen DataMover mit einem StandardSet aus
      * Dateitypen.: Bilder,Dokumente,Videos,Audio
      *
+     * @param stage
      * @throws IOException
      */
     public void init(Stage stage) throws IOException {
         getApGeneral().visibleProperty().bind(GeneralDisplayProperty());
         getApErweitert().visibleProperty().bind(ErweitertDisplayProperty());
         getApDateityp().visibleProperty().bind(DateiDisplayProperty());
-
-        stage.setOnCloseRequest((WindowEvent we) -> {
-            stage.hide();
-        });
 
         generalDisplay.set(true);
         erweitertDisplay.set(false);
@@ -201,7 +187,7 @@ public class GeneralController {
                 mover.sort();
             }
         } catch (IOException ex) {
-            Logger.getLogger(GeneralController.class.getName()).log(Level.SEVERE, null, ex);
+            showErrorMessage("Fehler beim sortieren!");
         }
     }
 
@@ -209,12 +195,20 @@ public class GeneralController {
      * Initialisiert ein Icon im Systemtray(Taskleiste), von diesem aus kann
      * mann sortieren.
      *
-     * @param listener
      * @throws IOException
      */
     private void initializeSystemTray() throws IOException {
         TrayIcon trayIcon = null;
         if (SystemTray.isSupported()) {
+            ActionListener listenerShow = (java.awt.event.ActionEvent e) -> {
+                Platform.runLater(() -> {
+                    stage.show();
+                });
+            };
+
+            stage.setOnCloseRequest((WindowEvent arg0) -> {
+                stage.hide();
+            });
             // get the SystemTray instance
             final SystemTray tray = SystemTray.getSystemTray();
             // load an image
@@ -222,9 +216,9 @@ public class GeneralController {
             // create a popup menu
             PopupMenu popup = new PopupMenu();
             // create menu item for the default action
-            MenuItem defaultItem = new MenuItem("Programm öffnen");
+            MenuItem open = new MenuItem("Programm öffnen");
 
-            popup.add(defaultItem);
+            popup.add(open);
             MenuItem close = new MenuItem("Programm schließen");
 
             popup.add(close);
@@ -234,23 +228,18 @@ public class GeneralController {
             trayIcon.setImageAutoSize(true);
 
             // set the TrayIcon properties
-            trayIcon.addActionListener((java.awt.event.ActionEvent e) -> {
-                Platform.runLater(() -> {
-                    stage.show();
-                });
-            });
+            trayIcon.addActionListener(listenerShow);
 
             final TrayIcon i = trayIcon;
 
-            defaultItem.addActionListener((java.awt.event.ActionEvent e) -> {
-                Platform.runLater(() -> {
-                    stage.show();
-                });
-            });
+            open.addActionListener(listenerShow);
 
-            close.addActionListener((java.awt.event.ActionEvent e) -> {
+            ActionListener listenerClose = (java.awt.event.ActionEvent e) -> {
+                stage.close();
                 tray.remove(i);
-            });
+            };
+
+            close.addActionListener(listenerClose);
             // ...
             // add the tray image
             try {
@@ -284,13 +273,6 @@ public class GeneralController {
         ausProp.set(value);
     }
 
-//    public String getZielProp() {
-//        return zielProp.get();
-//    }
-//
-//    public final void setZielProp(String value) {
-//        zielProp.set(value);
-//    }
     public String getString() {
         filestring = selectedDirectory.toString();
         return filestring;

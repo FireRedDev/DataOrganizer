@@ -7,7 +7,7 @@ package data;
  * Dateiendung gehört.
  * </p>
  */
-public class Extension {
+public final class Extension {
 
     private String extension;
     private DataType dataType;
@@ -28,7 +28,7 @@ public class Extension {
     /**
      * Set the extension, jpg is possible
      *
-     * @param Extension
+     * @param extension
      */
     public void setExtension(String extension) {
         this.extension = extension;
@@ -40,11 +40,12 @@ public class Extension {
      * @param neu
      */
     public void setDataTyp(DataType neu) {
-        if (neu != dataType) {
+        if (dataType != neu) {
             if (dataType != null) {
                 dataType.removeExtension(this);
             }
             dataType = neu;
+
             if (neu != null) {
                 neu.addExtension(this);
             }
