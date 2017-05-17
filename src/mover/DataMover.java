@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.io.*;
 import viewController.GeneralController;
 
@@ -46,8 +48,12 @@ public class DataMover {
      * sortieren nach Monat aufrufen
      */
     public void order() {
-        for (DataType typ : datatype) {
-            typ.order(controller);
+        try {
+            for (DataType typ : datatype) {
+                typ.order(controller);
+            }
+        } catch (IOException ex) {
+            controller.showErrorMessage("Fehler beim sortieren nach Datum!");
         }
     }
 

@@ -41,32 +41,28 @@ public class DataType {
      * </p>
      *
      * @param controller
+     * @throws java.io.IOException
      */
-    public void order(GeneralController controller) {
+    public void order(GeneralController controller) throws IOException {
         File[] directoryListing;
         directoryListing = Ordner.listFiles();
 
         if (directoryListing != null) {
             for (File child : directoryListing) {
-
-                try {
-                    String filename = datum(child);
-                    //System.out.println(name);
+                String filename = datum(child);
+                //System.out.println(name);
 //                    if (controller.getAusProp() == null) {
 //                        controller.setAusProp(FileUtils.getUserDirectoryPath() + "\\sortiert");
 //                    }
-                    File diry = new File(Ordner.getAbsolutePath(), filename);
-                    diry.mkdir();
-                    try {
-                        FileUtils.moveFileToDirectory(child, diry, true);
-                    } catch (java.io.IOException ex) {
-                        System.out.println(ex.getMessage());
-                    }
-
-                    //System.out.println("creationTime: " + attr.creationTime());
-                } catch (IOException ex) {
-                    System.out.println("Error");
+                File diry = new File(Ordner.getAbsolutePath(), filename);
+                diry.mkdir();
+                try {
+                    FileUtils.moveFileToDirectory(child, diry, true);
+                } catch (java.io.IOException ex) {
+                    System.out.println(ex.getMessage());
                 }
+
+                //System.out.println("creationTime: " + attr.creationTime());
             }
         } else {
             // Handle the case where dir is not really a directory.
