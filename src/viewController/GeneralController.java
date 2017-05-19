@@ -2,7 +2,13 @@ package viewController;
 
 import data.DataType;
 import data.Extension;
-import java.awt.*;
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import javafx.fxml.*;
@@ -172,7 +178,7 @@ public class GeneralController {
         ausOrdnerTyp.textProperty().bindBidirectional(this.ausOrdnerTypProp);
         tfTyp.textProperty().bindBidirectional(typProp);
 
-        initializeSystemTray();
+//        initializeSystemTray();
 //        System.out.println("Hast du das gemacht, drücke Enter:");
 //        sc.nextLine();
     }
@@ -201,13 +207,17 @@ public class GeneralController {
         TrayIcon trayIcon = null;
         if (SystemTray.isSupported()) {
             ActionListener listenerShow = (java.awt.event.ActionEvent e) -> {
+                System.out.println("Window");
                 Platform.runLater(() -> {
+
                     stage.show();
                 });
             };
 
             stage.setOnCloseRequest((WindowEvent arg0) -> {
                 stage.hide();
+                System.out.println(stage.onHiddenProperty());
+                System.out.println(stage.onHidingProperty());
             });
             // get the SystemTray instance
             final SystemTray tray = SystemTray.getSystemTray();
@@ -235,7 +245,9 @@ public class GeneralController {
             open.addActionListener(listenerShow);
 
             ActionListener listenerClose = (java.awt.event.ActionEvent e) -> {
-                stage.close();
+                Platform.runLater(() -> {
+                    stage.close();
+                });
                 tray.remove(i);
             };
 
