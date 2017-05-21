@@ -1,7 +1,6 @@
 package mover;
 
 import data.DataType;
-import data.Extension;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -21,7 +20,7 @@ import viewController.GeneralController;
  * </p>
  */
 public class DataMover {
-    
+
     private List<DataType> datatype;
     GeneralController controller;
 
@@ -64,15 +63,15 @@ public class DataMover {
     public void sort() throws IOException {
         boolean rename = controller.isDateNamingProp();
         boolean verschieben = controller.isVerschiebenProp();
-        
+
         int anz = 0;
         File f;
-        
+
         File[] directoryListing;
         String aus = controller.getAusProp();
         if (aus != null) {
             directoryListing = new File(controller.getAusProp()).listFiles();
-            
+
             if (directoryListing != null) {
                 for (File child : directoryListing) {
                     for (DataType type : datatype) {
@@ -81,10 +80,21 @@ public class DataMover {
                                 try {
                                     if (rename) {
                                         String filename = datum(child);
-                                        f = new File(type.toString() + "\\" + filename + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
-                                        
+                                        filename = type.toString() + "\\" + filename + "." + FilenameUtils.getExtension(child.getName());
+                                        if (new File(filename).exists()) {
+                                            f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+                                            anz++;
+                                            System.out.println(f.toString());
+                                        } else {
+                                            f = new File(filename);
+                                        }
+
                                     } else {
                                         f = new File(type.toString() + "\\" + child.getName());
+                                    }
+                                    if (f.exists()) {
+                                        f = new File(type.toString() + "\\" + f.getAbsoluteFile().toString().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+                                        anz++;
                                     }
                                     if (verschieben) {
                                         FileUtils.moveFile(child, f);
@@ -157,18 +167,18 @@ public class DataMover {
             typ.setMover(this);
         }
     }
-    
+
     public void removeDataType(DataType typ) {
         if (datatype.contains(typ)) {
             datatype.remove(typ);
             typ.setMover(this);
         }
     }
-    
+
     public List<DataType> getDatatype() {
         return datatype;
     }
-    
+
     public boolean contains(DataType d) {
         return datatype.contains(d);
     }
