@@ -84,7 +84,6 @@ public class DataMover {
                                         if (new File(filename).exists()) {
                                             f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
                                             anz++;
-                                            System.out.println(f.toString());
                                         } else {
                                             f = new File(filename);
                                         }
