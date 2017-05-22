@@ -1,8 +1,15 @@
 package viewController;
 
+import utility.ActionListenerVar;
 import data.DataType;
 import data.Extension;
-import java.awt.*;
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import javafx.fxml.*;
@@ -172,7 +179,8 @@ public class GeneralController {
         ausOrdnerTyp.textProperty().bindBidirectional(this.ausOrdnerTypProp);
         tfTyp.textProperty().bindBidirectional(typProp);
 
-        initializeSystemTray();
+        ActionListenerVar listener = new ActionListenerVar(stage);
+//        initializeSystemTray(listener);
 //        System.out.println("Hast du das gemacht, drücke Enter:");
 //        sc.nextLine();
     }
@@ -180,11 +188,9 @@ public class GeneralController {
     private void sortieren() {
         try {
             // System.out.println("Log:");
+            mover.sort();
             if (isOrderByDateProp()) {
-                mover.sort();
                 mover.order();
-            } else {
-                mover.sort();
             }
         } catch (IOException ex) {
             showErrorMessage("Fehler beim sortieren!");
@@ -197,17 +203,14 @@ public class GeneralController {
      *
      * @throws IOException
      */
-    private void initializeSystemTray() throws IOException {
+    private void initializeSystemTray(ActionListener listener) throws IOException {
         TrayIcon trayIcon = null;
         if (SystemTray.isSupported()) {
-            ActionListener listenerShow = (java.awt.event.ActionEvent e) -> {
-                Platform.runLater(() -> {
-                    stage.show();
-                });
-            };
 
             stage.setOnCloseRequest((WindowEvent arg0) -> {
                 stage.hide();
+                System.out.println(stage.onHiddenProperty());
+                System.out.println(stage.onHidingProperty());
             });
             // get the SystemTray instance
             final SystemTray tray = SystemTray.getSystemTray();
@@ -228,14 +231,16 @@ public class GeneralController {
             trayIcon.setImageAutoSize(true);
 
             // set the TrayIcon properties
-            trayIcon.addActionListener(listenerShow);
+            trayIcon.addActionListener(listener);
 
             final TrayIcon i = trayIcon;
 
-            open.addActionListener(listenerShow);
+            open.addActionListener(listener);
 
             ActionListener listenerClose = (java.awt.event.ActionEvent e) -> {
-                stage.close();
+                Platform.runLater(() -> {
+                    stage.close();
+                });
                 tray.remove(i);
             };
 
@@ -466,24 +471,28 @@ public class GeneralController {
 
     @FXML
     private void speichernD(ActionEvent event) {
+        speichernD();
+    }
+
+    private void speichernD() {
         if (this.getTypProp() != null && this.getAusOrdnerTyp() != null) {
             boolean eingabefehler = false;
             Extension extension = new Extension(this.getTypProp());
 
             java.util.List<DataType> datatype = mover.getDatatype();
             for (DataType type : datatype) {
-                if (type.getOrdner().equals(new File(this.getAusOrdnerTyp()))) {
-                    type.addExtension(extension);
-                    mover.addDataType(type);
-                    eingabefehler = true;
-                    showSuccessMessage("Neue Extension wurde gespeichert!");
-                }
                 LinkedList<Extension> extensionlist = type.getExtensionlist();
                 for (Extension e : extensionlist) {
                     if (extension.getExtension().equals(e.getExtension())) {
                         eingabefehler = true;
                         showErrorMessage("Extension wird bereits anders sortiert!");
                     }
+                }
+                if (type.getOrdner().equals(new File(this.getAusOrdnerTyp()))) {
+                    type.addExtension(extension);
+                    mover.addDataType(type);
+                    eingabefehler = true;
+                    showSuccessMessage("Neue Extension wurde gespeichert!");
                 }
 
             }
@@ -508,17 +517,6 @@ public class GeneralController {
         } else {
             showErrorMessage("Eingabefehler!");
         }
-//        if (!typeList.contains(new DataType(typProp.toString()))) {
-//            DataType newType = new DataType(typProp.toString());
-//            typeList.add(newType);
-//            if (!newType.getExtensionlist().contains(new Extension(typProp.toString()))) {
-//                newType.addExtension(new Extension(typProp.toString()));
-//            } else {
-//                System.out.println("Diese Extension ist in diesem Datentypen bereits vorhanden.");
-//            }
-//        } else {
-//            System.out.println("Dieser Datentyp existiert bereits.");
-//        }
     }
 
     private void erase(ActionEvent event) {
