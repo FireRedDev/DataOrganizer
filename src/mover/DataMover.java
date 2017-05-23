@@ -23,6 +23,7 @@ public class DataMover {
 
     private List<DataType> datatype;
     GeneralController controller;
+    private int anz;
 
     /**
      * Standardkonstruktor, Benötigt einen Controller und einen Datentyp
@@ -64,57 +65,49 @@ public class DataMover {
         boolean rename = controller.isDateNamingProp();
         boolean verschieben = controller.isVerschiebenProp();
 
-        int anz = 0;
+        anz = 0;
         File f;
 
         File[] directoryListing;
         String aus = controller.getAusProp();
         if (aus != null) {
             directoryListing = new File(controller.getAusProp()).listFiles();
-
+            Instant start = Instant.now();
             if (directoryListing != null) {
                 for (File child : directoryListing) {
                     for (DataType type : datatype) {
-                        for (int num = 0; num < type.getExtensionlist().size(); num++) {
-                            if (FilenameUtils.getExtension(child.getName()).equals(type.getExtensionlist().get(num).getExtension())) {
-                                try {
-                                    if (rename) {
-                                        String filename = datum(child);
-                                        filename = type.toString() + "\\" + filename + "." + FilenameUtils.getExtension(child.getName());
-                                        if (new File(filename).exists()) {
-                                            f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
-                                            anz++;
-                                        } else {
-                                            f = new File(filename);
-                                        }
-
-                                    } else {
-                                        f = new File(type.toString() + "\\" + child.getName());
-                                    }
-                                    if (f.exists()) {
-                                        f = new File(type.toString() + "\\" + f.getAbsoluteFile().toString().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+                        if (type.search(FilenameUtils.getExtension(child.getName()))) {
+                            try {
+                                if (rename) {
+                                    String filename = datum(child);
+                                    filename = type.toString() + "\\" + filename + "." + FilenameUtils.getExtension(child.getName());
+                                    if (new File(filename).exists()) {
+                                        f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
                                         anz++;
-                                    }
-                                    if (verschieben) {
-                                        FileUtils.moveFile(child, f);
                                     } else {
-                                        FileUtils.copyFile(child, f);
+                                        f = new File(filename);
                                     }
-                                } catch (FileExistsException ex) {
-                                    f = new File(type.toString() + "\\" + child.getName().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
-                                    anz++;
-                                    if (verschieben) {
-                                        FileUtils.moveFile(child, f);
-                                    } else {
-                                        FileUtils.copyFile(child, f);
-                                    }
-                                } catch (IOException ex) {
-                                    controller.showErrorMessage("IOException");
-                                } catch (NullPointerException e) {
-                                    controller.showErrorMessage("NullPointerException");
+
+                                } else {
+                                    f = new File(type.toString() + "\\" + child.getName());
                                 }
+                                if (f.exists()) {
+                                    f = new File(type.toString() + "\\" + f.getAbsoluteFile().toString().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+                                    anz++;
+                                }
+                                verschieben(verschieben, child, f);
+                            } catch (FileExistsException ex) {
+                                f = new File(type.toString() + "\\" + child.getName().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+                                anz++;
+                                verschieben(verschieben, child, f);
+                            } catch (IOException ex) {
+                                controller.showErrorMessage("IOException");
+                            } catch (NullPointerException e) {
+                                controller.showErrorMessage("NullPointerException");
                             }
+                            break;
                         }
+
                     }
                 }
 //            Alert Box
@@ -123,11 +116,47 @@ public class DataMover {
 //                alConfirm.setHeaderText("Dateien wurden sortiert!");
 //                alConfirm.show();
 //            });
-                controller.showSuccessMessage("Dateien von " + controller.getAusProp() + " sortiert!");
+                Instant end = Instant.now();
+                System.out.println("Sortierzeit: " + Duration.between(start, end).toNanos());
+                controller.showSuccessMessage(" Dateien von " + controller.getAusProp() + " sortiert!");
             } else {
                 controller.showErrorMessage("Ausgangsordner nicht definiert!");
             }
         }
+    }
+
+    private void verschieben(boolean verschieben, File child, File f) throws IOException {
+        if (verschieben) {
+            FileUtils.moveFile(child, f);
+        } else {
+            FileUtils.copyFile(child, f);
+        }
+    }
+
+    private File exists(File f, DataType type, File child) {
+        if (f.exists()) {
+            f = new File(type.toString() + "\\" + f.getAbsoluteFile().toString().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+            anz++;
+        }
+        return f;
+    }
+
+    private File rename(boolean rename, File child, DataType type) throws IOException {
+        File f;
+        if (rename) {
+            String filename = datum(child);
+            filename = type.toString() + "\\" + filename + "." + FilenameUtils.getExtension(child.getName());
+            if (new File(filename).exists()) {
+                f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+                anz++;
+            } else {
+                f = new File(filename);
+            }
+
+        } else {
+            f = new File(type.toString() + "\\" + child.getName());
+        }
+        return f;
     }
 
     /**

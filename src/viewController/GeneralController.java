@@ -100,6 +100,7 @@ public class GeneralController {
 
             // Anzeigen
             stage.show();
+            
 
             // Anzeigen
 //           Platform.runLater(() -> {
