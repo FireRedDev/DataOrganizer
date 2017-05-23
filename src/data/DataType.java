@@ -20,7 +20,7 @@ import viewController.GeneralController;
  * </p>
  */
 public class DataType {
-    
+
     private LinkedList<Extension> extensionlist;
     private File Ordner;
     private DataMover mover;
@@ -48,7 +48,7 @@ public class DataType {
     public void order(GeneralController controller) throws IOException {
         File[] directoryListing;
         directoryListing = Ordner.listFiles();
-        
+
         if (directoryListing != null) {
             for (File child : directoryListing) {
                 String filename = datum(child);
@@ -74,7 +74,7 @@ public class DataType {
         }
 //        System.out.println("Dateien von " + controller.getAusProp() + " sortiert!");
     }
-    
+
     private String datum(File child) throws IOException {
         BasicFileAttributes attr = Files.readAttributes(child.toPath(), BasicFileAttributes.class);
         Instant creationTime = attr.lastModifiedTime().toInstant();
@@ -87,62 +87,70 @@ public class DataType {
         String filename = date.getYear() + "_" + monat;
         return filename;
     }
-    
+
     public void addExtension(Extension neu) {
         if (!extensionlist.contains(neu)) {
             extensionlist.add(neu);
             neu.setDataTyp(this);
         }
-        
+
     }
-    
+
     public void removeExtension(Extension ex) {
         if (extensionlist.contains(ex)) {
             extensionlist.remove(ex);
             ex.setExtension(null);
         }
     }
-    
+
     public LinkedList<Extension> getExtensionlist() {
         return extensionlist;
     }
-    
+
     public void setExtensionlist(LinkedList<Extension> extensionlist) {
         this.extensionlist = extensionlist;
     }
-    
+
     public File getOrdner() {
         return Ordner;
     }
-    
+
     public void setOrdner(File Ordner) {
         this.Ordner = Ordner;
     }
-    
+
     @Override
     public String toString() {
         return Ordner.getAbsolutePath();
     }
-    
+
     public boolean contains(Extension e) {
         return extensionlist.contains(e);
     }
-    
+
     public DataMover getMover() {
         return mover;
     }
-    
+
     public void setMover(DataMover neu) {
         if (mover != neu) {
             if (mover != null) {
                 mover.removeDataType(this);
             }
             mover = neu;
-            
+
             if (neu != null) {
                 neu.addDataType(this);
             }
         }
     }
-    
+
+    public boolean search(String ex) {
+        for (Extension e : extensionlist) {
+            if (e.toString().equals(ex)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
