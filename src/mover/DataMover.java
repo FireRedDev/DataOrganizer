@@ -61,53 +61,68 @@ public class DataMover {
      *
      * @throws IOException
      */
-    public void sort() throws IOException {
+    public void sort(File[] directoryListing) throws IOException {
         boolean rename = controller.isDateNamingProp();
         boolean verschieben = controller.isVerschiebenProp();
+        boolean subfolder = controller.issortSubFolderProp();
 
         anz = 0;
         File f;
+//                      File file = CH1.getSelectedFile();
+//File[] files = file.listFiles();
+//for(int i=0; i< files.length; i++) {
+//       if(files[i].isDirectory()) {
+//             TA1.append(files[i].getName());
+//       }
+//}
 
-        File[] directoryListing;
         String aus = controller.getAusProp();
         if (aus != null) {
-            directoryListing = new File(controller.getAusProp()).listFiles();
+
             Instant start = Instant.now();
             if (directoryListing != null) {
                 for (File child : directoryListing) {
-                    for (DataType type : datatype) {
-                        if (type.search(FilenameUtils.getExtension(child.getName()))) {
-                            try {
-                                if (rename) {
-                                    String filename = datum(child);
-                                    filename = type.toString() + "\\" + filename + "." + FilenameUtils.getExtension(child.getName());
-                                    if (new File(filename).exists()) {
-                                        f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
-                                        anz++;
+                    if (child.isDirectory()&&subfolder) {
+                        System.out.print("foundFolder");
+                        this.sort(child.listFiles());
+                    } else {
+                        for (DataType type : datatype) {
+                            if (type.search(FilenameUtils.getExtension(child.getName()))) {
+                                try {
+                                    //property adden nd vagessn
+                                    //fehler
+
+                                    if (rename) {
+                                        String filename = datum(child);
+                                        filename = type.toString() + "\\" + filename + "." + FilenameUtils.getExtension(child.getName());
+                                        if (new File(filename).exists()) {
+                                            f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+                                            anz++;
+                                        } else {
+                                            f = new File(filename);
+                                        }
+
                                     } else {
-                                        f = new File(filename);
+                                        f = new File(type.toString() + "\\" + child.getName());
                                     }
-
-                                } else {
-                                    f = new File(type.toString() + "\\" + child.getName());
-                                }
-                                if (f.exists()) {
-                                    f = new File(type.toString() + "\\" + f.getAbsoluteFile().toString().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+                                    if (f.exists()) {
+                                        f = new File(type.toString() + "\\" + f.getAbsoluteFile().toString().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+                                        anz++;
+                                    }
+                                    verschieben(verschieben, child, f);
+                                } catch (FileExistsException ex) {
+                                    f = new File(type.toString() + "\\" + child.getName().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
                                     anz++;
+                                    verschieben(verschieben, child, f);
+                                } catch (IOException ex) {
+                                    controller.showErrorMessage("IOException");
+                                } catch (NullPointerException e) {
+                                    controller.showErrorMessage("NullPointerException");
                                 }
-                                verschieben(verschieben, child, f);
-                            } catch (FileExistsException ex) {
-                                f = new File(type.toString() + "\\" + child.getName().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
-                                anz++;
-                                verschieben(verschieben, child, f);
-                            } catch (IOException ex) {
-                                controller.showErrorMessage("IOException");
-                            } catch (NullPointerException e) {
-                                controller.showErrorMessage("NullPointerException");
+                                break;
                             }
-                            break;
-                        }
 
+                        }
                     }
                 }
 //            Alert Box
