@@ -27,7 +27,7 @@
                 <Button fx:id="speichern" layoutX="488.0" layoutY="173.0" mnemonicParsing="false" onAction="#speichern" prefHeight="25.0" prefWidth="74.0" text="Speichern" />
                 <Button fx:id="abbrechen" layoutX="404.0" layoutY="173.0" mnemonicParsing="false" onAction="#abbrechen" text="Abbrechen" />
                 <CheckBox fx:id="dateNaming" layoutX="27.0" layoutY="24.0" mnemonicParsing="false" text="Dateibennenung nach Datum" />
-                <Button fx:id="erweiternDateityp" layoutX="307.0" layoutY="173.0" mnemonicParsing="false" onAction="#erweiternDateityp" text="Sortierregeln" />
+                <Button fx:id="tableView" layoutX="307.0" layoutY="173.0" mnemonicParsing="false" onAction="#tableView" text="Sortierregeln" />
                 <CheckBox fx:id="verschieben" layoutX="27.0" layoutY="51.0" mnemonicParsing="false" text="Verschieben" />
                 <CheckBox fx:id="orderByDate" layoutX="27.0" layoutY="80.0" mnemonicParsing="false" text="nach Monat ordnen" />
                 <CheckBox fx:id="sortByName" layoutX="27.0" layoutY="109.0" mnemonicParsing="false" text="sortieren nach Dateinamen" />
