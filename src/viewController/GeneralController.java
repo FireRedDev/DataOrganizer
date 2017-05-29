@@ -58,6 +58,8 @@ public class GeneralController {
     @FXML
     private CheckBox orderByDate;
     @FXML
+    private CheckBox sortSubFolder;
+    @FXML
     private TextField ausOrdnerTyp;
     @FXML
     private TextField tfTyp;
@@ -75,6 +77,7 @@ public class GeneralController {
     private final BooleanProperty dateNamingProp = new SimpleBooleanProperty();
     private final BooleanProperty orderByDateProp = new SimpleBooleanProperty();
     private final BooleanProperty verschiebenProp = new SimpleBooleanProperty();
+    private final BooleanProperty sortSubFolderProp = new SimpleBooleanProperty();
 
     public static void show(Stage stage) {
         try {
@@ -100,7 +103,6 @@ public class GeneralController {
 
             // Anzeigen
             stage.show();
-            
 
             // Anzeigen
 //           Platform.runLater(() -> {
@@ -142,6 +144,7 @@ public class GeneralController {
         DateNamingPropProperty().bind(dateNaming.selectedProperty());
         OrderByDatePropProperty().bind(orderByDate.selectedProperty());
         VerschiebenPropProperty().bind(verschieben.selectedProperty());
+        this.sortSubFolderProp.bind(sortSubFolder.selectedProperty());
 
         this.showSuccessMessage("DataOrganizer - Sortiert ihre Dateien via Dateitypen");
 
@@ -189,7 +192,7 @@ public class GeneralController {
     private void sortieren() {
         try {
             // System.out.println("Log:");
-            mover.sort();
+            mover.sort(new File(this.getAusProp()).listFiles());
             if (isOrderByDateProp()) {
                 mover.order();
             }
@@ -446,6 +449,18 @@ public class GeneralController {
 
     public BooleanProperty OrderByDatePropProperty() {
         return orderByDateProp;
+    }
+
+    public boolean issortSubFolderProp() {
+        return sortSubFolderProp.get();
+    }
+
+    public void setsortSubFolderProp(boolean value) {
+        sortSubFolderProp.set(value);
+    }
+
+    public BooleanProperty sortSubFolderPropProperty() {
+        return sortSubFolderProp;
     }
 
     public boolean isVerschiebenProp() {

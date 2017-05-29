@@ -31,6 +31,7 @@
                 <CheckBox fx:id="verschieben" layoutX="27.0" layoutY="51.0" mnemonicParsing="false" text="Verschieben" />
                 <CheckBox fx:id="orderByDate" layoutX="27.0" layoutY="80.0" mnemonicParsing="false" text="nach Monat ordnen" />
                 <CheckBox fx:id="sortByName" layoutX="27.0" layoutY="109.0" mnemonicParsing="false" text="sortieren nach Dateinamen" />
+                 <CheckBox fx:id="sortSubFolder" layoutX="27.0" layoutY="139.0" mnemonicParsing="false" text="Unterordner auch sortieren" />
             </children>
         </AnchorPane>
         <AnchorPane fx:id="apDateityp" layoutX="-4.0" layoutY="-7.0" prefHeight="217.0" prefWidth="581.0">
