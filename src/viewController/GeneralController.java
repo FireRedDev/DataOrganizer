@@ -21,6 +21,7 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -65,6 +66,22 @@ public class GeneralController {
     private TextField tfTyp;
     @FXML
     private CheckBox verschieben;
+    @FXML
+    private Button sortBt;
+    @FXML
+    private Button erweiternBt;
+    @FXML
+    private Button speichern;
+    @FXML
+    private Button abbrechen;
+    @FXML
+    private Button tableView;
+    @FXML
+    private CheckBox sortByName;
+    @FXML
+    private Button speichernD;
+    @FXML
+    private Button abbrechenD;
 
     private final StringProperty ausOrdnerTypProp = new SimpleStringProperty();
     private final StringProperty typProp = new SimpleStringProperty();
@@ -405,7 +422,6 @@ public class GeneralController {
         return apErweitert;
     }
 
-    @FXML
     private void erweiternDateityp(ActionEvent event) {
         erweiternDateityp();
     }
@@ -575,5 +591,28 @@ public class GeneralController {
     public void showSuccessMessage(String message) {
         tfMsg.setText(message);
         tfMsg.setStyle("-fx-text-inner-color: green;");
+    }
+
+    @FXML
+    private void tableView(ActionEvent event) {
+//        try {
+//            FXMLLoader fxmlLoader = new FXMLLoader();
+//            fxmlLoader.setLocation(getClass().getResource("Dateitypenwarten.fxml"));
+//            /* 
+//         * if "fx:controller" is not set in fxml
+//         * fxmlLoader.setController(NewWindowController);
+//             */
+//            Scene scene = new Scene(fxmlLoader.load());
+//            Stage stage = new Stage();
+//            stage.setTitle("Dateitypen bearbeiten");
+//            stage.setScene(scene);
+//            stage.initModality(Modality.WINDOW_MODAL);
+//            stage.initOwner(this.stage);
+//            stage.show();
+//            
+//        } catch (IOException e) {
+//            System.err.println("Error");
+//        }
+        ErweiterterController.show(stage,null);
     }
 }
