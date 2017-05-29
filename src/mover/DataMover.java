@@ -1,12 +1,15 @@
 package mover;
 
 import data.DataType;
+import data.RegexRule;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.*;
 import java.util.*;
+import java.util.regex.Pattern;
 import org.apache.commons.io.*;
+import org.apache.commons.io.filefilter.RegexFileFilter;
 import viewController.GeneralController;
 
 /**
@@ -22,6 +25,7 @@ import viewController.GeneralController;
 public class DataMover {
 
     private List<DataType> datatype;
+    private List<RegexRule> regexrules;
     GeneralController controller;
     private int anz;
 
@@ -35,7 +39,7 @@ public class DataMover {
 //        File dir = new File("ZusortierendeDateien");
 
         datatype = new LinkedList<>();
-
+        regexrules = new LinkedList<>();
         //Ordner Erstellen
 //        dir.mkdir();
 //        setOrdner(dir);
@@ -53,6 +57,33 @@ public class DataMover {
             }
         } catch (IOException ex) {
             controller.showErrorMessage("Fehler beim sortieren nach Datum!");
+        }
+    }
+
+    /**
+     * sortieren nach Regex
+     *
+     * @param directoryListing
+     * @param input
+     * @throws IOException
+     */
+    public void sortbyRegex(File[] directoryListing) throws IOException {
+        boolean subfolder = controller.issortSubFolderProp();
+        boolean verschieben = controller.isVerschiebenProp();
+        File dir = new File(controller.getAusProp());
+        for (RegexRule rule : regexrules) {
+            FileFilter fileFilter = new RegexFileFilter(rule.getRegex());
+            File[] files = dir.listFiles(fileFilter);
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isDirectory() && subfolder) {
+                    System.out.print("foundFolder");
+                    //jz miasma nu die regexrules durchgeh und imma den jeweiligen regex in den jeweilien ordner verschieben
+                    this.sortbyRegex(files[i].listFiles());
+                }
+                //Jetzt müsste man FIles[i] an sein Ziel verschieben.
+                //movetosomewhere(rule.getordner)
+                verschieben(verschieben, files[i], rule.getOrdner());
+            }
         }
     }
 
@@ -82,7 +113,7 @@ public class DataMover {
             Instant start = Instant.now();
             if (directoryListing != null) {
                 for (File child : directoryListing) {
-                    if (child.isDirectory()&&subfolder) {
+                    if (child.isDirectory() && subfolder) {
                         System.out.print("foundFolder");
                         this.sort(child.listFiles());
                     } else {
@@ -220,6 +251,24 @@ public class DataMover {
 
     public List<DataType> getDatatype() {
         return datatype;
+    }
+
+    public void addRegexRule(RegexRule typ) {
+        if (!regexrules.contains(typ)) {
+            regexrules.add(typ);
+            // typ.setMover(this);
+        }
+    }
+
+    public void removeRegexRule(DataType typ) {
+        if (regexrules.contains(typ)) {
+            regexrules.remove(typ);
+            // typ.setMover(this);
+        }
+    }
+
+    public List<RegexRule> getRegexRules() {
+        return regexrules;
     }
 
     public boolean contains(DataType d) {
