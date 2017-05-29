@@ -82,7 +82,8 @@ public class DataMover {
                 }
                 //Jetzt müsste man FIles[i] an sein Ziel verschieben.
                 //movetosomewhere(rule.getordner)
-                verschieben(verschieben, files[i], rule.getOrdner());
+                
+                this.verschiebenToDirectory(verschieben, files[i], rule.getOrdner());
             }
         }
     }
@@ -93,6 +94,7 @@ public class DataMover {
      * @throws IOException
      */
     public void sort(File[] directoryListing) throws IOException {
+        //Offene Fragen: Brauche ich eine FIlexistsexception?
         boolean rename = controller.isDateNamingProp();
         boolean verschieben = controller.isVerschiebenProp();
         boolean subfolder = controller.issortSubFolderProp();
@@ -177,8 +179,17 @@ else {
     private void verschieben(boolean verschieben, File child, File f) throws IOException {
         if (verschieben) {
             FileUtils.moveFile(child, f);
+           
         } else {
             FileUtils.copyFile(child, f);
+        }
+    }
+       private void verschiebenToDirectory(boolean verschieben, File child, File f) throws IOException {
+        if (verschieben) {
+            FileUtils.moveFileToDirectory(child, f,true);
+           
+        } else {
+            FileUtils.copyFileToDirectory(child, f);
         }
     }
 
