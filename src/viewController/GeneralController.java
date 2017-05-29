@@ -66,6 +66,8 @@ public class GeneralController {
     private TextField tfTyp;
     @FXML
     private CheckBox verschieben;
+     @FXML
+    private CheckBox sortviaRegex;
     @FXML
     private Button sortBt;
     @FXML
@@ -95,6 +97,7 @@ public class GeneralController {
     private final BooleanProperty orderByDateProp = new SimpleBooleanProperty();
     private final BooleanProperty verschiebenProp = new SimpleBooleanProperty();
     private final BooleanProperty sortSubFolderProp = new SimpleBooleanProperty();
+    private final BooleanProperty sortviaRegexProp = new SimpleBooleanProperty();
 
     public static void show(Stage stage) {
         try {
@@ -162,7 +165,7 @@ public class GeneralController {
         OrderByDatePropProperty().bind(orderByDate.selectedProperty());
         VerschiebenPropProperty().bind(verschieben.selectedProperty());
         this.sortSubFolderProp.bind(sortSubFolder.selectedProperty());
-
+this.sortviaRegexProp.bind(sortviaRegex.selectedProperty());
         this.showSuccessMessage("DataOrganizer - Sortiert ihre Dateien via Dateitypen");
 
         DataType bilder = new DataType(new File("Bilder").getAbsoluteFile());
@@ -477,6 +480,18 @@ public class GeneralController {
 
     public BooleanProperty sortSubFolderPropProperty() {
         return sortSubFolderProp;
+    }
+    
+       public boolean issortviaRegexProp() {
+        return sortviaRegexProp.get();
+    }
+
+    public void setsortviaRegexProp(boolean value) {
+        sortviaRegexProp.set(value);
+    }
+
+    public BooleanProperty sortviaRegexPropProperty() {
+        return sortviaRegexProp;
     }
 
     public boolean isVerschiebenProp() {
