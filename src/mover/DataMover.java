@@ -82,7 +82,8 @@ public class DataMover {
                 }
                 //Jetzt müsste man FIles[i] an sein Ziel verschieben.
                 //movetosomewhere(rule.getordner)
-                verschieben(verschieben, files[i], rule.getOrdner());
+                
+                this.verschiebenToDirectory(verschieben, files[i], rule.getOrdner());
             }
         }
     }
@@ -93,10 +94,11 @@ public class DataMover {
      * @throws IOException
      */
     public void sort(File[] directoryListing) throws IOException {
+        //Offene Fragen: Brauche ich eine FIlexistsexception?
         boolean rename = controller.isDateNamingProp();
         boolean verschieben = controller.isVerschiebenProp();
         boolean subfolder = controller.issortSubFolderProp();
-
+  boolean sortviaRegex = controller.issortviaRegexProp();
         anz = 0;
         File f;
 //                      File file = CH1.getSelectedFile();
@@ -106,7 +108,10 @@ public class DataMover {
 //             TA1.append(files[i].getName());
 //       }
 //}
-
+if(sortviaRegex) {
+     sortbyRegex(directoryListing);
+}
+else {
         String aus = controller.getAusProp();
         if (aus != null) {
 
@@ -168,14 +173,23 @@ public class DataMover {
             } else {
                 controller.showErrorMessage("Ausgangsordner nicht definiert!");
             }
-        }
+        }}
     }
 
     private void verschieben(boolean verschieben, File child, File f) throws IOException {
         if (verschieben) {
             FileUtils.moveFile(child, f);
+           
         } else {
             FileUtils.copyFile(child, f);
+        }
+    }
+       private void verschiebenToDirectory(boolean verschieben, File child, File f) throws IOException {
+        if (verschieben) {
+            FileUtils.moveFileToDirectory(child, f,true);
+           
+        } else {
+            FileUtils.copyFileToDirectory(child, f);
         }
     }
 

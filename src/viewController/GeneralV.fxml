@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="248.0" prefWidth="575.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewController.GeneralController">
+<AnchorPane id="AnchorPane" prefHeight="248.0" prefWidth="605.0" styleClass="background" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewController.GeneralController">
     <children>
         <TextField fx:id="tfMsg" editable="false" layoutX="14.0" layoutY="208.0" prefHeight="25.0" prefWidth="548.0" />
         <AnchorPane fx:id="apGeneral" layoutX="12.0" prefHeight="231.0" prefWidth="548.0">
@@ -22,7 +22,7 @@
                 <Button fx:id="erweiternBt" layoutX="321.0" layoutY="173.0" mnemonicParsing="false" onAction="#erweitern" text="Erweiterte Einstellungen" />
             </children>
         </AnchorPane>                
-        <AnchorPane fx:id="apErweitert" layoutX="0.0" prefHeight="231.0" prefWidth="548.0">
+        <AnchorPane fx:id="apErweitert" layoutX="0.0" prefHeight="261.0" prefWidth="548.0">
             <children>
                 <Button fx:id="speichern" layoutX="488.0" layoutY="173.0" mnemonicParsing="false" onAction="#speichern" prefHeight="25.0" prefWidth="74.0" text="Speichern" />
                 <Button fx:id="abbrechen" layoutX="404.0" layoutY="173.0" mnemonicParsing="false" onAction="#abbrechen" text="Abbrechen" />
@@ -32,6 +32,7 @@
                 <CheckBox fx:id="orderByDate" layoutX="27.0" layoutY="80.0" mnemonicParsing="false" text="nach Monat ordnen" />
                 <CheckBox fx:id="sortByName" layoutX="27.0" layoutY="109.0" mnemonicParsing="false" text="sortieren nach Dateinamen" />
                  <CheckBox fx:id="sortSubFolder" layoutX="27.0" layoutY="139.0" mnemonicParsing="false" text="Unterordner auch sortieren" />
+                  <CheckBox fx:id="sortviaRegex" layoutX="27.0" layoutY="169.0" mnemonicParsing="false" text="Via Regex Befehl sortieren" />
             </children>
         </AnchorPane>
         <AnchorPane fx:id="apDateityp" layoutX="-4.0" layoutY="-7.0" prefHeight="217.0" prefWidth="581.0">
