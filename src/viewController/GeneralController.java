@@ -113,6 +113,7 @@ public class GeneralController {
                 stage = new Stage();
             }
             stage.setScene(scene);
+           
             stage.setTitle("DataOrganizer");
 
             // Controller ermitteln
