@@ -25,13 +25,8 @@ public class DataType {
     private File Ordner;
     private DataMover mover;
 
-    //Um Deutsche Monatsnamen zu erhalten
-//    private final String[] monat = {"Jänner", "Februar", "Maerz", "April", "Mai","Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"};
     public DataType(File Ordner) {
-//        this.name = name;
         extensionlist = new LinkedList<>();
-//        File dir = new File(name);
-//        setOrdner(dir);
         this.Ordner = Ordner;
     }
 
@@ -52,10 +47,6 @@ public class DataType {
         if (directoryListing != null) {
             for (File child : directoryListing) {
                 String filename = datum(child);
-                //System.out.println(name);
-//                    if (controller.getAusProp() == null) {
-//                        controller.setAusProp(FileUtils.getUserDirectoryPath() + "\\sortiert");
-//                    }
                 File diry = new File(Ordner.getAbsolutePath(), filename);
                 diry.mkdir();
                 try {
@@ -63,22 +54,14 @@ public class DataType {
                 } catch (java.io.IOException ex) {
                     System.out.println(ex.getMessage());
                 }
-
-                //System.out.println("creationTime: " + attr.creationTime());
             }
         } else {
-            // Handle the case where dir is not really a directory.
-            // Checking dir.isDirectory() above would not be sufficient
-            // to avoid race conditions with another process that deletes
-            // directories.
         }
-//        System.out.println("Dateien von " + controller.getAusProp() + " sortiert!");
     }
 
     private String datum(File child) throws IOException {
         BasicFileAttributes attr = Files.readAttributes(child.toPath(), BasicFileAttributes.class);
         Instant creationTime = attr.lastModifiedTime().toInstant();
-        //String filename = monat[creationTime.get(MONTH_OF_YEAR) - 1] + "_" +creationTime.get(YEAR);
         LocalDateTime date = LocalDateTime.ofInstant(creationTime, ZoneOffset.UTC);
         String monat = Integer.toString(date.getMonthValue());
         if (date.getMonthValue() < 10) {
@@ -93,7 +76,6 @@ public class DataType {
             extensionlist.add(neu);
             neu.setDataTyp(this);
         }
-
     }
 
     public void removeExtension(Extension ex) {
