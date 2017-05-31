@@ -10,14 +10,13 @@
 <AnchorPane id="AnchorPane" prefHeight="248.0" prefWidth="575.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewController.ErweiterterController">
     <children>
         <TextField fx:id="tfMsg" editable="false" layoutX="14.0" layoutY="208.0" prefHeight="25.0" prefWidth="548.0" />
-        <TableView layoutX="14.0" layoutY="14.0" prefHeight="154.0" prefWidth="548.0">
+        <TableView fx:id="tvWarten" layoutX="14.0" layoutY="14.0" prefHeight="154.0" prefWidth="548.0" editable="true">
             <columns>
-                <TableColumn prefWidth="180.0" text="Zielordner" />
-                <TableColumn prefWidth="367.0" text="Dateiendung(en)" />
+                <TableColumn fx:id="tcZiel" prefWidth="278.0" text="Zielordner" />
+                <TableColumn fx:id="tcEndung" prefWidth="269.0" text="Dateiendung(en)" />
             </columns>
         </TableView>
-        <Button layoutX="416.0" layoutY="175.0" mnemonicParsing="false" text="Hinzufügen" />
-        <Button layoutX="502.0" layoutY="175.0" mnemonicParsing="false" text="Löschen" />
-       
+        <Button layoutX="416.0" layoutY="175.0" mnemonicParsing="false" onAction="#addDateiendung" text="Hinzufügen" />
+        <Button layoutX="502.0" layoutY="175.0" mnemonicParsing="false" onAction="#deleteDateiendung" text="Löschen" />    
     </children>
 </AnchorPane>

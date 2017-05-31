@@ -1,0 +1,16 @@
+{
+  "name": "hallowelt",
+  "version": "1.0.0",
+  "description": "Hallo Welt Modul",
+  "main": "index.js",
+  "scripts": {
+	"start":"node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hallo",
+    "welt"
+  ],
+  "author": "",
+  "license": "ISC"
+}

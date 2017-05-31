@@ -1,29 +1,18 @@
 package viewController;
 
-import utility.ActionListenerVar;
-import data.DataType;
-import data.Extension;
-import java.awt.AWTException;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.Toolkit;
-import java.awt.TrayIcon;
-import java.awt.event.ActionListener;
+import data.*;
 import java.io.IOException;
 import javafx.fxml.*;
 import javafx.scene.Parent;
 import mover.DataMover;
 import java.io.File;
-import java.util.LinkedList;
-import javafx.application.Platform;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.Properties;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.*;
 
@@ -37,12 +26,21 @@ public class GeneralController {
 
     private final static String VIEWNAME = "GeneralV.fxml";
     private Stage stage;
+    private DataMover mover;
+    private File selectedDirectory;
 
-    public DataMover mover;
+    Properties props = new Properties();
 
     private final BooleanProperty generalDisplay = new SimpleBooleanProperty();
-    private final BooleanProperty erweitertDisplay = new SimpleBooleanProperty();
-    private final BooleanProperty dateiDisplay = new SimpleBooleanProperty();
+
+    String propertyFile = "DOproperties.properties";
+
+    private final StringProperty ausProp = new SimpleStringProperty();
+    private final BooleanProperty dateNamingProp = new SimpleBooleanProperty();
+    private final BooleanProperty orderByDateProp = new SimpleBooleanProperty();
+    private final BooleanProperty verschiebenProp = new SimpleBooleanProperty();
+    private final BooleanProperty sortSubFolderProp = new SimpleBooleanProperty();
+    private final BooleanProperty sortviaRegexProp = new SimpleBooleanProperty();
 
     @FXML
     private TextField tfMsg;
@@ -53,51 +51,15 @@ public class GeneralController {
     @FXML
     private AnchorPane apErweitert;
     @FXML
-    private AnchorPane apDateityp;
-    @FXML
     private CheckBox dateNaming;
     @FXML
     private CheckBox orderByDate;
     @FXML
+    private CheckBox verschieben;
+    @FXML
     private CheckBox sortSubFolder;
     @FXML
-    private TextField ausOrdnerTyp;
-    @FXML
-    private TextField tfTyp;
-    @FXML
-    private CheckBox verschieben;
-     @FXML
-    private CheckBox sortviaRegex;
-    @FXML
-    private Button sortBt;
-    @FXML
-    private Button erweiternBt;
-    @FXML
-    private Button speichern;
-    @FXML
-    private Button abbrechen;
-    @FXML
-    private Button tableView;
-    @FXML
     private CheckBox sortByName;
-    @FXML
-    private Button speichernD;
-    @FXML
-    private Button abbrechenD;
-
-    private final StringProperty ausOrdnerTypProp = new SimpleStringProperty();
-    private final StringProperty typProp = new SimpleStringProperty();
-
-    private File selectedDirectory, selectOutDirectory;
-    private String filestring, fileOutstring;
-
-    private final StringProperty ausProp = new SimpleStringProperty();
-//    private final StringProperty zielProp = new SimpleStringProperty();
-    private final BooleanProperty dateNamingProp = new SimpleBooleanProperty();
-    private final BooleanProperty orderByDateProp = new SimpleBooleanProperty();
-    private final BooleanProperty verschiebenProp = new SimpleBooleanProperty();
-    private final BooleanProperty sortSubFolderProp = new SimpleBooleanProperty();
-    private final BooleanProperty sortviaRegexProp = new SimpleBooleanProperty();
 
     public static void show(Stage stage) {
         try {
@@ -113,7 +75,6 @@ public class GeneralController {
                 stage = new Stage();
             }
             stage.setScene(scene);
-           
             stage.setTitle("DataOrganizer");
 
             // Controller ermitteln
@@ -125,12 +86,6 @@ public class GeneralController {
             // Anzeigen
             stage.show();
 
-            // Anzeigen
-//           Platform.runLater(() -> {
-//                Alert alConfirm = new Alert(Alert.AlertType.INFORMATION);
-//                alConfirm.setHeaderText("Programm läuft im Hintergrund!\nÖffnen über SystemTray!");
-//                alConfirm.show();
-//            });
         } catch (IOException ex) {
             System.err.println("Something wrong with " + VIEWNAME + "!");
             ex.printStackTrace(System.out);
@@ -150,24 +105,99 @@ public class GeneralController {
      */
     public void init(Stage stage) throws IOException {
         getApGeneral().visibleProperty().bind(GeneralDisplayProperty());
-        getApErweitert().visibleProperty().bind(ErweitertDisplayProperty());
-        getApDateityp().visibleProperty().bind(DateiDisplayProperty());
-
+        getApErweitert().visibleProperty().bind(GeneralDisplayProperty().not());
         generalDisplay.set(true);
-        erweitertDisplay.set(false);
-        dateiDisplay.set(false);
 
         ausOrdner.setEditable(false);
         ausOrdner.textProperty().bindBidirectional(this.ausProp);
-//        zielOrdner.setEditable(false);
-//        zielOrdner.textProperty().bindBidirectional(this.zielProp);
 
-        DateNamingPropProperty().bind(dateNaming.selectedProperty());
-        OrderByDatePropProperty().bind(orderByDate.selectedProperty());
-        VerschiebenPropProperty().bind(verschieben.selectedProperty());
-        this.sortSubFolderProp.bind(sortSubFolder.selectedProperty());
-this.sortviaRegexProp.bind(sortviaRegex.selectedProperty());
-        this.showSuccessMessage("DataOrganizer - Sortiert ihre Dateien via Dateitypen");
+        DateNamingPropProperty().bindBidirectional(dateNaming.selectedProperty());
+        OrderByDatePropProperty().bindBidirectional(orderByDate.selectedProperty());
+        VerschiebenPropProperty().bindBidirectional(verschieben.selectedProperty());
+        sortviaRegexPropProperty().bindBidirectional(sortByName.selectedProperty());
+        sortSubFolderPropProperty().bindBidirectional(sortSubFolder.selectedProperty());
+
+        props.load(new FileInputStream(propertyFile));
+        // Properties File laden
+        String datenaming = props.getProperty("dateNaming");
+        String orderbydate = props.getProperty("orderbydate");
+        String verschieben = props.getProperty("verschieben");
+        String unterordner = props.getProperty("unterordner");
+        String regex = props.getProperty("regex");
+//
+//            if ("true".equals(datenaming)) {
+//                //dateNaming.setSelected(true);
+//                DateNamingPropProperty().set(true);
+//            }
+//            if ("true".equals(orderbydate)) {
+//                OrderByDatePropProperty().set(true);
+//            }
+//            if ("true".equals(verschieben)) {
+//                VerschiebenPropProperty().set(true);
+//            }
+//            if ("true".equals(unterordner)) {
+//                sortSubFolderPropProperty().set(true);
+//            }
+//            if ("true".equals(regex)) {
+//                sortviaRegexPropProperty().set(true);
+//            }
+//        } catch (IOException e) {
+//            String path = "DOproperties.properties";
+//            File f = new File(path);
+//
+//            f.createNewFile();
+//        }
+//
+//        this.showSuccessMessage("DataOrganizer - Sortiert ihre Dateien via Dateitypen");
+//
+//        if ("".equals(props.getProperty("bilder"))) {
+//            props.setProperty("bilder", "jpg,png,gif,jpeg");
+//        }
+//        if ("".equals(props.getProperty("dokumente"))) {
+//            props.setProperty("dokumente", "pdf,docx,vsd,xlsx,zip");
+//        }
+//        if ("".equals(props.getProperty("video"))) {
+//            props.setProperty("video", "mp4,mpeg,avi,wmv");
+//        }
+//        if ("".equals(props.getProperty("audio"))) {
+//            props.setProperty("audio", "mp3,wma,ogg,flac");
+//        }
+//
+//        FileOutputStream out = new FileOutputStream(this.propertyFile);
+//        props.store(out, null);
+//
+//        DataType bilder = new DataType(new File("Bilder").getAbsoluteFile());
+//        String bilderg = props.getProperty("bilder");
+//        String[] bildera = bilderg.split(",");
+//        for (int i = 0; i < bildera.length; i++) {
+//            bilder.addExtension(new Extension(bildera[i]));
+//        }
+//
+//        DataType documente = new DataType(new File("Dokumente").getAbsoluteFile());
+//        String docsg = props.getProperty("dokumente");
+//        String[] docsa = docsg.split(",");
+//        for (int i = 0; i < docsa.length; i++) {
+//            documente.addExtension(new Extension(docsa[i]));
+//        }
+//
+//        DataType video = new DataType(new File("Video").getAbsoluteFile());
+//        String videog = props.getProperty("video");
+//        String[] videoa = videog.split(",");
+//        for (int i = 0; i < videoa.length; i++) {
+//            video.addExtension(new Extension(videoa[i]));
+//        }
+//
+//        DataType audio = new DataType(new File("Audio").getAbsoluteFile());
+//        String audiog = props.getProperty("audio");
+//        String[] audioa = audiog.split(",");
+//        for (int i = 0; i < audioa.length; i++) {
+//            audio.addExtension(new Extension(audioa[i]));
+//        }
+//
+//        mover = new DataMover(bilder, this);
+//        mover.addDataType(documente);
+//        mover.addDataType(video);
+//        mover.addDataType(audio);
 
         DataType bilder = new DataType(new File("Bilder").getAbsoluteFile());
         bilder.addExtension(new Extension("jpg"));
@@ -198,96 +228,83 @@ this.sortviaRegexProp.bind(sortviaRegex.selectedProperty());
         mover.addDataType(documente);
         mover.addDataType(video);
         mover.addDataType(audio);
+
         this.stage = stage;
+    }
 
-        ausOrdnerTyp.setEditable(false);
-        ausOrdnerTyp.textProperty().bindBidirectional(this.ausOrdnerTypProp);
-        tfTyp.textProperty().bindBidirectional(typProp);
+    @FXML
+    private void erweitern(ActionEvent event) {
+        erweitern();
+    }
 
-        ActionListenerVar listener = new ActionListenerVar(stage);
-//        initializeSystemTray(listener);
-//        System.out.println("Hast du das gemacht, drücke Enter:");
-//        sc.nextLine();
+    @FXML
+    private void sort(ActionEvent event) {
+        sortieren();
+    }
+
+    @FXML
+    private void ordnerBtAus(ActionEvent event) {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Data Organizer");
+        selectedDirectory = chooser.showDialog(stage);
+        if (selectedDirectory != null) {
+            this.setAusProp(selectedDirectory.toString());
+        }
+    }
+
+    @FXML
+    private void tableView(ActionEvent event) {
+        ErweiterterController.show(stage, null, mover);
+    }
+
+    @FXML
+    private void speichern(ActionEvent event) throws Exception {
+        speichern();
+    }
+
+    @FXML
+    private void abbrechen(ActionEvent event) {
+        abbrechen();
+    }
+
+    private void erweitern() {
+        //ErweitertC.show(null, mover);
+        generalDisplay.set(false);
+    }
+
+    private void speichern() throws Exception {
+        Boolean date = this.isDateNamingProp();
+        Boolean orderbydate = this.isOrderByDateProp();
+        Boolean verschieben = this.isVerschiebenProp();
+        Boolean unterordner = this.issortSubFolderProp();
+        Boolean regex = this.issortviaRegexProp();
+
+        props.setProperty("dateNaming", date.toString());
+        props.setProperty("orderbydate", orderbydate.toString());
+        props.setProperty("verschieben", verschieben.toString());
+        props.setProperty("unterordner", unterordner.toString());
+        props.setProperty("regex", regex.toString());
+
+        FileOutputStream out = new FileOutputStream(this.propertyFile);
+
+        props.store(out, null);
+
+        generalDisplay.set(true);
+    }
+
+    private void abbrechen() {
+        generalDisplay.set(true);
     }
 
     private void sortieren() {
         try {
-            // System.out.println("Log:");
+            String dateNaming = props.getProperty("dateNaming");
             mover.sort(new File(this.getAusProp()).listFiles());
-            if (isOrderByDateProp()) {
+            if ("true".equals(dateNaming)) {
                 mover.order();
             }
         } catch (IOException ex) {
             showErrorMessage("Fehler beim sortieren!");
-        }
-    }
-
-    /**
-     * Initialisiert ein Icon im Systemtray(Taskleiste), von diesem aus kann
-     * mann sortieren.
-     *
-     * @throws IOException
-     */
-    private void initializeSystemTray(ActionListener listener) throws IOException {
-        TrayIcon trayIcon = null;
-        if (SystemTray.isSupported()) {
-
-            stage.setOnCloseRequest((WindowEvent arg0) -> {
-                stage.hide();
-                System.out.println(stage.onHiddenProperty());
-                System.out.println(stage.onHidingProperty());
-            });
-            // get the SystemTray instance
-            final SystemTray tray = SystemTray.getSystemTray();
-            // load an image
-            Image image = Toolkit.getDefaultToolkit().getImage("icon.png");
-            // create a popup menu
-            PopupMenu popup = new PopupMenu();
-            // create menu item for the default action
-            MenuItem open = new MenuItem("Programm öffnen");
-
-            popup.add(open);
-            MenuItem close = new MenuItem("Programm schließen");
-
-            popup.add(close);
-            /// ... add other items
-            // construct a TrayIcon
-            trayIcon = new TrayIcon(image, "DataOrganizer", popup);
-            trayIcon.setImageAutoSize(true);
-
-            // set the TrayIcon properties
-            trayIcon.addActionListener(listener);
-
-            final TrayIcon i = trayIcon;
-
-            open.addActionListener(listener);
-
-            ActionListener listenerClose = (java.awt.event.ActionEvent e) -> {
-                Platform.runLater(() -> {
-                    stage.close();
-                });
-                tray.remove(i);
-            };
-
-            close.addActionListener(listenerClose);
-            // ...
-            // add the tray image
-            try {
-                tray.add(trayIcon);
-            } catch (AWTException e) {
-                System.err.println(e);
-            }
-            // ...
-        } else {
-            // disable tray option in your application or
-            // perform other actions
-
-        }
-        // ...
-        // some time later
-        // the application state has changed - update the image
-        if (trayIcon != null) {
-            // trayIcon.setImage(updatedImage);
         }
     }
 
@@ -303,83 +320,8 @@ this.sortviaRegexProp.bind(sortviaRegex.selectedProperty());
         ausProp.set(value);
     }
 
-    public String getString() {
-        filestring = selectedDirectory.toString();
-        return filestring;
-    }
-
-    public String getSelectOutDirectory() {
-        fileOutstring = selectOutDirectory.toString();
-        return fileOutstring;
-    }
-
     public File getDirectory() {
         return selectedDirectory;
-    }
-
-    public File getOutDirectory() {
-        return selectOutDirectory;
-    }
-
-    @FXML
-    private void erweitern(ActionEvent event) {
-        erweitern();
-    }
-
-    private void erweitern() {
-        //ErweitertC.show(null, mover);
-        generalDisplay.set(false);
-        erweitertDisplay.set(true);
-        dateiDisplay.set(false);
-    }
-
-    @FXML
-    private void sort(ActionEvent event) {
-        sortieren();
-    }
-
-    /*private void Msg(){
-     ordnerTf.setText("hallo");
-     }*/
-    @FXML
-    private void ordnerBtAus(ActionEvent event) {
-        DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Data Organizer");
-        selectedDirectory = chooser.showDialog(stage);
-        if (selectedDirectory != null) {
-            this.setAusProp(selectedDirectory.toString());
-        }
-        //Msg();
-    }
-
-//    @FXML
-//    private void ordnerBtZiel(ActionEvent event) {
-//        DirectoryChooser chooser = new DirectoryChooser();
-//        chooser.setTitle("Data Organizer");
-//        selectedDirectory = chooser.showDialog(stage);
-//        this.setZielProp(selectedDirectory.toString());
-//        //Msg();
-//    }
-    @FXML
-    private void speichern(ActionEvent event) {
-        speichern();
-    }
-
-    private void speichern() {
-        generalDisplay.set(true);
-        erweitertDisplay.set(false);
-        dateiDisplay.set(false);
-    }
-
-    @FXML
-    private void abbrechen(ActionEvent event) {
-        abbrechen();
-    }
-
-    private void abbrechen() {
-        generalDisplay.set(true);
-        erweitertDisplay.set(false);
-        dateiDisplay.set(false);
     }
 
     public boolean isGeneralDisplay() {
@@ -394,57 +336,12 @@ this.sortviaRegexProp.bind(sortviaRegex.selectedProperty());
         return generalDisplay;
     }
 
-    public boolean isErweitertDisplay() {
-        return erweitertDisplay.get();
-    }
-
-    public void setErweitertDisplay(boolean value) {
-        erweitertDisplay.set(value);
-    }
-
-    public BooleanProperty ErweitertDisplayProperty() {
-        return erweitertDisplay;
-    }
-
-    public boolean isDateiDisplay() {
-        return dateiDisplay.get();
-    }
-
-    public void setDateiDisplay(boolean value) {
-        dateiDisplay.set(value);
-    }
-
-    public BooleanProperty DateiDisplayProperty() {
-        return dateiDisplay;
-    }
-
     public AnchorPane getApGeneral() {
         return apGeneral;
     }
 
     public AnchorPane getApErweitert() {
         return apErweitert;
-    }
-
-    private void erweiternDateityp(ActionEvent event) {
-        erweiternDateityp();
-    }
-
-    private void erweiternDateityp() {
-        generalDisplay.set(false);
-        erweitertDisplay.set(false);
-        dateiDisplay.set(true);
-    }
-
-    public AnchorPane getApDateityp() {
-        return apDateityp;
-    }
-
-    @FXML
-    private void abbrechenD(ActionEvent event) {
-        generalDisplay.set(false);
-        erweitertDisplay.set(true);
-        dateiDisplay.set(false);
     }
 
     public boolean isDateNamingProp() {
@@ -471,30 +368,6 @@ this.sortviaRegexProp.bind(sortviaRegex.selectedProperty());
         return orderByDateProp;
     }
 
-    public boolean issortSubFolderProp() {
-        return sortSubFolderProp.get();
-    }
-
-    public void setsortSubFolderProp(boolean value) {
-        sortSubFolderProp.set(value);
-    }
-
-    public BooleanProperty sortSubFolderPropProperty() {
-        return sortSubFolderProp;
-    }
-    
-       public boolean issortviaRegexProp() {
-        return sortviaRegexProp.get();
-    }
-
-    public void setsortviaRegexProp(boolean value) {
-        sortviaRegexProp.set(value);
-    }
-
-    public BooleanProperty sortviaRegexPropProperty() {
-        return sortviaRegexProp;
-    }
-
     public boolean isVerschiebenProp() {
         return verschiebenProp.get();
     }
@@ -507,86 +380,28 @@ this.sortviaRegexProp.bind(sortviaRegex.selectedProperty());
         return verschiebenProp;
     }
 
-    @FXML
-    private void ordnerAusTyp(ActionEvent event) {
-        DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Data Organizer");
-        selectedDirectory = chooser.showDialog(stage);
-        if (selectedDirectory != null) {
-            this.setAusOrdnerTyp(selectedDirectory.toString());
-        }
+    public boolean issortSubFolderProp() {
+        return sortSubFolderProp.get();
     }
 
-    @FXML
-    private void speichernD(ActionEvent event) {
-        speichernD();
+    public void setsortSubFolderProp(boolean value) {
+        sortSubFolderProp.set(value);
     }
 
-    private void speichernD() {
-        if (this.getTypProp() != null && this.getAusOrdnerTyp() != null) {
-            boolean eingabefehler = false;
-            Extension extension = new Extension(this.getTypProp());
-
-            java.util.List<DataType> datatype = mover.getDatatype();
-            for (DataType type : datatype) {
-                LinkedList<Extension> extensionlist = type.getExtensionlist();
-                for (Extension e : extensionlist) {
-                    if (extension.getExtension().equals(e.getExtension())) {
-                        eingabefehler = true;
-                        showErrorMessage("Extension wird bereits anders sortiert!");
-                    }
-                }
-                if (type.getOrdner().equals(new File(this.getAusOrdnerTyp()))) {
-                    type.addExtension(extension);
-                    mover.addDataType(type);
-                    eingabefehler = true;
-                    showSuccessMessage("Neue Extension wurde gespeichert!");
-                }
-
-            }
-            if (!eingabefehler) {
-                DataType typ = new DataType(new File(this.getAusOrdnerTyp()));
-
-                if (typ.contains(extension)) {
-                    eingabefehler = true;
-                    showErrorMessage("Fehler! Extension konnte nicht eingefügt werden!");
-
-                }
-                if (datatype.contains(typ)) {
-                    eingabefehler = true;
-                    showErrorMessage("Fehler! Extension konnte nicht eingefügt werden!");
-                }
-                if (!eingabefehler) {
-                    typ.addExtension(extension);
-                    mover.addDataType(typ);
-                    showSuccessMessage("Neue Extension wurde gespeichert!");
-                }
-            }
-        } else {
-            showErrorMessage("Eingabefehler!");
-        }
+    public BooleanProperty sortSubFolderPropProperty() {
+        return sortSubFolderProp;
     }
 
-    private void erase(ActionEvent event) {
-        DataType typ = new DataType(new File(this.getAusOrdnerTyp()));
-        Extension extension = new Extension(this.getTypProp());
-        typ.removeExtension(extension);
+    public boolean issortviaRegexProp() {
+        return sortviaRegexProp.get();
     }
 
-    public final void setAusOrdnerTyp(String value) {
-        ausOrdnerTypProp.set(value);
+    public void setsortviaRegexProp(boolean value) {
+        sortviaRegexProp.set(value);
     }
 
-    private void setTypProp(String value) {
-        typProp.set(value);
-    }
-
-    private String getAusOrdnerTyp() {
-        return ausOrdnerTypProp.get();
-    }
-
-    private String getTypProp() {
-        return typProp.get();
+    public BooleanProperty sortviaRegexPropProperty() {
+        return sortviaRegexProp;
     }
 
     /**
@@ -609,26 +424,4 @@ this.sortviaRegexProp.bind(sortviaRegex.selectedProperty());
         tfMsg.setStyle("-fx-text-inner-color: green;");
     }
 
-    @FXML
-    private void tableView(ActionEvent event) {
-//        try {
-//            FXMLLoader fxmlLoader = new FXMLLoader();
-//            fxmlLoader.setLocation(getClass().getResource("Dateitypenwarten.fxml"));
-//            /* 
-//         * if "fx:controller" is not set in fxml
-//         * fxmlLoader.setController(NewWindowController);
-//             */
-//            Scene scene = new Scene(fxmlLoader.load());
-//            Stage stage = new Stage();
-//            stage.setTitle("Dateitypen bearbeiten");
-//            stage.setScene(scene);
-//            stage.initModality(Modality.WINDOW_MODAL);
-//            stage.initOwner(this.stage);
-//            stage.show();
-//            
-//        } catch (IOException e) {
-//            System.err.println("Error");
-//        }
-        ErweiterterController.show(stage,null);
-    }
 }

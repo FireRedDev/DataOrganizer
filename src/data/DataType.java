@@ -124,6 +124,14 @@ public class DataType {
         return Ordner.getAbsolutePath();
     }
 
+    public String Extensions() {
+        String s = "";
+        for (Extension e : extensionlist) {
+            s += e.toString() + ", ";
+        }
+        return s;
+    }
+
     public boolean contains(Extension e) {
         return extensionlist.contains(e);
     }
@@ -152,5 +160,9 @@ public class DataType {
             }
         }
         return false;
+    }
+
+    public void clearExtensionlist() {
+        extensionlist.clear();
     }
 }

@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.*;
 import java.util.*;
-import java.util.regex.Pattern;
 import org.apache.commons.io.*;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import viewController.GeneralController;
@@ -26,6 +25,7 @@ public class DataMover {
 
     private List<DataType> datatype;
     private List<RegexRule> regexrules;
+
     GeneralController controller;
     private int anz;
 
@@ -36,13 +36,10 @@ public class DataMover {
      * @param controller GenerallController
      */
     public DataMover(DataType datatyp, GeneralController controller) {
-//        File dir = new File("ZusortierendeDateien");
-
         datatype = new LinkedList<>();
+
         regexrules = new LinkedList<>();
-        //Ordner Erstellen
-//        dir.mkdir();
-//        setOrdner(dir);
+
         datatype.add(datatyp);
         this.controller = controller;
     }
@@ -82,7 +79,7 @@ public class DataMover {
                 }
                 //Jetzt müsste man FIles[i] an sein Ziel verschieben.
                 //movetosomewhere(rule.getordner)
-                
+
                 this.verschiebenToDirectory(verschieben, files[i], rule.getOrdner());
             }
         }
@@ -98,96 +95,84 @@ public class DataMover {
         boolean rename = controller.isDateNamingProp();
         boolean verschieben = controller.isVerschiebenProp();
         boolean subfolder = controller.issortSubFolderProp();
-  boolean sortviaRegex = controller.issortviaRegexProp();
+        boolean sortviaRegex = controller.issortviaRegexProp();
         anz = 0;
         File f;
-//                      File file = CH1.getSelectedFile();
-//File[] files = file.listFiles();
-//for(int i=0; i< files.length; i++) {
-//       if(files[i].isDirectory()) {
-//             TA1.append(files[i].getName());
-//       }
-//}
-if(sortviaRegex) {
-     sortbyRegex(directoryListing);
-}
-else {
-        String aus = controller.getAusProp();
-        if (aus != null) {
 
-            Instant start = Instant.now();
-            if (directoryListing != null) {
-                for (File child : directoryListing) {
-                    if (child.isDirectory() && subfolder) {
-                        System.out.print("foundFolder");
-                        this.sort(child.listFiles());
-                    } else {
-                        for (DataType type : datatype) {
-                            if (type.search(FilenameUtils.getExtension(child.getName()))) {
-                                try {
-                                    //property adden nd vagessn
-                                    //fehler
+        if (sortviaRegex) {
+            sortbyRegex(directoryListing);
+        } else {
+            String aus = controller.getAusProp();
+            if (aus != null) {
 
-                                    if (rename) {
-                                        String filename = datum(child);
-                                        filename = type.toString() + "\\" + filename + "." + FilenameUtils.getExtension(child.getName());
-                                        if (new File(filename).exists()) {
-                                            f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
-                                            anz++;
+                Instant start = Instant.now();
+                if (directoryListing != null) {
+                    for (File child : directoryListing) {
+                        if (child.isDirectory() && subfolder) {
+                            System.out.print("foundFolder");
+                            this.sort(child.listFiles());
+                        } else {
+                            for (DataType type : datatype) {
+                                if (type.search(FilenameUtils.getExtension(child.getName()))) {
+                                    try {
+                                        //property adden nd vagessn
+                                        //fehler
+
+                                        if (rename) {
+                                            String filename = datum(child);
+                                            filename = type.toString() + "\\" + filename + "." + FilenameUtils.getExtension(child.getName());
+                                            if (new File(filename).exists()) {
+                                                f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+                                                anz++;
+                                            } else {
+                                                f = new File(filename);
+                                            }
+
                                         } else {
-                                            f = new File(filename);
+                                            f = new File(type.toString() + "\\" + child.getName());
                                         }
-
-                                    } else {
-                                        f = new File(type.toString() + "\\" + child.getName());
-                                    }
-                                    if (f.exists()) {
-                                        f = new File(type.toString() + "\\" + f.getAbsoluteFile().toString().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+                                        if (f.exists()) {
+                                            f = new File(type.toString() + "\\" + f.getAbsoluteFile().toString().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+                                            anz++;
+                                        }
+                                        verschieben(verschieben, child, f);
+                                    } catch (FileExistsException ex) {
+                                        f = new File(type.toString() + "\\" + child.getName().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
                                         anz++;
+                                        verschieben(verschieben, child, f);
+                                    } catch (IOException ex) {
+                                        controller.showErrorMessage("IOException");
+                                    } catch (NullPointerException e) {
+                                        controller.showErrorMessage("NullPointerException");
                                     }
-                                    verschieben(verschieben, child, f);
-                                } catch (FileExistsException ex) {
-                                    f = new File(type.toString() + "\\" + child.getName().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
-                                    anz++;
-                                    verschieben(verschieben, child, f);
-                                } catch (IOException ex) {
-                                    controller.showErrorMessage("IOException");
-                                } catch (NullPointerException e) {
-                                    controller.showErrorMessage("NullPointerException");
+                                    break;
                                 }
-                                break;
-                            }
 
+                            }
                         }
                     }
+                    Instant end = Instant.now();
+                    System.out.println("Sortierzeit: " + Duration.between(start, end).toNanos());
+                    controller.showSuccessMessage(" Dateien von " + controller.getAusProp() + " sortiert!");
+                } else {
+                    controller.showErrorMessage("Ausgangsordner nicht definiert!");
                 }
-//            Alert Box
-//            Platform.runLater(() -> {
-//                Alert alConfirm = new Alert(Alert.AlertType.INFORMATION);
-//                alConfirm.setHeaderText("Dateien wurden sortiert!");
-//                alConfirm.show();
-//            });
-                Instant end = Instant.now();
-                System.out.println("Sortierzeit: " + Duration.between(start, end).toNanos());
-                controller.showSuccessMessage(" Dateien von " + controller.getAusProp() + " sortiert!");
-            } else {
-                controller.showErrorMessage("Ausgangsordner nicht definiert!");
             }
-        }}
+        }
     }
 
     private void verschieben(boolean verschieben, File child, File f) throws IOException {
         if (verschieben) {
             FileUtils.moveFile(child, f);
-           
         } else {
             FileUtils.copyFile(child, f);
         }
     }
-       private void verschiebenToDirectory(boolean verschieben, File child, File f) throws IOException {
+
+    private void verschiebenToDirectory(boolean verschieben, File child, File f) throws IOException {
         if (verschieben) {
-            FileUtils.moveFileToDirectory(child, f,true);
-           
+            FileUtils.moveFileToDirectory(child, f, true);
+
         } else {
             FileUtils.copyFileToDirectory(child, f);
         }
@@ -267,25 +252,16 @@ else {
         return datatype;
     }
 
-    public void addRegexRule(RegexRule typ) {
-        if (!regexrules.contains(typ)) {
-            regexrules.add(typ);
-            // typ.setMover(this);
-        }
-    }
-
-    public void removeRegexRule(DataType typ) {
-        if (regexrules.contains(typ)) {
-            regexrules.remove(typ);
-            // typ.setMover(this);
-        }
-    }
-
-    public List<RegexRule> getRegexRules() {
-        return regexrules;
-    }
-
     public boolean contains(DataType d) {
         return datatype.contains(d);
+    }
+
+    public DataType getDataType(String d) {
+        for (DataType type : datatype) {
+            if (type.toString().equals(d)) {
+                return type;
+            }
+        }
+        return null;
     }
 }
