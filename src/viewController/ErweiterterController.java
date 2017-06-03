@@ -2,6 +2,9 @@ package viewController;
 
 import data.*;
 import java.io.*;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
@@ -21,6 +24,7 @@ public class ErweiterterController {
     private Stage stage;
     private final static String VIEWNAME = "Dateitypenwarten.fxml";
     private DataMover mover;
+    private Statement statement;
 
     @FXML
     private TextField tfMsg;
@@ -32,7 +36,7 @@ public class ErweiterterController {
     @FXML
     private TableColumn<Dateiendung, String> tcEndung;
 
-    public static void show(Stage parentStage, Stage stage, DataMover mover) {
+    public static void show(Stage parentStage, Stage stage, DataMover mover, Statement statement) {
         try {
             // View und Controller erstellen
             FXMLLoader loader = new FXMLLoader(ErweiterterController.class.getResource(VIEWNAME));
@@ -53,6 +57,7 @@ public class ErweiterterController {
 
             // Controller ermitteln
             ErweiterterController controller = (ErweiterterController) loader.getController();
+            controller.statement = statement;
 
             // View initialisieren
             controller.init(stage, mover);
@@ -69,7 +74,7 @@ public class ErweiterterController {
         }
     }
 
-    private void init(Stage stage, DataMover mover) {
+    private void init(Stage stage, DataMover mover) throws SQLException {
         this.mover = mover;
         this.stage = stage;
 
@@ -107,16 +112,20 @@ public class ErweiterterController {
                     DirectoryChooser chooser = new DirectoryChooser();
                     String file = chooseFile();
                     if (file != null) {
-                        int selectedIndex = tvWarten.getSelectionModel().getSelectedIndex();
-                        DataType d = mover.getDataType(tvWarten.getItems().get(selectedIndex).getOrdner());
+                        try {
+                            int selectedIndex = tvWarten.getSelectionModel().getSelectedIndex();
+                            DataType d = mover.getDataType(tvWarten.getItems().get(selectedIndex).getOrdner());
 
-                        Dateiendung end = new Dateiendung(d);
-                        end.setOrdner(file);
-                        end.editOrdner();
-                        end.setExtension(tvWarten.getItems().get(selectedIndex).getExtension());
-                        tvWarten.getItems().set(selectedIndex, end);
+                            Dateiendung end = new Dateiendung(d);
+                            end.setOrdner(file);
+                            end.editOrdner(statement);
+                            end.setExtension(tvWarten.getItems().get(selectedIndex).getExtension());
+                            tvWarten.getItems().set(selectedIndex, end);
 
-                        showSuccessMessage("Ok, Dateityp gespeichert!");
+                            showSuccessMessage("Ok, Dateityp gespeichert!");
+                        } catch (SQLException ex) {
+                            Logger.getLogger(ErweiterterController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
             });
@@ -124,11 +133,15 @@ public class ErweiterterController {
         });
 
         tcEndung.setOnEditCommit((TableColumn.CellEditEvent<Dateiendung, String> event) -> {
-            ((Dateiendung) event.getTableView().getItems().get(
-                    event.getTablePosition().getRow())).setExtension(event.getNewValue());
-            ((Dateiendung) event.getTableView().getItems().get(
-                    event.getTablePosition().getRow())).editExtension();
-            showSuccessMessage("Ok, Dateityp gespeichert!");
+            try {
+                ((Dateiendung) event.getTableView().getItems().get(
+                        event.getTablePosition().getRow())).setExtension(event.getNewValue());
+                ((Dateiendung) event.getTableView().getItems().get(
+                        event.getTablePosition().getRow())).editExtension(statement);
+                showSuccessMessage("Ok, Dateityp gespeichert!");
+            } catch (SQLException ex) {
+                Logger.getLogger(ErweiterterController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
 
         // Benutzernachricht
@@ -145,10 +158,13 @@ public class ErweiterterController {
         return null;
     }
 
-    private void handleDeleteDateiendung() {
+    private void handleDeleteDateiendung() throws SQLException {
         int selectedIndex = tvWarten.getSelectionModel().getSelectedIndex();
         if (selectedIndex >= 0) {
+            String sql = "delete from Dateiendung where datatype = '" + tvWarten.getItems().get(selectedIndex).getOrdner() + "' ";
 
+            // Datenbankzugriff
+            statement.executeUpdate(sql);
             mover.removeDataType(mover.getDataType(tvWarten.getItems().get(selectedIndex).getOrdner()));
 
             tvWarten.getItems().remove(selectedIndex);
@@ -166,13 +182,13 @@ public class ErweiterterController {
     }
 
     @FXML
-    private void deleteDateiendung(ActionEvent event) {
+    private void deleteDateiendung(ActionEvent event) throws SQLException {
         handleDeleteDateiendung();
     }
 
     @FXML
     private void addDateiendung(ActionEvent event) {
-        AddDateitypController.show(stage, null, mover, this);
+        AddDateitypController.show(stage, null, mover, this, statement);
     }
 
     public void addList(Dateiendung end) {
@@ -180,7 +196,11 @@ public class ErweiterterController {
     }
 
     public void removeList(Dateiendung end) {
-        list.remove(end);
+        if (list.remove(end)) {
+            System.out.println("geht");
+        } else {
+            System.out.println("geht nicht");
+        }
     }
 
     /**

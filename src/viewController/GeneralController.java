@@ -8,6 +8,9 @@ import mover.DataMover;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
@@ -28,6 +31,8 @@ public class GeneralController {
     private Stage stage;
     private DataMover mover;
     private File selectedDirectory;
+    // Verbindung zur Datenbank
+    private Statement statement;
 
     Properties props = new Properties();
 
@@ -61,7 +66,7 @@ public class GeneralController {
     @FXML
     private CheckBox sortByName;
 
-    public static void show(Stage stage) {
+    public static void show(Stage stage, Statement statement) {
         try {
             // View und Controller erstellen
             FXMLLoader loader = new FXMLLoader(GeneralController.class.getResource(VIEWNAME));
@@ -79,6 +84,8 @@ public class GeneralController {
 
             // Controller ermitteln
             GeneralController controller = (GeneralController) loader.getController();
+
+            controller.statement = statement;
 
             // View initialisieren
             controller.init(stage);
@@ -103,7 +110,7 @@ public class GeneralController {
      * @param stage
      * @throws IOException
      */
-    public void init(Stage stage) throws IOException {
+    public void init(Stage stage) throws IOException, SQLException {
         getApGeneral().visibleProperty().bind(GeneralDisplayProperty());
         getApErweitert().visibleProperty().bind(GeneralDisplayProperty().not());
         generalDisplay.set(true);
@@ -124,112 +131,42 @@ public class GeneralController {
         String verschieben = props.getProperty("verschieben");
         String unterordner = props.getProperty("unterordner");
         String regex = props.getProperty("regex");
-//
-//            if ("true".equals(datenaming)) {
-//                //dateNaming.setSelected(true);
-//                DateNamingPropProperty().set(true);
-//            }
-//            if ("true".equals(orderbydate)) {
-//                OrderByDatePropProperty().set(true);
-//            }
-//            if ("true".equals(verschieben)) {
-//                VerschiebenPropProperty().set(true);
-//            }
-//            if ("true".equals(unterordner)) {
-//                sortSubFolderPropProperty().set(true);
-//            }
-//            if ("true".equals(regex)) {
-//                sortviaRegexPropProperty().set(true);
-//            }
-//        } catch (IOException e) {
-//            String path = "DOproperties.properties";
-//            File f = new File(path);
-//
-//            f.createNewFile();
-//        }
-//
-//        this.showSuccessMessage("DataOrganizer - Sortiert ihre Dateien via Dateitypen");
-//
-//        if ("".equals(props.getProperty("bilder"))) {
-//            props.setProperty("bilder", "jpg,png,gif,jpeg");
-//        }
-//        if ("".equals(props.getProperty("dokumente"))) {
-//            props.setProperty("dokumente", "pdf,docx,vsd,xlsx,zip");
-//        }
-//        if ("".equals(props.getProperty("video"))) {
-//            props.setProperty("video", "mp4,mpeg,avi,wmv");
-//        }
-//        if ("".equals(props.getProperty("audio"))) {
-//            props.setProperty("audio", "mp3,wma,ogg,flac");
-//        }
-//
-//        FileOutputStream out = new FileOutputStream(this.propertyFile);
-//        props.store(out, null);
-//
-//        DataType bilder = new DataType(new File("Bilder").getAbsoluteFile());
-//        String bilderg = props.getProperty("bilder");
-//        String[] bildera = bilderg.split(",");
-//        for (int i = 0; i < bildera.length; i++) {
-//            bilder.addExtension(new Extension(bildera[i]));
-//        }
-//
-//        DataType documente = new DataType(new File("Dokumente").getAbsoluteFile());
-//        String docsg = props.getProperty("dokumente");
-//        String[] docsa = docsg.split(",");
-//        for (int i = 0; i < docsa.length; i++) {
-//            documente.addExtension(new Extension(docsa[i]));
-//        }
-//
-//        DataType video = new DataType(new File("Video").getAbsoluteFile());
-//        String videog = props.getProperty("video");
-//        String[] videoa = videog.split(",");
-//        for (int i = 0; i < videoa.length; i++) {
-//            video.addExtension(new Extension(videoa[i]));
-//        }
-//
-//        DataType audio = new DataType(new File("Audio").getAbsoluteFile());
-//        String audiog = props.getProperty("audio");
-//        String[] audioa = audiog.split(",");
-//        for (int i = 0; i < audioa.length; i++) {
-//            audio.addExtension(new Extension(audioa[i]));
-//        }
-//
-//        mover = new DataMover(bilder, this);
-//        mover.addDataType(documente);
-//        mover.addDataType(video);
-//        mover.addDataType(audio);
 
-        DataType bilder = new DataType(new File("Bilder").getAbsoluteFile());
-        bilder.addExtension(new Extension("jpg"));
-        bilder.addExtension(new Extension("png"));
-        bilder.addExtension(new Extension("gif"));
-        bilder.addExtension(new Extension("jpeg"));
+        if ("true".equals(datenaming)) {
+            DateNamingPropProperty().set(true);
+        }
+        if ("true".equals(orderbydate)) {
+            OrderByDatePropProperty().set(true);
+        }
+        if ("true".equals(verschieben)) {
+            VerschiebenPropProperty().set(true);
+        }
+        if ("true".equals(unterordner)) {
+            sortSubFolderPropProperty().set(true);
+        }
+        if ("true".equals(regex)) {
+            sortviaRegexPropProperty().set(true);
+        }
 
-        DataType documente = new DataType(new File("Dokumente").getAbsoluteFile());
-        documente.addExtension(new Extension("pdf"));
-        documente.addExtension(new Extension("docx"));
-        documente.addExtension(new Extension("vsd"));
-        documente.addExtension(new Extension("xlsx"));
-        documente.addExtension(new Extension("zip"));
+        String sqlQuery = "select datatype, extension from dateiendung";
 
-        DataType video = new DataType(new File("Video").getAbsoluteFile());
-        video.addExtension(new Extension("mp4"));
-        video.addExtension(new Extension("mpeg"));
-        video.addExtension(new Extension("avi"));
-        video.addExtension(new Extension("wmv"));
+        ResultSet rSet = statement.executeQuery(sqlQuery);
 
-        DataType audio = new DataType(new File("Audio").getAbsoluteFile());
-        audio.addExtension(new Extension("mp3"));
-        audio.addExtension(new Extension("wma"));
-        audio.addExtension(new Extension("ogg"));
-        audio.addExtension(new Extension("flac"));
+        mover = new DataMover(this);
+        while (rSet.next()) {
+            String typ = rSet.getString("datatype");
+            DataType datatype = new DataType(new File(typ).getAbsoluteFile());
+            String[] array = rSet.getString("extension").split(",");
 
-        mover = new DataMover(bilder, this);
-        mover.addDataType(documente);
-        mover.addDataType(video);
-        mover.addDataType(audio);
-
+            for (String ex : array) {
+                Extension extension = new Extension(ex);
+                datatype.addExtension(extension);
+            }
+            mover.addDataType(datatype);
+        }
         this.stage = stage;
+
+        this.showSuccessMessage("DataOrganizer - Sortiert ihre Dateien via Dateitypen");
     }
 
     @FXML
@@ -254,7 +191,7 @@ public class GeneralController {
 
     @FXML
     private void tableView(ActionEvent event) {
-        ErweiterterController.show(stage, null, mover);
+        ErweiterterController.show(stage, null, mover,statement);
     }
 
     @FXML
@@ -268,7 +205,6 @@ public class GeneralController {
     }
 
     private void erweitern() {
-        //ErweitertC.show(null, mover);
         generalDisplay.set(false);
     }
 

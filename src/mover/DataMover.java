@@ -32,15 +32,12 @@ public class DataMover {
     /**
      * Standardkonstruktor, Benötigt einen Controller und einen Datentyp
      *
-     * @param datatyp Datatype
      * @param controller GenerallController
      */
-    public DataMover(DataType datatyp, GeneralController controller) {
+    public DataMover(GeneralController controller) {
         datatype = new LinkedList<>();
-
         regexrules = new LinkedList<>();
 
-        datatype.add(datatyp);
         this.controller = controller;
     }
 
@@ -61,7 +58,6 @@ public class DataMover {
      * sortieren nach Regex
      *
      * @param directoryListing
-     * @param input
      * @throws IOException
      */
     public void sortbyRegex(File[] directoryListing) throws IOException {
@@ -88,6 +84,7 @@ public class DataMover {
     /**
      * sortieren nach Dateityp
      *
+     * @param directoryListing
      * @throws IOException
      */
     public void sort(File[] directoryListing) throws IOException {
