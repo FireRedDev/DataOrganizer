@@ -2,6 +2,8 @@ package viewController;
 
 import data.*;
 import java.io.*;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
@@ -15,7 +17,8 @@ import mover.DataMover;
 /**
  * FXML Controller class
  *
- * TODO * Wenn Datentyp vorhanden ist soll dieser in der Tabelle nicht neu
+ * TODO 
+ * Wenn Datentyp vorhanden ist soll dieser in der Tabelle nicht neu
  * angezeigt werden.
  *
  * @author Isabella
@@ -26,6 +29,7 @@ public class AddDateitypController {
     private DataMover mover;
     private final static String VIEWNAME = "AddDateityp.fxml";
     private ErweiterterController ec;
+    private Statement statement;
 
     @FXML
     private TextField tfMsg;
@@ -45,7 +49,7 @@ public class AddDateitypController {
     private final StringProperty ausOrdnerTypProp = new SimpleStringProperty();
     private final StringProperty typProp = new SimpleStringProperty();
 
-    public static void show(Stage parentStage, Stage stage, DataMover mover, ErweiterterController ec) {
+    public static void show(Stage parentStage, Stage stage, DataMover mover, ErweiterterController ec, Statement statement) {
         try {
             // View und Controller erstellen
             FXMLLoader loader = new FXMLLoader(AddDateitypController.class.getResource(VIEWNAME));
@@ -65,6 +69,7 @@ public class AddDateitypController {
 
             // Controller ermitteln
             AddDateitypController controller = (AddDateitypController) loader.getController();
+            controller.statement = statement;
 
             // View initialisieren
             controller.init(stage, mover, ec);
@@ -107,11 +112,11 @@ public class AddDateitypController {
     }
 
     @FXML
-    private void speichernD(ActionEvent event) {
+    private void speichernD(ActionEvent event) throws SQLException {
         speichernD();
     }
 
-    private void speichernD() {
+    private void speichernD() throws SQLException {
         if (!"".equals(this.getTypProp()) && !"".equals(this.getAusOrdnerTyp()) && this.getTypProp().length() > 1 && this.getAusOrdnerTyp().length() > 1) {
             boolean eingabefehler = false;
             Extension extension = new Extension(this.getTypProp());
@@ -126,16 +131,19 @@ public class AddDateitypController {
                     }
                 }
                 if (type.getOrdner().equals(new File(this.getAusOrdnerTyp()))) {
-                    type.addExtension(new Extension(this.getTypProp()));
-                    mover.addDataType(type);
-
                     Dateiendung end = new Dateiendung(type);
+                    ec.removeList(end);
+                    type.addExtension(new Extension(this.getTypProp()));
 
                     end.setOrdner(this.getAusOrdnerTyp());
                     end.setExtension(type.Extensions());
 
-                    ec.removeList(end);
                     ec.addList(end);
+
+                    String sql = "update Dateiendung set datatype = '" + type.toString() + "', extension = '" + type.Extensions() + "' where datatype = '" + type.toString() + "' ";
+
+                    // Datenbankzugriff
+                    statement.executeUpdate(sql);
 
                     //Da Extension schon gespeichert, brauchen keine weiteren Überprüfungen mehr durchgeführt werden.
                     eingabefehler = true;
@@ -162,6 +170,11 @@ public class AddDateitypController {
                     end.setOrdner(this.getAusOrdnerTyp());
                     end.setExtension(this.getTypProp());
                     ec.addList(end);
+
+                    String sql = "insert into Dateiendung (datatype,extension) values ( '" + this.getAusOrdnerTyp() + "', '" + this.getTypProp() + "')";
+
+                    // Datenbankzugriff
+                    statement.executeUpdate(sql);
 
                     showSuccessMessage("Neue Extension wurde gespeichert!");
                 }
