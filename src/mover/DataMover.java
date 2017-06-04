@@ -212,7 +212,6 @@ public class DataMover {
         BasicFileAttributes attr = Files.readAttributes(child.toPath(), BasicFileAttributes.class
         );
         Instant creationTime = attr.lastModifiedTime().toInstant();
-        //String filename = monat[creationTime.get(MONTH_OF_YEAR) - 1] + "_" +creationTime.get(YEAR);
         LocalDateTime date = LocalDateTime.ofInstant(creationTime, ZoneOffset.UTC);
         String monat = Integer.toString(date.getMonthValue());
         if (date.getMonthValue() < 10) {

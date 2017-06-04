@@ -1,6 +1,24 @@
-
 .button {
-/*  -fx-background-color: red;
-  -fx-text-fill: white;*/
-  -fx-background-radius: 16px;
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
+#AnchorPane{
+    -fx-background-image: url("background.png"); 
+    -fx-background-position: left top, center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover, auto;
+    -fx-text-fill: white;
+}
+.label{
+    -fx-text-fill: white;
+}
+.check-box{
+    -fx-text-fill: white;
+}
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+.check-box:selected .box {
+    -fx-background-color: yellow;
 }
