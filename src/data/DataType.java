@@ -59,6 +59,15 @@ public class DataType {
         }
     }
 
+    /**
+     * Datum für Ordnername
+     * <p>
+     * Mithilfe dieser Funktion bekommt man das Datum als String YYYY_MM zurück
+     * </p>
+     * @param child File zum auslesen des Datums
+     * @return String YYYY_MM
+     * @throws IOException 
+     */
     private String datum(File child) throws IOException {
         BasicFileAttributes attr = Files.readAttributes(child.toPath(), BasicFileAttributes.class);
         Instant creationTime = attr.lastModifiedTime().toInstant();

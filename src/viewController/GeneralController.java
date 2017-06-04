@@ -159,8 +159,10 @@ public class GeneralController {
             String[] array = rSet.getString("extension").split(",");
 
             for (String ex : array) {
-                Extension extension = new Extension(ex);
-                datatype.addExtension(extension);
+                if (ex != null && !ex.equals("")) {
+                    Extension extension = new Extension(ex);
+                    datatype.addExtension(extension);
+                }
             }
             mover.addDataType(datatype);
         }
@@ -191,7 +193,7 @@ public class GeneralController {
 
     @FXML
     private void tableView(ActionEvent event) {
-        ErweiterterController.show(stage, null, mover,statement);
+        ErweiterterController.show(stage, null, mover, statement);
     }
 
     @FXML

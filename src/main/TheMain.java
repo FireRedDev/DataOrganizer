@@ -17,8 +17,6 @@ public class TheMain extends Application {
         final boolean test = true;
         try {
             if (test) {
-                //Inhalt der Ordner wird gelöscht
-                //Ordner bleiben jedoch bestehend
                 test();
             }
 

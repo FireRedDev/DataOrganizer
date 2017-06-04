@@ -15,12 +15,10 @@ import javafx.stage.*;
 import mover.DataMover;
 
 /**
- * FXML Controller class
- *
- * TODO 
- * Wenn Datentyp vorhanden ist soll dieser in der Tabelle nicht neu
- * angezeigt werden.
- *
+ * Dateityp hinzufügen
+ * <p>
+ * Fenster zum hinzufügen von Datentypen
+ * </p>
  * @author Isabella
  */
 public class AddDateitypController {
@@ -116,66 +114,73 @@ public class AddDateitypController {
         speichernD();
     }
 
+    /**
+     * Speichern neuer Dateiendung
+     * <p>
+     * Einfügen neuer Dateiendungen.
+     * </p>
+     * @throws SQLException 
+     */
     private void speichernD() throws SQLException {
         if (!"".equals(this.getTypProp()) && !"".equals(this.getAusOrdnerTyp()) && this.getTypProp().length() > 1 && this.getAusOrdnerTyp().length() > 1) {
             boolean eingabefehler = false;
-            Extension extension = new Extension(this.getTypProp());
+            DataType vorhanden = null;
+            String[] array = this.getTypProp().split(",");
+            LinkedList<Extension> extensionlistget = new LinkedList<>();
+            for (String ex : array) {
+                if (ex != null && ex != "") {
+                    extensionlistget.add(new Extension(ex));
+                }
+            }
 
             List<DataType> datatype = mover.getDatatype();
             for (DataType type : datatype) {
                 LinkedList<Extension> extensionlist = type.getExtensionlist();
                 for (Extension e : extensionlist) {
-                    if (extension.getExtension().equals(e.getExtension())) {
-                        eingabefehler = true;
-                        showErrorMessage("Extension wird bereits anders sortiert!");
+                    for (Extension eget : extensionlistget) {
+                        if (eget.getExtension().equals(e.getExtension())) {
+                            eingabefehler = true;
+                            showErrorMessage("Extension wird bereits anders sortiert!");
+                        }
                     }
                 }
                 if (type.getOrdner().equals(new File(this.getAusOrdnerTyp()))) {
-                    Dateiendung end = new Dateiendung(type);
-                    ec.removeList(end);
-                    type.addExtension(new Extension(this.getTypProp()));
-
-                    end.setOrdner(this.getAusOrdnerTyp());
-                    end.setExtension(type.Extensions());
-
-                    ec.addList(end);
-
-                    String sql = "update Dateiendung set datatype = '" + type.toString() + "', extension = '" + type.Extensions() + "' where datatype = '" + type.toString() + "' ";
-
-                    // Datenbankzugriff
-                    statement.executeUpdate(sql);
-
-                    //Da Extension schon gespeichert, brauchen keine weiteren Überprüfungen mehr durchgeführt werden.
-                    eingabefehler = true;
-                    showSuccessMessage("Neue Extension wurde gespeichert!");
+                    vorhanden = type;
                 }
 
             }
             if (!eingabefehler) {
-                DataType typ = new DataType(new File(this.getAusOrdnerTyp()));
-
-                if (typ.contains(extension)) {
-                    eingabefehler = true;
-                    showErrorMessage("Fehler! Extension konnte nicht eingefügt werden!");
-
-                }
-                if (datatype.contains(typ)) {
-                    eingabefehler = true;
-                    showErrorMessage("Fehler! Extension konnte nicht eingefügt werden!");
+                DataType typ;
+                if (vorhanden != null) {
+                    typ = vorhanden;
+                } else {
+                    typ = new DataType(new File(this.getAusOrdnerTyp()));
                 }
                 if (!eingabefehler) {
-                    typ.addExtension(new Extension(this.getTypProp()));
-                    mover.addDataType(typ);
+                    String[] arrayE = this.getTypProp().split(",");
+
+                    for (String ex : arrayE) {
+                        typ.addExtension(new Extension(ex));
+                    }
+
                     Dateiendung end = new Dateiendung(typ);
                     end.setOrdner(this.getAusOrdnerTyp());
-                    end.setExtension(this.getTypProp());
-                    ec.addList(end);
+                    end.setExtension(typ.Extensions());
+                    if (vorhanden != null) {
+                        String sql = "update Dateiendung set datatype = '" + typ.toString() + "', extension = '" + typ.Extensions() + "' where datatype = '" + typ.toString() + "' ";
 
-                    String sql = "insert into Dateiendung (datatype,extension) values ( '" + this.getAusOrdnerTyp() + "', '" + this.getTypProp() + "')";
+                        // Datenbankzugriff
+                        statement.executeUpdate(sql);
+                        ec.updateList();
+                    } else {
+                        mover.addDataType(typ);
+                        ec.addList(end);
 
-                    // Datenbankzugriff
-                    statement.executeUpdate(sql);
+                        String sql = "insert into Dateiendung (datatype,extension) values ( '" + this.getAusOrdnerTyp() + "', '" + this.getTypProp() + "')";
 
+                        // Datenbankzugriff
+                        statement.executeUpdate(sql);
+                    }
                     showSuccessMessage("Neue Extension wurde gespeichert!");
                 }
             }

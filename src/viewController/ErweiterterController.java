@@ -16,7 +16,10 @@ import javafx.stage.*;
 import mover.DataMover;
 
 /**
- *
+ * ErweiterterController
+ * <p>
+ * Tableviewübersicht über alle Dateiendungen.
+ * </p>
  * @author Isabella
  */
 public class ErweiterterController {
@@ -74,6 +77,12 @@ public class ErweiterterController {
         }
     }
 
+    /**
+     * Init
+     * @param stage
+     * @param mover
+     * @throws SQLException 
+     */
     private void init(Stage stage, DataMover mover) throws SQLException {
         this.mover = mover;
         this.stage = stage;
@@ -158,6 +167,13 @@ public class ErweiterterController {
         return null;
     }
 
+    /**
+     * Dateiendungen löschen
+     * <p>
+     * Ausgewählte Dateiendung löschen.
+     * </p>
+     * @throws SQLException 
+     */
     private void handleDeleteDateiendung() throws SQLException {
         int selectedIndex = tvWarten.getSelectionModel().getSelectedIndex();
         if (selectedIndex >= 0) {
@@ -195,12 +211,17 @@ public class ErweiterterController {
         list.add(end);
     }
 
-    public void removeList(Dateiendung end) {
-        if (list.remove(end)) {
-            System.out.println("geht");
-        } else {
-            System.out.println("geht nicht");
+    public void updateList() {
+        list = FXCollections.observableArrayList();
+
+        for (DataType e : mover.getDatatype()) {
+            Dateiendung end = new Dateiendung(e);
+            end.setExtension(e.Extensions());
+            end.setOrdner(e.getOrdner().toString());
+            list.add(end);
         }
+
+        tvWarten.setItems(list);
     }
 
     /**
