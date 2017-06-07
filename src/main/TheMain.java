@@ -3,6 +3,8 @@ package main;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.stage.Stage;
@@ -30,12 +32,15 @@ public class TheMain extends Application {
     @Override
     public void start(Stage stage) {
         try {
+            String baseName = "resources.dataorganizer";
+            ResourceBundle bundle = ResourceBundle.getBundle(baseName);
+            System.out.println(bundle.getString("Hello"));
             String url = "jdbc:derby://localhost:1527/Dataorganizer";
             String user = "Dataorganizer";
             String pwd = "passme";
             Connection connection = DriverManager.getConnection(url, user, pwd);
             Statement statement = connection.createStatement();
-            GeneralController.show(stage, statement);
+            GeneralController.show(stage, statement,bundle);
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());
         }
