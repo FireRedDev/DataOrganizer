@@ -34,13 +34,13 @@ public class TheMain extends Application {
         try {
             String baseName = "resources.dataorganizer";
             ResourceBundle bundle = ResourceBundle.getBundle(baseName);
-            System.out.println(bundle.getString("Hello"));
             String url = "jdbc:derby://localhost:1527/Dataorganizer";
             String user = "Dataorganizer";
             String pwd = "passme";
             Connection connection = DriverManager.getConnection(url, user, pwd);
             Statement statement = connection.createStatement();
             GeneralController.show(stage, statement,bundle);
+            System.out.println("hallo");
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());
         }
