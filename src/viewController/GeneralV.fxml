@@ -12,11 +12,11 @@
         <TextField fx:id="tfMsg" editable="false" layoutX="14.0" layoutY="208.0" prefHeight="25.0" prefWidth="548.0" />
         <AnchorPane fx:id="apGeneral" layoutX="12.0" prefHeight="231.0" prefWidth="548.0">
             <children>
-                <Label prefHeight="36.0" prefWidth="106.0" text="Ausgangsordner:" />
-                <TextField fx:id="ausOrdner" layoutX="99.0" layoutY="6.0" prefHeight="25.0" prefWidth="365.0" text="C:\" />
-                <Button id="ordnerBtAus" layoutX="474.0" layoutY="6.0" mnemonicParsing="false" onAction="#ordnerBtAus" text="Auswählen" />
-                <Button fx:id="sortBt" layoutX="474.0" layoutY="173.0" mnemonicParsing="false" onAction="#sort" prefHeight="25.0" prefWidth="74.0" text="Sortieren" />
-                <Button fx:id="erweiternBt" layoutX="321.0" layoutY="173.0" mnemonicParsing="false" onAction="#erweitern" text="Erweiterte Einstellungen" />
+                <Label prefHeight="36.0" prefWidth="106.0" text="%Ordner" />
+                <TextField fx:id="ausOrdner" layoutX="99.0" layoutY="6.0" prefHeight="25.0" prefWidth="365.0" />
+                <Button id="ordnerBtAus" layoutX="474.0" layoutY="6.0" mnemonicParsing="false" onAction="#ordnerBtAus" text="%Auswaehlen" />
+                <Button fx:id="sortBt" layoutX="474.0" layoutY="173.0" mnemonicParsing="false" onAction="#sort" prefHeight="25.0" prefWidth="74.0" text="%Sortieren" />
+                <Button fx:id="erweiternBt" layoutX="321.0" layoutY="173.0" mnemonicParsing="false" onAction="#erweitern" text="%Erweiterte_Einstellungen" />
             </children>
         </AnchorPane>                
         <AnchorPane fx:id="apErweitert" layoutX="0.0" prefHeight="261.0" prefWidth="548.0">
@@ -32,4 +32,4 @@
             </children>
         </AnchorPane>
     </children>
-</AnchorPane>               
+</AnchorPane>

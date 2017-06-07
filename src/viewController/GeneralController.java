@@ -68,10 +68,10 @@ public class GeneralController {
     @FXML
     private CheckBox sortByName;
 
-    public static void show(Stage stage, Statement statement,ResourceBundle bundle) {
+    public static void show(Stage stage, Statement statement, ResourceBundle bundle) {
         try {
             // View und Controller erstellen
-            FXMLLoader loader = new FXMLLoader(GeneralController.class.getResource(VIEWNAME));
+            FXMLLoader loader = new FXMLLoader(GeneralController.class.getResource(VIEWNAME), bundle);
             Parent root = (Parent) loader.load();
 
             // Scene erstellen
@@ -88,13 +88,13 @@ public class GeneralController {
             GeneralController controller = (GeneralController) loader.getController();
 
             controller.statement = statement;
-            controller.bundle=bundle;
+            controller.bundle = bundle;
 
             // View initialisieren
             controller.init(stage);
 
             // Anzeigen
-            stage.show();       
+            stage.show();
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
             System.exit(2);
@@ -191,7 +191,7 @@ public class GeneralController {
 
     @FXML
     private void tableView(ActionEvent event) {
-        ErweiterterController.show(stage, null, mover, statement,bundle);
+        ErweiterterController.show(stage, null, mover, statement, bundle);
     }
 
     @FXML
