@@ -19,6 +19,7 @@ import mover.DataMover;
  * <p>
  * Fenster zum hinzufügen von Datentypen
  * </p>
+ *
  * @author Isabella
  */
 public class AddDateitypController {
@@ -28,6 +29,7 @@ public class AddDateitypController {
     private final static String VIEWNAME = "AddDateityp.fxml";
     private ErweiterterController ec;
     private Statement statement;
+    private ResourceBundle bundle;
 
     @FXML
     private TextField tfMsg;
@@ -47,7 +49,7 @@ public class AddDateitypController {
     private final StringProperty ausOrdnerTypProp = new SimpleStringProperty();
     private final StringProperty typProp = new SimpleStringProperty();
 
-    public static void show(Stage parentStage, Stage stage, DataMover mover, ErweiterterController ec, Statement statement) {
+    public static void show(Stage parentStage, Stage stage, DataMover mover, ErweiterterController ec, Statement statement, ResourceBundle bundle) {
         try {
             // View und Controller erstellen
             FXMLLoader loader = new FXMLLoader(AddDateitypController.class.getResource(VIEWNAME));
@@ -68,6 +70,7 @@ public class AddDateitypController {
             // Controller ermitteln
             AddDateitypController controller = (AddDateitypController) loader.getController();
             controller.statement = statement;
+            controller.bundle = bundle;
 
             // View initialisieren
             controller.init(stage, mover, ec);
@@ -119,7 +122,8 @@ public class AddDateitypController {
      * <p>
      * Einfügen neuer Dateiendungen.
      * </p>
-     * @throws SQLException 
+     *
+     * @throws SQLException
      */
     private void speichernD() throws SQLException {
         if (!"".equals(this.getTypProp()) && !"".equals(this.getAusOrdnerTyp()) && this.getTypProp().length() > 1 && this.getAusOrdnerTyp().length() > 1) {

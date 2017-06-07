@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
@@ -33,6 +34,7 @@ public class GeneralController {
     private File selectedDirectory;
     // Verbindung zur Datenbank
     private Statement statement;
+    private ResourceBundle bundle;
 
     Properties props = new Properties();
 
@@ -66,7 +68,7 @@ public class GeneralController {
     @FXML
     private CheckBox sortByName;
 
-    public static void show(Stage stage, Statement statement) {
+    public static void show(Stage stage, Statement statement,ResourceBundle bundle) {
         try {
             // View und Controller erstellen
             FXMLLoader loader = new FXMLLoader(GeneralController.class.getResource(VIEWNAME));
@@ -86,17 +88,13 @@ public class GeneralController {
             GeneralController controller = (GeneralController) loader.getController();
 
             controller.statement = statement;
+            controller.bundle=bundle;
 
             // View initialisieren
             controller.init(stage);
 
             // Anzeigen
-            stage.show();
-
-        } catch (IOException ex) {
-            System.err.println("Something wrong with " + VIEWNAME + "!");
-            ex.printStackTrace(System.out);
-            System.exit(1);
+            stage.show();       
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
             System.exit(2);
@@ -193,7 +191,7 @@ public class GeneralController {
 
     @FXML
     private void tableView(ActionEvent event) {
-        ErweiterterController.show(stage, null, mover, statement);
+        ErweiterterController.show(stage, null, mover, statement,bundle);
     }
 
     @FXML

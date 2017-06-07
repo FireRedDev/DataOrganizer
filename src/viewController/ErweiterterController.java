@@ -3,6 +3,7 @@ package viewController;
 import data.*;
 import java.io.*;
 import java.sql.*;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.*;
@@ -20,6 +21,7 @@ import mover.DataMover;
  * <p>
  * Tableviewübersicht über alle Dateiendungen.
  * </p>
+ *
  * @author Isabella
  */
 public class ErweiterterController {
@@ -28,6 +30,7 @@ public class ErweiterterController {
     private final static String VIEWNAME = "Dateitypenwarten.fxml";
     private DataMover mover;
     private Statement statement;
+    private ResourceBundle bundle;
 
     @FXML
     private TextField tfMsg;
@@ -39,7 +42,7 @@ public class ErweiterterController {
     @FXML
     private TableColumn<Dateiendung, String> tcEndung;
 
-    public static void show(Stage parentStage, Stage stage, DataMover mover, Statement statement) {
+    public static void show(Stage parentStage, Stage stage, DataMover mover, Statement statement, ResourceBundle bundle) {
         try {
             // View und Controller erstellen
             FXMLLoader loader = new FXMLLoader(ErweiterterController.class.getResource(VIEWNAME));
@@ -61,6 +64,7 @@ public class ErweiterterController {
             // Controller ermitteln
             ErweiterterController controller = (ErweiterterController) loader.getController();
             controller.statement = statement;
+            controller.bundle = bundle;
 
             // View initialisieren
             controller.init(stage, mover);
@@ -79,9 +83,10 @@ public class ErweiterterController {
 
     /**
      * Init
+     *
      * @param stage
      * @param mover
-     * @throws SQLException 
+     * @throws SQLException
      */
     private void init(Stage stage, DataMover mover) throws SQLException {
         this.mover = mover;
@@ -172,7 +177,8 @@ public class ErweiterterController {
      * <p>
      * Ausgewählte Dateiendung löschen.
      * </p>
-     * @throws SQLException 
+     *
+     * @throws SQLException
      */
     private void handleDeleteDateiendung() throws SQLException {
         int selectedIndex = tvWarten.getSelectionModel().getSelectedIndex();
@@ -204,7 +210,7 @@ public class ErweiterterController {
 
     @FXML
     private void addDateiendung(ActionEvent event) {
-        AddDateitypController.show(stage, null, mover, this, statement);
+        AddDateitypController.show(stage, null, mover, this, statement,bundle);
     }
 
     public void addList(Dateiendung end) {
