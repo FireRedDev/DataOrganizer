@@ -62,7 +62,7 @@ public class AddDateitypController {
                 stage = new Stage();
             }
             stage.setScene(scene);
-            stage.setTitle("DataOrganizer");
+            stage.setTitle(bundle.getString("DataOrganizer"));
 
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(parentStage);
@@ -78,7 +78,7 @@ public class AddDateitypController {
             // Anzeigen
             stage.show();
         } catch (IOException ex) {
-            System.err.println("Something wrong with " + VIEWNAME + "!");
+            System.err.println(bundle.getString("Fensterladefehler"));
             ex.printStackTrace(System.out);
             System.exit(1);
         } catch (Exception ex) {
@@ -105,7 +105,7 @@ public class AddDateitypController {
     @FXML
     private void ordnerAusTyp(ActionEvent event) {
         DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Data Organizer");
+        chooser.setTitle(bundle.getString("DataOrganizer"));
         selectedDirectory = chooser.showDialog(stage);
         if (selectedDirectory != null) {
             this.setAusOrdnerTyp(selectedDirectory.toString());
@@ -132,7 +132,7 @@ public class AddDateitypController {
             String[] array = this.getTypProp().split(",");
             LinkedList<Extension> extensionlistget = new LinkedList<>();
             for (String ex : array) {
-                if (ex != null && ex != "") {
+                if (ex != null && !"".equals(ex)) {
                     extensionlistget.add(new Extension(ex));
                 }
             }
@@ -144,7 +144,7 @@ public class AddDateitypController {
                     for (Extension eget : extensionlistget) {
                         if (eget.getExtension().equals(e.getExtension())) {
                             eingabefehler = true;
-                            showErrorMessage("Extension wird bereits anders sortiert!");
+                            showErrorMessage(bundle.getString("ExtensionAnders"));
                         }
                     }
                 }
@@ -185,11 +185,11 @@ public class AddDateitypController {
                         // Datenbankzugriff
                         statement.executeUpdate(sql);
                     }
-                    showSuccessMessage("Neue Extension wurde gespeichert!");
+                    showSuccessMessage(bundle.getString("neueExtension"));
                 }
             }
         } else {
-            showErrorMessage("Du hast den Ordner oder/und die Extension nicht ausgewählt!");
+            showErrorMessage(bundle.getString("ExtensionAusgewaehlt"));
         }
     }
 

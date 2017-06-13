@@ -50,7 +50,7 @@ public class DataMover {
                 typ.order(controller);
             }
         } catch (IOException ex) {
-            controller.showErrorMessage("Fehler beim sortieren nach Datum!");
+            controller.showErrorMessage(controller.getBundle().getString("fehlerDatum"));
         }
     }
 
@@ -69,12 +69,8 @@ public class DataMover {
             File[] files = dir.listFiles(fileFilter);
             for (int i = 0; i < files.length; i++) {
                 if (files[i].isDirectory() && subfolder) {
-                    System.out.print("foundFolder");
-                    //jz miasma nu die regexrules durchgeh und imma den jeweiligen regex in den jeweilien ordner verschieben
                     this.sortbyRegex(files[i].listFiles());
                 }
-                //Jetzt müsste man FIles[i] an sein Ziel verschieben.
-                //movetosomewhere(rule.getordner)
 
                 this.verschiebenToDirectory(verschieben, files[i], rule.getOrdner());
             }
@@ -101,20 +97,15 @@ public class DataMover {
         } else {
             String aus = controller.getAusProp();
             if (aus != null) {
-
-                Instant start = Instant.now();
+//                Instant start = Instant.now();
                 if (directoryListing != null) {
                     for (File child : directoryListing) {
                         if (child.isDirectory() && subfolder) {
-                            System.out.print("foundFolder");
                             this.sort(child.listFiles());
                         } else {
                             for (DataType type : datatype) {
                                 if (type.search(FilenameUtils.getExtension(child.getName()))) {
                                     try {
-                                        //property adden nd vagessn
-                                        //fehler
-
                                         if (rename) {
                                             String filename = datum(child);
                                             filename = type.toString() + "\\" + filename + "." + FilenameUtils.getExtension(child.getName());
@@ -137,10 +128,8 @@ public class DataMover {
                                         f = new File(type.toString() + "\\" + child.getName().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
                                         anz++;
                                         verschieben(verschieben, child, f);
-                                    } catch (IOException ex) {
-                                        controller.showErrorMessage("IOException");
-                                    } catch (NullPointerException e) {
-                                        controller.showErrorMessage("NullPointerException");
+                                    } catch (Exception ex) {
+                                        controller.showErrorMessage(controller.getBundle().getString("FehlerSort"));
                                     }
                                     break;
                                 }
@@ -148,11 +137,11 @@ public class DataMover {
                             }
                         }
                     }
-                    Instant end = Instant.now();
-                    System.out.println("Sortierzeit: " + Duration.between(start, end).toNanos());
-                    controller.showSuccessMessage(" Dateien von " + controller.getAusProp() + " sortiert!");
+//                    Instant end = Instant.now();
+//                    System.out.println("Sortierzeit: " + Duration.between(start, end).toNanos());
+                    controller.showSuccessMessage(controller.getBundle().getString("DataVon") + controller.getAusProp() + controller.getBundle().getString("sortiert"));
                 } else {
-                    controller.showErrorMessage("Ausgangsordner nicht definiert!");
+                    controller.showErrorMessage(controller.getBundle().getString("AusgangsordnerUndefiniert"));
                 }
             }
         }
