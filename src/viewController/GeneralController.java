@@ -82,7 +82,7 @@ public class GeneralController {
                 stage = new Stage();
             }
             stage.setScene(scene);
-            stage.setTitle("DataOrganizer");
+            stage.setTitle(bundle.getString("DataOrganizer"));
 
             // Controller ermitteln
             GeneralController controller = (GeneralController) loader.getController();
@@ -166,7 +166,9 @@ public class GeneralController {
         }
         this.stage = stage;
 
-        this.showSuccessMessage("DataOrganizer - Sortiert ihre Dateien via Dateitypen");
+        this.showSuccessMessage(bundle.getString("DataOrganizer"));
+//        this.showSuccessMessage("bis da funkt!");
+
     }
 
     @FXML
@@ -182,7 +184,7 @@ public class GeneralController {
     @FXML
     private void ordnerBtAus(ActionEvent event) {
         DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Data Organizer");
+        chooser.setTitle(bundle.getString("Data Organizer"));
         selectedDirectory = chooser.showDialog(stage);
         if (selectedDirectory != null) {
             this.setAusProp(selectedDirectory.toString());
@@ -240,7 +242,7 @@ public class GeneralController {
                 mover.order();
             }
         } catch (IOException ex) {
-            showErrorMessage("Fehler beim sortieren!");
+            showErrorMessage(bundle.getString("FehlerSort"));
         }
     }
 
@@ -338,6 +340,14 @@ public class GeneralController {
 
     public BooleanProperty sortviaRegexPropProperty() {
         return sortviaRegexProp;
+    }
+
+    public ResourceBundle getBundle() {
+        return bundle;
+    }
+
+    public void setBundle(ResourceBundle bundle) {
+        this.bundle = bundle;
     }
 
     /**

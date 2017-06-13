@@ -15,6 +15,9 @@ import viewController.GeneralController;
  */
 public class TheMain extends Application {
 
+    String baseName;
+    GeneralController GC = new GeneralController();
+
     public static void main(String[] args) {
         final boolean test = true;
         try {
@@ -32,15 +35,19 @@ public class TheMain extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            String baseName = "resources.dataorganizer";
-//            Locale locale = new Locale("en", "UK");
-//            ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale);
-            ResourceBundle bundle = ResourceBundle.getBundle(baseName);
+            baseName = "resources.dataorganizer";
+//            System.out.println(baseName);
+            Locale locale = new Locale("en", "UK");
+//            Locale locale = new Locale("ge", "GE");
+            ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale);
+
             String url = "jdbc:derby://localhost:1527/Dataorganizer";
             String user = "Dataorganizer";
             String pwd = "passme";
+
             Connection connection = DriverManager.getConnection(url, user, pwd);
             Statement statement = connection.createStatement();
+
             GeneralController.show(stage, statement, bundle);
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());

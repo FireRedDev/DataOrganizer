@@ -56,7 +56,7 @@ public class ErweiterterController {
                 stage = new Stage();
             }
             stage.setScene(scene);
-            stage.setTitle("DataOrganizer");
+            stage.setTitle(bundle.getString("DataOrganizer"));
 
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(parentStage);
@@ -72,7 +72,7 @@ public class ErweiterterController {
             // Anzeigen
             stage.show();
         } catch (IOException ex) {
-            System.err.println("Something wrong with " + VIEWNAME + "!");
+            System.err.println(bundle.getString("Fensterladefehler"));
             ex.printStackTrace(System.out);
             System.exit(1);
         } catch (Exception ex) {
@@ -136,7 +136,7 @@ public class ErweiterterController {
                             end.setExtension(tvWarten.getItems().get(selectedIndex).getExtension());
                             tvWarten.getItems().set(selectedIndex, end);
 
-                            showSuccessMessage("Ok, Dateityp gespeichert!");
+                            showSuccessMessage(bundle.getString("Dateitypgespeichert"));
                         } catch (SQLException ex) {
                             Logger.getLogger(ErweiterterController.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -152,19 +152,19 @@ public class ErweiterterController {
                         event.getTablePosition().getRow())).setExtension(event.getNewValue());
                 ((Dateiendung) event.getTableView().getItems().get(
                         event.getTablePosition().getRow())).editExtension(statement);
-                showSuccessMessage("Ok, Dateityp gespeichert!");
+                showSuccessMessage(bundle.getString("Dateitypgespeichert"));
             } catch (SQLException ex) {
                 Logger.getLogger(ErweiterterController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
 
         // Benutzernachricht
-        showSuccessMessage("Ok, alle Daten angezeigt!");
+        showSuccessMessage(bundle.getString("alleDaten"));
     }
 
     private String chooseFile() {
         DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Data Organizer");
+        chooser.setTitle(bundle.getString("DataOrganizer"));
         File selectedDirectory = chooser.showDialog(stage);
         if (selectedDirectory != null) {
             return selectedDirectory.toString();
@@ -196,8 +196,8 @@ public class ErweiterterController {
             // Nothing selected.
             Alert alert = new Alert(AlertType.WARNING);
             alert.initOwner(stage);
-            alert.setTitle("Keine Zeile ausgewählt!");
-            alert.setContentText("Bitte wähle eine Zeile zum löschen aus.");
+            alert.setTitle(bundle.getString("keineZeile"));
+            alert.setContentText(bundle.getString("Zeileauswaehlen"));
 
             alert.showAndWait();
         }
@@ -210,7 +210,7 @@ public class ErweiterterController {
 
     @FXML
     private void addDateiendung(ActionEvent event) {
-        AddDateitypController.show(stage, null, mover, this, statement,bundle);
+        AddDateitypController.show(stage, null, mover, this, statement, bundle);
     }
 
     public void addList(Dateiendung end) {
