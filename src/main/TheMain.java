@@ -16,7 +16,6 @@ import viewController.GeneralController;
 public class TheMain extends Application {
 
     String baseName;
-    GeneralController GC = new GeneralController();
 
     public static void main(String[] args) {
         final boolean test = true;
@@ -37,9 +36,10 @@ public class TheMain extends Application {
         try {
             baseName = "resources.dataorganizer";
 //            System.out.println(baseName);
-            Locale locale = new Locale("en", "UK");
+//            Locale locale = new Locale("en", "UK");
 //            Locale locale = new Locale("ge", "GE");
-            ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale);
+//            ResourceBundle bundle = ResourceBundle.getBundle(baseName,locale);
+            ResourceBundle bundle = ResourceBundle.getBundle(baseName);
 
             String url = "jdbc:derby://localhost:1527/Dataorganizer";
             String user = "Dataorganizer";

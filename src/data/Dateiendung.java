@@ -44,7 +44,7 @@ public class Dateiendung {
         return Extension;
     }
 
-    public void editExtension(Statement statement) throws SQLException {
+    public void editExtension(Statement statement) throws IllegalArgumentException,SQLException {
         if (Extension.get() == null || Extension.get().length() == 0) {
             throw new IllegalArgumentException("Extension muss eingegeben werden!");
         }

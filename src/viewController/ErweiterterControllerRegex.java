@@ -20,33 +20,33 @@ import mover.DataMover;
 /**
  * ErweiterterController
  * <p>
- * Tableviewübersicht über alle Dateiendungen.
+ * Tableviewübersicht über alle RegexRegeln.
  * </p>
  *
  * @author Isabella
  */
-public class ErweiterterController {
+public class ErweiterterControllerRegex {
 
     private Stage stage;
-    private final static String VIEWNAME = "Dateitypenwarten.fxml";
+    private final static String VIEWNAME = "Regexwarten.fxml";
     private DataMover mover;
     private Statement statement;
     private ResourceBundle bundle;
 
     @FXML
     private TextField tfMsg;
-    private ObservableList<Dateiendung> list;
+    private ObservableList<RegexRule> list;
     @FXML
-    private TableView<Dateiendung> tvWarten;
+    private TableView<RegexRule> tvWarten;
     @FXML
-    private TableColumn<Dateiendung, String> tcZiel;
+    private TableColumn<RegexRule, String> tcZiel;
     @FXML
-    private TableColumn<Dateiendung, String> tcEndung;
+    private TableColumn<RegexRule, String> tcFilter;
 
     public static void show(Stage parentStage, Stage stage, DataMover mover, Statement statement, ResourceBundle bundle) {
         try {
             // View und Controller erstellen
-            FXMLLoader loader = new FXMLLoader(ErweiterterController.class.getResource(VIEWNAME),bundle);
+            FXMLLoader loader = new FXMLLoader(ErweiterterControllerRegex.class.getResource(VIEWNAME), bundle);
             Parent root = (Parent) loader.load();
 
             // Scene erstellen
@@ -58,13 +58,13 @@ public class ErweiterterController {
             }
             stage.setScene(scene);
             stage.setTitle(bundle.getString("DataOrganizer"));
-            stage.getIcons().add(new Image(ErweiterterController.class.getResourceAsStream("icon.png")));
 
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(parentStage);
+            stage.getIcons().add(new Image(ErweiterterControllerRegex.class.getResourceAsStream("icon.png")));
 
             // Controller ermitteln
-            ErweiterterController controller = (ErweiterterController) loader.getController();
+            ErweiterterControllerRegex controller = (ErweiterterControllerRegex) loader.getController();
             controller.statement = statement;
             controller.bundle = bundle;
 
@@ -97,26 +97,24 @@ public class ErweiterterController {
 
         list = FXCollections.observableArrayList();
 
-        for (DataType e : mover.getDatatype()) {
-            Dateiendung end = new Dateiendung(e);
-            end.setExtension(e.Extensions());
-            end.setOrdner(e.getOrdner().toString());
-            list.add(end);
+        for (RegexRule e : mover.getRegexrules()) {
+
+            list.add(e);
         }
 
         tvWarten.setItems(list);
 
         tcZiel.setCellValueFactory(new PropertyValueFactory<>("Ordner"));
-        tcEndung.setCellValueFactory(new PropertyValueFactory<>("Extension"));
+        tcFilter.setCellValueFactory(new PropertyValueFactory<>("Regex"));
 
         // Spalten konfigurieren
         tcZiel.setSortType(TableColumn.SortType.ASCENDING);
 
         // Spalten editierbar machen
-        tcEndung.setCellFactory(TextFieldTableCell.<Dateiendung>forTableColumn());
+        tcFilter.setCellFactory(TextFieldTableCell.<RegexRule>forTableColumn());
 
         tcZiel.setCellFactory(tc -> {
-            TableCell<Dateiendung, String> cell = new TableCell<Dateiendung, String>() {
+            TableCell<RegexRule, String> cell = new TableCell<RegexRule, String>() {
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
@@ -131,17 +129,17 @@ public class ErweiterterController {
                     if (file != null) {
                         try {
                             int selectedIndex = tvWarten.getSelectionModel().getSelectedIndex();
-                            DataType d = mover.getDataType(tvWarten.getItems().get(selectedIndex).getOrdner());
 
-                            Dateiendung end = new Dateiendung(d);
+                            RegexRule end = mover.getRegexRule(list.get(selectedIndex).getRegex());
                             end.setOrdner(file);
+
                             end.editOrdner(statement);
-                            end.setExtension(tvWarten.getItems().get(selectedIndex).getExtension());
+                            end.setRegex(tvWarten.getItems().get(selectedIndex).getRegex());
                             tvWarten.getItems().set(selectedIndex, end);
 
-                            showSuccessMessage(bundle.getString("Dateitypgespeichert"));
+                            showSuccessMessage(bundle.getString("OKRegex"));
                         } catch (SQLException ex) {
-                            Logger.getLogger(ErweiterterController.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(ErweiterterControllerRegex.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 }
@@ -149,15 +147,15 @@ public class ErweiterterController {
             return cell;
         });
 
-        tcEndung.setOnEditCommit((TableColumn.CellEditEvent<Dateiendung, String> event) -> {
+        tcFilter.setOnEditCommit((TableColumn.CellEditEvent<RegexRule, String> event) -> {
             try {
-                ((Dateiendung) event.getTableView().getItems().get(
-                        event.getTablePosition().getRow())).setExtension(event.getNewValue());
-                ((Dateiendung) event.getTableView().getItems().get(
-                        event.getTablePosition().getRow())).editExtension(statement);
-                showSuccessMessage(bundle.getString("Dateitypgespeichert"));
+                ((RegexRule) event.getTableView().getItems().get(
+                        event.getTablePosition().getRow())).setRegex(event.getNewValue());
+                ((RegexRule) event.getTableView().getItems().get(
+                        event.getTablePosition().getRow())).editRegex(statement);
+                showSuccessMessage(bundle.getString("OKRegex"));
             } catch (SQLException ex) {
-                Logger.getLogger(ErweiterterController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ErweiterterControllerRegex.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
 
@@ -183,20 +181,19 @@ public class ErweiterterController {
      *
      * @throws SQLException
      */
-    private void handleDeleteDateiendung() throws SQLException {
+    private void handleDeleteRegex() throws SQLException {
         int selectedIndex = tvWarten.getSelectionModel().getSelectedIndex();
         if (selectedIndex >= 0) {
-            String sql = "delete from Dateiendung where datatype = '" + tvWarten.getItems().get(selectedIndex).getOrdner() + "' ";
+            String sql = "delete from regexrules where ordner = '" + tvWarten.getItems().get(selectedIndex).getOrdner() + "' ";
 
             // Datenbankzugriff
             statement.executeUpdate(sql);
-            mover.removeDataType(mover.getDataType(tvWarten.getItems().get(selectedIndex).getOrdner()));
+            mover.removeRegexRule(mover.getRegexRule(tvWarten.getItems().get(selectedIndex).getOrdner()));
 
             tvWarten.getItems().remove(selectedIndex);
 
-            showSuccessMessage(bundle.getString("Datatypgeloescht"));
+            showSuccessMessage(bundle.getString("Regexgeloescht"));
         } else {
-            // Nothing selected.
             Alert alert = new Alert(AlertType.WARNING);
             alert.initOwner(stage);
             alert.setTitle(bundle.getString("keineZeile"));
@@ -207,27 +204,24 @@ public class ErweiterterController {
     }
 
     @FXML
-    private void deleteDateiendung(ActionEvent event) throws SQLException {
-        handleDeleteDateiendung();
+    private void deleteRegex(ActionEvent event) throws SQLException {
+        handleDeleteRegex();
     }
 
     @FXML
-    private void addDateiendung(ActionEvent event) {
-        AddDateitypController.show(stage, null, mover, this, statement, bundle);
+    private void addRegex(ActionEvent event) {
+        AddRegexController.show(stage, null, mover, this, statement, bundle);
     }
 
-    public void addList(Dateiendung end) {
+    public void addList(RegexRule end) {
         list.add(end);
     }
 
     public void updateList() {
         list = FXCollections.observableArrayList();
 
-        for (DataType e : mover.getDatatype()) {
-            Dateiendung end = new Dateiendung(e);
-            end.setExtension(e.Extensions());
-            end.setOrdner(e.getOrdner().toString());
-            list.add(end);
+        for (RegexRule e : mover.getRegexrules()) {
+            list.add(e);
         }
 
         tvWarten.setItems(list);

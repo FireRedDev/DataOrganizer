@@ -17,6 +17,7 @@ import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.*;
 
@@ -48,6 +49,7 @@ public class GeneralController {
     private final BooleanProperty verschiebenProp = new SimpleBooleanProperty();
     private final BooleanProperty sortSubFolderProp = new SimpleBooleanProperty();
     private final BooleanProperty sortviaRegexProp = new SimpleBooleanProperty();
+    private final BooleanProperty expertenmodus = new SimpleBooleanProperty();
 
     @FXML
     private TextField tfMsg;
@@ -67,6 +69,8 @@ public class GeneralController {
     private CheckBox sortSubFolder;
     @FXML
     private CheckBox sortByName;
+    @FXML
+    private CheckBox regex;
 
     public static void show(Stage stage, Statement statement, ResourceBundle bundle) {
         try {
@@ -83,6 +87,7 @@ public class GeneralController {
             }
             stage.setScene(scene);
             stage.setTitle(bundle.getString("DataOrganizer"));
+            stage.getIcons().add(new Image(GeneralController.class.getResourceAsStream("icon.png")));
 
             // Controller ermitteln
             GeneralController controller = (GeneralController) loader.getController();
@@ -95,9 +100,15 @@ public class GeneralController {
 
             // Anzeigen
             stage.show();
-        } catch (Exception ex) {
+
+        } catch (IOException ex) {
+            System.err.println(bundle.getString("Fensterladefehler"));
             ex.printStackTrace(System.out);
-            System.exit(2);
+            System.exit(1);
+        } catch (SQLException ex) {
+            System.err.println(bundle.getString("Fensterladefehler"));
+            ex.printStackTrace(System.out);
+            System.exit(1);
         }
     }
 
@@ -121,6 +132,8 @@ public class GeneralController {
         VerschiebenPropProperty().bindBidirectional(verschieben.selectedProperty());
         sortviaRegexPropProperty().bindBidirectional(sortByName.selectedProperty());
         sortSubFolderPropProperty().bindBidirectional(sortSubFolder.selectedProperty());
+        expertenmodusProperty().bindBidirectional(regex.selectedProperty());
+        sortviaRegexPropProperty().bindBidirectional(regex.visibleProperty());
 
         props.load(new FileInputStream(propertyFile));
         // Properties File laden
@@ -129,6 +142,7 @@ public class GeneralController {
         String verschieben = props.getProperty("verschieben");
         String unterordner = props.getProperty("unterordner");
         String regex = props.getProperty("regex");
+        String experte = props.getProperty("experte");
 
         if ("true".equals(datenaming)) {
             DateNamingPropProperty().set(true);
@@ -144,6 +158,9 @@ public class GeneralController {
         }
         if ("true".equals(regex)) {
             sortviaRegexPropProperty().set(true);
+        }
+        if ("true".equals(experte)) {
+            this.expertenmodusProperty().set(true);
         }
 
         String sqlQuery = "select datatype, extension from dateiendung";
@@ -164,11 +181,21 @@ public class GeneralController {
             }
             mover.addDataType(datatype);
         }
+
+        sqlQuery = "select ordner, regex from regexrules";
+
+        rSet = statement.executeQuery(sqlQuery);
+
+        while (rSet.next()) {
+            String ordner = rSet.getString("ordner");
+            String rule = rSet.getString("regex");
+            RegexRule regexRule = new RegexRule(ordner, rule);
+
+            mover.addRegexRule(regexRule);
+        }
         this.stage = stage;
 
         this.showSuccessMessage(bundle.getString("DataOrganizer"));
-//        this.showSuccessMessage("bis da funkt!");
-
     }
 
     @FXML
@@ -193,7 +220,11 @@ public class GeneralController {
 
     @FXML
     private void tableView(ActionEvent event) {
-        ErweiterterController.show(stage, null, mover, statement, bundle);
+        if (issortviaRegexProp()) {
+            ErweiterterControllerRegex.show(stage, null, mover, statement, bundle);
+        } else {
+            ErweiterterController.show(stage, null, mover, statement, bundle);
+        }
     }
 
     @FXML
@@ -216,12 +247,14 @@ public class GeneralController {
         Boolean verschieben = this.isVerschiebenProp();
         Boolean unterordner = this.issortSubFolderProp();
         Boolean regex = this.issortviaRegexProp();
+        Boolean expertenmodus = this.isexpertenmodusProp();
 
         props.setProperty("dateNaming", date.toString());
         props.setProperty("orderbydate", orderbydate.toString());
         props.setProperty("verschieben", verschieben.toString());
         props.setProperty("unterordner", unterordner.toString());
         props.setProperty("regex", regex.toString());
+        props.setProperty("experte", expertenmodus.toString());
 
         FileOutputStream out = new FileOutputStream(this.propertyFile);
 
@@ -342,12 +375,24 @@ public class GeneralController {
         return sortviaRegexProp;
     }
 
+    public boolean isexpertenmodusProp() {
+        return expertenmodus.get();
+    }
+
+    public void setexpertenmodusProp(boolean value) {
+        expertenmodus.set(value);
+    }
+
     public ResourceBundle getBundle() {
         return bundle;
     }
 
     public void setBundle(ResourceBundle bundle) {
         this.bundle = bundle;
+    }
+
+    public BooleanProperty expertenmodusProperty() {
+        return expertenmodus;
     }
 
     /**

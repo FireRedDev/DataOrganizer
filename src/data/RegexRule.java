@@ -3,36 +3,102 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package data;
 
 import java.io.File;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import mover.DataMover;
 
 /**
-* C.G
+ * C.G
  */
 public class RegexRule {
-    private File Ordner;
-    private String regex;
-       public RegexRule(File Ordner,String regex) {
-//     this.regex = regex;
-        this.Ordner = Ordner;
+
+    private final StringProperty Regex = new SimpleStringProperty();
+    private final StringProperty Ordner = new SimpleStringProperty();
+    private DataMover mover;
+
+    public RegexRule(String ordner, String rule) {
+        setOrdner(ordner);
+        //System.out.println(Ordner);
+        setRegex(rule);
     }
 
-    public File getOrdner() {
+    public RegexRule() {
+    }
+
+    public String getOrdner() {
+        return Ordner.getValue();
+    }
+
+    public final void setOrdner(String value) {
+        Ordner.set(value);
+    }
+
+    public StringProperty OrdnerProperty() {
         return Ordner;
     }
 
-    public void setOrdner(File Ordner) {
-        this.Ordner = Ordner;
-    }
-
     public String getRegex() {
-        return regex;
+        return Regex.getValue();
     }
 
-    public void setRegex(String regex) {
-        this.regex = regex;
+    public final void setRegex(String value) {
+        Regex.set(value);
+    }
+
+    public StringProperty regexProperty() {
+        return Regex;
+    }
+
+    public void editRegex(Statement statement) throws SQLException {
+        if (Regex.get() == null || Regex.get().length() == 0) {
+            throw new IllegalArgumentException("Extension muss eingegeben werden!");
+        }
+
+        if (Regex.get().length() < 2) {
+            throw new IllegalArgumentException("Extension muss länger als 2 Zeichen sein!");
+        }
+        this.setRegex(Regex.get());
+
+        String sql = "update regexrules set Ordner = '" + Ordner.getValue() + "', regex = '" + Regex.getValue() + "' where Ordner = '" + Ordner.getValue() + "' ";
+
+        // Datenbankzugriff
+        statement.executeUpdate(sql);
+
+    }
+
+    public void editOrdner(Statement statement) throws SQLException {
+        if (Ordner.get() == null || Ordner.get().length() == 0) {
+            throw new IllegalArgumentException("Pfad muss eingegeben werden!");
+        }
+
+        if (Ordner.get().length() < 2) {
+            throw new IllegalArgumentException("Pfad muss länger als 2 Zeichen sein!");
+        }
+
+//        setOrdner(Ordner.getValue());
+        String sql = "update regexrules set Ordner = '" + Ordner.getValue() + "', regex = '" + Regex.getValue() + "' where regex = '" + Regex.getValue() + "' ";
+
+        // Datenbankzugriff
+        statement.executeUpdate(sql);
+
+    }
+
+    public void setMover(DataMover neu) {
+        if (mover != neu) {
+            if (mover != null) {
+                mover.removeRegexRule(this);
+            }
+            mover = neu;
+
+            if (neu != null) {
+                neu.addRegexRule(this);
+            }
+        }
     }
 
 }

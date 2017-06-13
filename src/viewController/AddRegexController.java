@@ -1,33 +1,40 @@
 package viewController;
 
-import data.*;
-import java.io.*;
+import data.RegexRule;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
-import javafx.beans.property.*;
+import java.util.List;
+import java.util.ResourceBundle;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
-import javafx.fxml.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.stage.*;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import mover.DataMover;
 
 /**
- * Dateityp hinzufügen
+ * Regex-Filter hinzufügen
  * <p>
- * Fenster zum hinzufügen von Datentypen
+ * Fenster zum hinzufügen von Regex-Filtern
  * </p>
  *
  * @author Isabella
  */
-public class AddDateitypController {
+public class AddRegexController {
 
     private Stage stage;
     private DataMover mover;
-    private final static String VIEWNAME = "AddDateityp.fxml";
-    private ErweiterterController ec;
+    private final static String VIEWNAME = "AddRegex.fxml";
+    private ErweiterterControllerRegex ec;
     private Statement statement;
     private ResourceBundle bundle;
 
@@ -43,10 +50,10 @@ public class AddDateitypController {
     private final StringProperty ausOrdnerTypProp = new SimpleStringProperty();
     private final StringProperty typProp = new SimpleStringProperty();
 
-    public static void show(Stage parentStage, Stage stage, DataMover mover, ErweiterterController ec, Statement statement, ResourceBundle bundle) {
+    public static void show(Stage parentStage, Stage stage, DataMover mover, ErweiterterControllerRegex ec, Statement statement, ResourceBundle bundle) {
         try {
             // View und Controller erstellen
-            FXMLLoader loader = new FXMLLoader(AddDateitypController.class.getResource(VIEWNAME), bundle);
+            FXMLLoader loader = new FXMLLoader(AddRegexController.class.getResource(VIEWNAME), bundle);
             Parent root = (Parent) loader.load();
             // Scene erstellen
             Scene scene = new Scene(root);
@@ -57,13 +64,14 @@ public class AddDateitypController {
             }
             stage.setScene(scene);
             stage.setTitle(bundle.getString("DataOrganizer"));
-            stage.getIcons().add(new Image(AddDateitypController.class.getResourceAsStream("icon.png")));
+            stage.getIcons().add(new Image(AddRegexController.class.getResourceAsStream("icon.png")));
 
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(parentStage);
 
             // Controller ermitteln
-            AddDateitypController controller = (AddDateitypController) loader.getController();
+            AddRegexController controller = (AddRegexController) loader.getController();
+
             controller.statement = statement;
             controller.bundle = bundle;
 
@@ -77,13 +85,12 @@ public class AddDateitypController {
             ex.printStackTrace(System.out);
             System.exit(1);
         } catch (Exception ex) {
-            System.err.println(bundle.getString("Fensterladefehler"));
             ex.printStackTrace(System.out);
-            System.exit(1);
+            System.exit(2);
         }
     }
 
-    private void init(Stage stage, DataMover mover, ErweiterterController ec) {
+    private void init(Stage stage, DataMover mover, ErweiterterControllerRegex ec) {
         this.mover = mover;
         this.stage = stage;
         this.ec = ec;
@@ -91,7 +98,7 @@ public class AddDateitypController {
         ausOrdnerTyp.setEditable(false);
         ausOrdnerTyp.textProperty().bindBidirectional(this.ausOrdnerTypProp);
         tfTyp.textProperty().bindBidirectional(typProp);
-        showSuccessMessage(bundle.getString("DatentypHinzufuegen"));
+        showSuccessMessage(bundle.getString("RegexHinzufuegen"));
     }
 
     @FXML
@@ -124,69 +131,41 @@ public class AddDateitypController {
      */
     private void speichernD() throws SQLException {
         if (!"".equals(this.getTypProp()) && !"".equals(this.getAusOrdnerTyp()) && this.getTypProp().length() > 1 && this.getAusOrdnerTyp().length() > 1) {
-            boolean eingabefehler = false;
-            DataType vorhanden = null;
-            String[] array = this.getTypProp().split(",");
-            LinkedList<Extension> extensionlistget = new LinkedList<>();
-            for (String ex : array) {
-                if (ex != null && ex != "") {
-                    extensionlistget.add(new Extension(ex));
-                }
-            }
+            RegexRule vorhanden = null;
+            List<RegexRule> regexrules = mover.getRegexrules();
+            for (RegexRule type : regexrules) {
 
-            List<DataType> datatype = mover.getDatatype();
-            for (DataType type : datatype) {
-                LinkedList<Extension> extensionlist = type.getExtensionlist();
-                for (Extension e : extensionlist) {
-                    for (Extension eget : extensionlistget) {
-                        if (eget.getExtension().equals(e.getExtension())) {
-                            eingabefehler = true;
-                            showErrorMessage(bundle.getString("ExtensionAnders"));
-                        }
-                    }
-                }
-                if (type.getOrdner().equals(new File(this.getAusOrdnerTyp()))) {
+                if (type.getOrdner().equals(this.getAusOrdnerTyp())) {
                     vorhanden = type;
                 }
-
             }
-            if (!eingabefehler) {
-                DataType typ;
-                if (vorhanden != null) {
-                    typ = vorhanden;
-                } else {
-                    typ = new DataType(new File(this.getAusOrdnerTyp()));
-                }
-                if (!eingabefehler) {
-                    String[] arrayE = this.getTypProp().split(",");
-
-                    for (String ex : arrayE) {
-                        typ.addExtension(new Extension(ex));
-                    }
-
-                    Dateiendung end = new Dateiendung(typ);
-                    end.setOrdner(this.getAusOrdnerTyp());
-                    end.setExtension(typ.Extensions());
-                    if (vorhanden != null) {
-                        String sql = "update Dateiendung set datatype = '" + typ.toString() + "', extension = '" + typ.Extensions() + "' where datatype = '" + typ.toString() + "' ";
-
-                        // Datenbankzugriff
-                        statement.executeUpdate(sql);
-                        ec.updateList();
-                    } else {
-                        mover.addDataType(typ);
-                        ec.addList(end);
-
-                        String sql = "insert into Dateiendung (datatype,extension) values ( '" + this.getAusOrdnerTyp() + "', '" + this.getTypProp() + "')";
-
-                        // Datenbankzugriff
-                        statement.executeUpdate(sql);
-                    }
-                    showSuccessMessage(bundle.getString("neueExtension"));
-                }
+            RegexRule typ;
+            if (vorhanden != null) {
+                typ = vorhanden;
+            } else {
+                typ = new RegexRule(this.getAusOrdnerTyp(), this.getTypProp());
             }
+
+            if (vorhanden != null) {
+                typ.setRegex(typ.getRegex() + "," + this.getTypProp());
+                String sql = "update regexrules set ordner = '" + typ.getOrdner() + "', regex = '" + typ.getRegex() + "' where ordner = '" + typ.getOrdner() + "' ";
+
+                // Datenbankzugriff
+                statement.executeUpdate(sql);
+                ec.updateList();
+            } else {
+                mover.addRegexRule(typ);
+                ec.addList(typ);
+
+                String sql = "insert into regexrules (ordner,regex) values ( '" + this.getAusOrdnerTyp() + "', '" + this.getTypProp() + "')";
+
+                // Datenbankzugriff
+                statement.executeUpdate(sql);
+            }
+            showSuccessMessage(bundle.getString("neueRegexRule"));
+
         } else {
-            showErrorMessage(bundle.getString("ExtensionAusgewaehlt"));
+            showErrorMessage(bundle.getString("RegexAusgewaehlt"));
         }
     }
 
@@ -225,4 +204,5 @@ public class AddDateitypController {
         tfMsg.setText(message);
         tfMsg.setStyle("-fx-text-inner-color: green;");
     }
+
 }

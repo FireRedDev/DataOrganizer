@@ -50,7 +50,7 @@ public class DataMover {
                 typ.order(controller);
             }
         } catch (IOException ex) {
-            controller.showErrorMessage(controller.getBundle().getString("fehlerDatum"));
+            controller.showErrorMessage("Fehler beim sortieren nach Datum!");
         }
     }
 
@@ -61,19 +61,22 @@ public class DataMover {
      * @throws IOException
      */
     public void sortbyRegex(File[] directoryListing) throws IOException {
+        Instant start = Instant.now();
         boolean subfolder = controller.issortSubFolderProp();
         boolean verschieben = controller.isVerschiebenProp();
         File dir = new File(controller.getAusProp());
         for (RegexRule rule : regexrules) {
-            FileFilter fileFilter = new RegexFileFilter(rule.getRegex());
+            FileFilter fileFilter = new RegexFileFilter("^.*" + rule.getRegex() + ".*$");
             File[] files = dir.listFiles(fileFilter);
             for (int i = 0; i < files.length; i++) {
                 if (files[i].isDirectory() && subfolder) {
                     this.sortbyRegex(files[i].listFiles());
                 }
-
-                this.verschiebenToDirectory(verschieben, files[i], rule.getOrdner());
+                this.verschiebenToDirectory(verschieben, files[i], new File(rule.getOrdner()));
             }
+            Instant end = Instant.now();
+            System.out.println("Sortierzeit: " + Duration.between(start, end).toNanos());
+            controller.showSuccessMessage("Dateien von " + controller.getAusProp() + " sortiert!");
         }
     }
 
@@ -106,6 +109,9 @@ public class DataMover {
                             for (DataType type : datatype) {
                                 if (type.search(FilenameUtils.getExtension(child.getName()))) {
                                     try {
+                                        //property adden nd vagessn
+                                        //fehler
+
                                         if (rename) {
                                             String filename = datum(child);
                                             filename = type.toString() + "\\" + filename + "." + FilenameUtils.getExtension(child.getName());
@@ -128,7 +134,7 @@ public class DataMover {
                                         f = new File(type.toString() + "\\" + child.getName().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
                                         anz++;
                                         verschieben(verschieben, child, f);
-                                    } catch (Exception ex) {
+                                    } catch (IOException ex) {
                                         controller.showErrorMessage(controller.getBundle().getString("FehlerSort"));
                                     }
                                     break;
@@ -153,6 +159,14 @@ public class DataMover {
         } else {
             FileUtils.copyFile(child, f);
         }
+    }
+
+    public List<RegexRule> getRegexrules() {
+        return regexrules;
+    }
+
+    public void setRegexrules(List<RegexRule> regexrules) {
+        this.regexrules = regexrules;
     }
 
     private void verschiebenToDirectory(boolean verschieben, File child, File f) throws IOException {
@@ -248,5 +262,28 @@ public class DataMover {
             }
         }
         return null;
+    }
+
+    public RegexRule getRegexRule(String d) {
+        for (RegexRule rule : this.regexrules) {
+            if (rule.getRegex().equals(d)) {
+                return rule;
+            }
+        }
+        return null;
+    }
+
+    public void removeRegexRule(RegexRule regex) {
+        if (regexrules.contains(regex)) {
+            regexrules.remove(regex);
+//            regex.setMover(this);
+        }
+    }
+
+    public void addRegexRule(RegexRule regexRule) {
+        if (!regexrules.contains(regexRule)) {
+            regexrules.add(regexRule);
+            regexRule.setMover(this);
+        }
     }
 }
