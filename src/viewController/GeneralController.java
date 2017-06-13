@@ -36,6 +36,7 @@ public class GeneralController {
     // Verbindung zur Datenbank
     private Statement statement;
     private ResourceBundle bundle;
+    public static DoubleProperty progress = new SimpleDoubleProperty();
 
     Properties props = new Properties();
 
@@ -123,21 +124,21 @@ public class GeneralController {
         ausOrdner.setEditable(false);
         ausOrdner.textProperty().bindBidirectional(this.ausProp);
 
+        sortviaRegexPropProperty().bindBidirectional(regex.visibleProperty());
         DateNamingPropProperty().bindBidirectional(dateNaming.selectedProperty());
         OrderByDatePropProperty().bindBidirectional(orderByDate.selectedProperty());
         VerschiebenPropProperty().bindBidirectional(verschieben.selectedProperty());
         sortviaRegexPropProperty().bindBidirectional(sortByName.selectedProperty());
         sortSubFolderPropProperty().bindBidirectional(sortSubFolder.selectedProperty());
         expertenmodusProperty().bindBidirectional(regex.selectedProperty());
-        sortviaRegexPropProperty().bindBidirectional(regex.visibleProperty());
 
         props.load(new FileInputStream(propertyFile));
         // Properties File laden
         String datenaming = props.getProperty("dateNaming");
         String orderbydate = props.getProperty("orderbydate");
-        String verschieben = props.getProperty("verschieben");
+        String move = props.getProperty("verschieben");
         String unterordner = props.getProperty("unterordner");
-        String regex = props.getProperty("regex");
+        String dateinamenSortieren = props.getProperty("regex");
         String experte = props.getProperty("experte");
 
         if ("true".equals(datenaming)) {
@@ -146,17 +147,17 @@ public class GeneralController {
         if ("true".equals(orderbydate)) {
             OrderByDatePropProperty().set(true);
         }
-        if ("true".equals(verschieben)) {
+        if ("true".equals(move)) {
             VerschiebenPropProperty().set(true);
         }
         if ("true".equals(unterordner)) {
             sortSubFolderPropProperty().set(true);
         }
-        if ("true".equals(regex)) {
+        if ("true".equals(dateinamenSortieren)) {
             sortviaRegexPropProperty().set(true);
         }
         if ("true".equals(experte)) {
-            this.expertenmodusProperty().set(true);
+            expertenmodusProperty().set(true);
         }
 
         String sqlQuery = "select datatype, extension from dateiendung";
@@ -241,17 +242,17 @@ public class GeneralController {
     private void speichern() throws Exception {
         Boolean date = this.isDateNamingProp();
         Boolean orderbydate = this.isOrderByDateProp();
-        Boolean verschieben = this.isVerschiebenProp();
+        Boolean move = this.isVerschiebenProp();
         Boolean unterordner = this.issortSubFolderProp();
-        Boolean regex = this.issortviaRegexProp();
-        Boolean expertenmodus = this.isexpertenmodusProp();
+        Boolean sortierennachdateinamen = this.issortviaRegexProp();
+        Boolean expertenmodusVerwenden = this.isexpertenmodusProp();
 
         props.setProperty("dateNaming", date.toString());
         props.setProperty("orderbydate", orderbydate.toString());
-        props.setProperty("verschieben", verschieben.toString());
+        props.setProperty("verschieben", move.toString());
         props.setProperty("unterordner", unterordner.toString());
-        props.setProperty("regex", regex.toString());
-        props.setProperty("experte", expertenmodus.toString());
+        props.setProperty("regex", sortierennachdateinamen.toString());
+        props.setProperty("experte", expertenmodusVerwenden.toString());
 
         FileOutputStream out = new FileOutputStream(this.propertyFile);
 
@@ -266,6 +267,7 @@ public class GeneralController {
         try {
             if (this.getAusProp() != null) {
                 String dateNaming = props.getProperty("dateNaming");
+                ProgressController.show(stage, null, this, bundle);
                 mover.sort(new File(this.getAusProp()).listFiles());
                 if ("true".equals(dateNaming)) {
                     mover.order();

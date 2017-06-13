@@ -28,6 +28,7 @@ public class DataMover {
 
     GeneralController controller;
     private int anz;
+    private int files = 0;
 
     /**
      * Standardkonstruktor, Benötigt einen Controller und einen Datentyp
@@ -78,6 +79,7 @@ public class DataMover {
                     this.sortbyRegex(files[i].listFiles());
                 }
                 this.verschiebenToDirectory(verschieben, files[i], new File(rule.getOrdner()));
+                controller.progress.set((double) i * 1.0 / files.length);
             }
 //            Instant end = Instant.now();
 //            System.out.println("Sortierzeit: " + Duration.between(start, end).toNanos());
@@ -108,6 +110,7 @@ public class DataMover {
 //                Instant start = Instant.now();
                 if (directoryListing != null) {
                     for (File child : directoryListing) {
+                        int length = directoryListing.length;
                         if (child.isDirectory() && subfolder) {
                             this.sort(child.listFiles());
                         } else {
@@ -147,6 +150,8 @@ public class DataMover {
 
                             }
                         }
+                        files++;
+                        controller.progress.set((double) files * 1.0 / length);
                     }
 //                    Instant end = Instant.now();
 //                    System.out.println("Sortierzeit: " + Duration.between(start, end).toNanos());
