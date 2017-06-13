@@ -61,12 +61,17 @@ public class DataMover {
      * @throws IOException
      */
     public void sortbyRegex(File[] directoryListing) throws IOException {
-        Instant start = Instant.now();
+//        Instant start = Instant.now();
         boolean subfolder = controller.issortSubFolderProp();
         boolean verschieben = controller.isVerschiebenProp();
+        FileFilter fileFilter;
         File dir = new File(controller.getAusProp());
         for (RegexRule rule : regexrules) {
-            FileFilter fileFilter = new RegexFileFilter("^.*" + rule.getRegex() + ".*$");
+            if (controller.isexpertenmodusProp()) {
+                fileFilter = new RegexFileFilter(rule.getRegex());
+            } else {
+                fileFilter = new RegexFileFilter("^.*" + rule.getRegex() + ".*$");
+            }
             File[] files = dir.listFiles(fileFilter);
             for (int i = 0; i < files.length; i++) {
                 if (files[i].isDirectory() && subfolder) {
@@ -74,8 +79,8 @@ public class DataMover {
                 }
                 this.verschiebenToDirectory(verschieben, files[i], new File(rule.getOrdner()));
             }
-            Instant end = Instant.now();
-            System.out.println("Sortierzeit: " + Duration.between(start, end).toNanos());
+//            Instant end = Instant.now();
+//            System.out.println("Sortierzeit: " + Duration.between(start, end).toNanos());
             controller.showSuccessMessage("Dateien von " + controller.getAusProp() + " sortiert!");
         }
     }

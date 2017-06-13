@@ -101,11 +101,7 @@ public class GeneralController {
             // Anzeigen
             stage.show();
 
-        } catch (IOException ex) {
-            System.err.println(bundle.getString("Fensterladefehler"));
-            ex.printStackTrace(System.out);
-            System.exit(1);
-        } catch (SQLException ex) {
+        } catch (IOException | SQLException ex) {
             System.err.println(bundle.getString("Fensterladefehler"));
             ex.printStackTrace(System.out);
             System.exit(1);
@@ -211,7 +207,7 @@ public class GeneralController {
     @FXML
     private void ordnerBtAus(ActionEvent event) {
         DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle(bundle.getString("Data Organizer"));
+        chooser.setTitle(bundle.getString("DataOrganizer"));
         selectedDirectory = chooser.showDialog(stage);
         if (selectedDirectory != null) {
             this.setAusProp(selectedDirectory.toString());
@@ -230,6 +226,7 @@ public class GeneralController {
     @FXML
     private void speichern(ActionEvent event) throws Exception {
         speichern();
+        generalDisplay.set(true);
     }
 
     @FXML
@@ -259,8 +256,6 @@ public class GeneralController {
         FileOutputStream out = new FileOutputStream(this.propertyFile);
 
         props.store(out, null);
-
-        generalDisplay.set(true);
     }
 
     private void abbrechen() {
@@ -269,10 +264,14 @@ public class GeneralController {
 
     private void sortieren() {
         try {
-            String dateNaming = props.getProperty("dateNaming");
-            mover.sort(new File(this.getAusProp()).listFiles());
-            if ("true".equals(dateNaming)) {
-                mover.order();
+            if (this.getAusProp() != null) {
+                String dateNaming = props.getProperty("dateNaming");
+                mover.sort(new File(this.getAusProp()).listFiles());
+                if ("true".equals(dateNaming)) {
+                    mover.order();
+                }
+            } else {
+                showErrorMessage(bundle.getString("FehlerSort"));
             }
         } catch (IOException ex) {
             showErrorMessage(bundle.getString("FehlerSort"));
