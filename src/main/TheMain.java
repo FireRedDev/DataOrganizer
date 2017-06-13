@@ -18,24 +18,13 @@ public class TheMain extends Application {
     String baseName;
 
     public static void main(String[] args) {
-        final boolean test = true;
-        try {
-            if (test) {
-                test();
-            }
-
-            launch(args);
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
-
+        launch(args);
     }
 
     @Override
     public void start(Stage stage) {
         try {
             baseName = "resources.dataorganizer";
-//            System.out.println(baseName);
 //            Locale locale = new Locale("en", "UK");
 //            Locale locale = new Locale("ge", "GE");
 //            ResourceBundle bundle = ResourceBundle.getBundle(baseName,locale);
@@ -51,49 +40,6 @@ public class TheMain extends Application {
             GeneralController.show(stage, statement, bundle);
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());
-        }
-    }
-
-    /**
-     * deleteDir
-     * <p>
-     * Löscht Inhalt eines Ordners samt Unterordner.
-     * </p>
-     *
-     * @param path Ordnerpfad
-     */
-    private static void deleteDir(File path) {
-        for (File file : path.listFiles()) {
-            if (file.isDirectory()) {
-                deleteDir(file);
-            }
-            file.delete();
-        }
-        path.delete();
-    }
-
-    /**
-     * Klasse für Testzwecke, Löscht die Daten aus den Directorys und kopiert
-     * sie zurück in Zusortierend
-     *
-     * @throws IOException
-     */
-    private static void test() throws IOException {
-        File audio = new File("Audio");
-        if (audio.exists()) {
-            deleteDir(audio);
-        }
-        File bilder = new File("Bilder");
-        if (bilder.exists()) {
-            deleteDir(bilder);
-        }
-        File dokumente = new File("Dokumente");
-        if (dokumente.exists()) {
-            deleteDir(dokumente);
-        }
-        File video = new File("Video");
-        if (video.exists()) {
-            deleteDir(video);
         }
     }
 }
