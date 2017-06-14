@@ -51,6 +51,7 @@ public class GeneralController {
     private final BooleanProperty sortSubFolderProp = new SimpleBooleanProperty();
     private final BooleanProperty sortviaRegexProp = new SimpleBooleanProperty();
     private final BooleanProperty expertenmodus = new SimpleBooleanProperty();
+    private final BooleanProperty abbrechen = new SimpleBooleanProperty();
 
     @FXML
     private TextField tfMsg;
@@ -268,6 +269,7 @@ public class GeneralController {
         try {
             if (this.getAusProp() != null) {
                 String dateNaming = props.getProperty("dateNaming");
+                this.setAbbrechenProp(false);
                 ProgressController.show(stage, null, this, bundle);
                 mover.sort(new File(this.getAusProp()).listFiles());
                 ProgressController.hide();
@@ -404,6 +406,18 @@ public class GeneralController {
 
     public final void setProgressProp(Double value) {
         progress.set(value);
+    }
+
+    public boolean isAbbrechenProp() {
+        return abbrechen.get();
+    }
+
+    public void setAbbrechenProp(boolean value) {
+        abbrechen.set(value);
+    }
+
+    public BooleanProperty AbbrechenPropProperty() {
+        return abbrechen;
     }
 
     /**

@@ -21,7 +21,6 @@ public class ProgressController {
     private final static String VIEWNAME = "progressV.fxml";
     private GeneralController Gcontroller;
     private ResourceBundle bundle;
-    private final BooleanProperty abbrechen = new SimpleBooleanProperty();
 
     @FXML
     private ProgressBar progressbar;
@@ -91,18 +90,6 @@ public class ProgressController {
     }
 
     private void abbrechen() {
-        setAbbrechenProp(true);
-    }
-
-    public boolean isAbbrechenProp() {
-        return abbrechen.get();
-    }
-
-    public void setAbbrechenProp(boolean value) {
-        abbrechen.set(value);
-    }
-
-    public BooleanProperty AbbrechenPropProperty() {
-        return abbrechen;
+        Gcontroller.setAbbrechenProp(true);
     }
 }
