@@ -3,6 +3,9 @@ package viewController;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,10 +17,11 @@ import javafx.stage.Stage;
 
 public class ProgressController {
 
-    private Stage stage;
+    private static Stage stage;
     private final static String VIEWNAME = "progressV.fxml";
     private GeneralController Gcontroller;
     private ResourceBundle bundle;
+    private final BooleanProperty abbrechen = new SimpleBooleanProperty();
 
     @FXML
     private ProgressBar progressbar;
@@ -41,6 +45,7 @@ public class ProgressController {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(parentStage);
             stage.getIcons().add(new Image(ProgressController.class.getResourceAsStream("icon.png")));
+            stage.setResizable(false);
 
             // Controller ermitteln
             ProgressController controller = (ProgressController) loader.getController();
@@ -74,5 +79,30 @@ public class ProgressController {
         this.stage = stage;
 
         progressbar.progressProperty().bind(Gcontroller.progress);
+    }
+
+    public static void hide() {
+        stage.close();
+    }
+
+    @FXML
+    private void abbrechen(ActionEvent event) {
+        abbrechen();
+    }
+
+    private void abbrechen() {
+        setAbbrechenProp(true);
+    }
+
+    public boolean isAbbrechenProp() {
+        return abbrechen.get();
+    }
+
+    public void setAbbrechenProp(boolean value) {
+        abbrechen.set(value);
+    }
+
+    public BooleanProperty AbbrechenPropProperty() {
+        return abbrechen;
     }
 }

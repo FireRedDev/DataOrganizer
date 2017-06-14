@@ -58,6 +58,7 @@ public class AddDateitypController {
             stage.setScene(scene);
             stage.setTitle(bundle.getString("DataOrganizer"));
             stage.getIcons().add(new Image(AddDateitypController.class.getResourceAsStream("icon.png")));
+            stage.setResizable(false);
 
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(parentStage);

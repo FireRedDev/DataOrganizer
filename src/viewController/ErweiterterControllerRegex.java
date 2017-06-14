@@ -62,6 +62,7 @@ public class ErweiterterControllerRegex {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(parentStage);
             stage.getIcons().add(new Image(ErweiterterControllerRegex.class.getResourceAsStream("icon.png")));
+            stage.setResizable(false);
 
             // Controller ermitteln
             ErweiterterControllerRegex controller = (ErweiterterControllerRegex) loader.getController();

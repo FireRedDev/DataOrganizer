@@ -36,7 +36,7 @@ public class GeneralController {
     // Verbindung zur Datenbank
     private Statement statement;
     private ResourceBundle bundle;
-    public static DoubleProperty progress = new SimpleDoubleProperty();
+    public DoubleProperty progress = new SimpleDoubleProperty();
 
     Properties props = new Properties();
 
@@ -89,6 +89,7 @@ public class GeneralController {
             stage.setScene(scene);
             stage.setTitle(bundle.getString("DataOrganizer"));
             stage.getIcons().add(new Image(GeneralController.class.getResourceAsStream("icon.png")));
+            stage.setResizable(false);
 
             // Controller ermitteln
             GeneralController controller = (GeneralController) loader.getController();
@@ -269,6 +270,7 @@ public class GeneralController {
                 String dateNaming = props.getProperty("dateNaming");
                 ProgressController.show(stage, null, this, bundle);
                 mover.sort(new File(this.getAusProp()).listFiles());
+                ProgressController.hide();
                 if ("true".equals(dateNaming)) {
                     mover.order();
                 }
@@ -394,6 +396,14 @@ public class GeneralController {
 
     public BooleanProperty expertenmodusProperty() {
         return expertenmodus;
+    }
+
+    public Double getProgressProp() {
+        return progress.get();
+    }
+
+    public final void setProgressProp(Double value) {
+        progress.set(value);
     }
 
     /**

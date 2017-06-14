@@ -1,9 +1,6 @@
 package main;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.*;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.application.Application;
 import static javafx.application.Application.launch;

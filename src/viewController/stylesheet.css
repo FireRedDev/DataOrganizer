@@ -1,10 +1,10 @@
 .button {
     -fx-background-color: black;
-    -fx-border-color: #e7f500;
-    -fx-text-fill: #e7f500;
+    -fx-border-color: #B7E4F2;
+    -fx-text-fill: #B7E4F2;
 }
 #AnchorPane{
-    -fx-background-image: url("background.png"); 
+    -fx-background-image: url("background.jpg"); 
     -fx-background-position: left top, center;
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover, auto;
@@ -31,7 +31,7 @@
     -fx-background-color: white;
 }
 .check-box:selected .box {
-    -fx-background-color:#e7f500;
+    -fx-background-color:#B7E4F2;
     -fx-text-fill: black;
 }
 .table-view{
@@ -57,7 +57,12 @@
     -fx-background-color: lightgray;
 }
 .table-row-cell:selected {
-    -fx-background-color: #e7f500;
+    -fx-background-color: #B7E4F2;
     -fx-background-insets: 0;
     -fx-background-radius: 1;
+}
+.progress-bar {
+    -fx-background-color: white;
+    -fx-background-radius: 10, 10, 10, 10;
+
 }

@@ -152,6 +152,7 @@ public class DataMover {
                         }
                         files++;
                         controller.progress.set((double) files * 1.0 / length);
+                        
                     }
 //                    Instant end = Instant.now();
 //                    System.out.println("Sortierzeit: " + Duration.between(start, end).toNanos());
