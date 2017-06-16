@@ -20,6 +20,52 @@ public class Dateiendung {
         this.type = type;
     }
 
+    public void editExtension(Statement statement, String value) throws IllegalArgumentException,SQLException {
+        if (value == null ||value.length() == 0) {
+            throw new IllegalArgumentException("Extension muss eingegeben werden!");
+        }
+
+        if (value.length() < 2) {
+            throw new IllegalArgumentException("Extension muss länger als 2 Zeichen sein!");
+        }
+
+        type.clearExtensionlist();
+        this.setExtension(value);
+
+        String[] array = Extension.get().split(",");
+
+        for (String ex : array) {
+            type.addExtension(new Extension(ex));
+        }
+        String sql = "update Dateiendung set datatype = '" + type.toString() + "', extension = '" + type.Extensions() + "' where datatype = '" + type.toString() + "' ";
+
+        // Datenbankzugriff
+        statement.executeUpdate(sql);
+
+    }
+
+    public void editOrdner(Statement statement, String value) throws SQLException, IllegalArgumentException {
+        if (value == null ||value.length() == 0) {
+            throw new IllegalArgumentException("Pfad muss eingegeben werden!");
+        }
+
+        if (value.length() < 2) {
+            throw new IllegalArgumentException("Pfad muss länger als 2 Zeichen sein!");
+        }
+
+        this.setOrdner(value);
+        type.setOrdner(new File(Ordner.getValue()));
+        String sql = "update Dateiendung set datatype = '" + type.toString() + "', extension = '" + type.Extensions() + "' where extension = '" + type.Extensions() + "' ";
+
+        // Datenbankzugriff
+        statement.executeUpdate(sql);
+
+    }
+
+    public void removeDataType(DataType d) {
+        type.setExtensionlist(null);
+    }
+    
     public String getOrdner() {
         return Ordner.get();
     }
@@ -44,47 +90,4 @@ public class Dateiendung {
         return Extension;
     }
 
-    public void editExtension(Statement statement) throws IllegalArgumentException,SQLException {
-        if (Extension.get() == null || Extension.get().length() == 0) {
-            throw new IllegalArgumentException("Extension muss eingegeben werden!");
-        }
-
-        if (Extension.get().length() < 2) {
-            throw new IllegalArgumentException("Extension muss länger als 2 Zeichen sein!");
-        }
-
-        type.clearExtensionlist();
-
-        String[] array = Extension.get().split(",");
-
-        for (String ex : array) {
-            type.addExtension(new Extension(ex));
-        }
-        String sql = "update Dateiendung set datatype = '" + type.toString() + "', extension = '" + type.Extensions() + "' where datatype = '" + type.toString() + "' ";
-
-        // Datenbankzugriff
-        statement.executeUpdate(sql);
-
-    }
-
-    public void editOrdner(Statement statement) throws SQLException {
-        if (Ordner.get() == null || Ordner.get().length() == 0) {
-            throw new IllegalArgumentException("Pfad muss eingegeben werden!");
-        }
-
-        if (Ordner.get().length() < 2) {
-            throw new IllegalArgumentException("Pfad muss länger als 2 Zeichen sein!");
-        }
-
-        type.setOrdner(new File(Ordner.getValue()));
-        String sql = "update Dateiendung set datatype = '" + type.toString() + "', extension = '" + type.Extensions() + "' where extension = '" + type.Extensions() + "' ";
-
-        // Datenbankzugriff
-        statement.executeUpdate(sql);
-
-    }
-
-    public void removeDataType(DataType d) {
-        type.setExtensionlist(null);
-    }
 }

@@ -36,7 +36,6 @@ public class GeneralController {
     // Verbindung zur Datenbank
     private Statement statement;
     private ResourceBundle bundle;
-    public DoubleProperty progress = new SimpleDoubleProperty();
 
     Properties props = new Properties();
 
@@ -51,7 +50,6 @@ public class GeneralController {
     private final BooleanProperty sortSubFolderProp = new SimpleBooleanProperty();
     private final BooleanProperty sortviaRegexProp = new SimpleBooleanProperty();
     private final BooleanProperty expertenmodus = new SimpleBooleanProperty();
-    private final BooleanProperty abbrechen = new SimpleBooleanProperty();
 
     @FXML
     private TextField tfMsg;
@@ -135,6 +133,7 @@ public class GeneralController {
         expertenmodusProperty().bindBidirectional(regex.selectedProperty());
 
         props.load(new FileInputStream(propertyFile));
+        
         // Properties File laden
         String datenaming = props.getProperty("dateNaming");
         String orderbydate = props.getProperty("orderbydate");
@@ -186,7 +185,7 @@ public class GeneralController {
         rSet = statement.executeQuery(sqlQuery);
 
         while (rSet.next()) {
-            String ordner = rSet.getString("ordner");
+            String ordner = new File(rSet.getString("ordner")).getAbsolutePath();
             String rule = rSet.getString("regex");
             RegexRule regexRule = new RegexRule(ordner, rule);
 
@@ -266,20 +265,14 @@ public class GeneralController {
     }
 
     private void sortieren() {
-        try {
-            if (this.getAusProp() != null) {
-                String dateNaming = props.getProperty("dateNaming");
-                this.setAbbrechenProp(false);
-                ProgressController.show(stage, null, this, bundle);
-                mover.sort(new File(this.getAusProp()).listFiles());
-                ProgressController.hide();
-                if ("true".equals(dateNaming)) {
-                    mover.order();
-                }
-            } else {
-                showErrorMessage(bundle.getString("FehlerSort"));
-            }
-        } catch (IOException ex) {
+        if (this.getAusProp() != null) {
+//            this.setAbbrechenProp(false);
+//            ProgressController.show(stage, null, this, bundle);
+            mover.sort(new File(this.getAusProp()).listFiles());
+//            ProgressController.hide();
+//            this.setProgressProp(0.0);
+           
+        } else {
             showErrorMessage(bundle.getString("FehlerSort"));
         }
     }
@@ -400,26 +393,6 @@ public class GeneralController {
         return expertenmodus;
     }
 
-    public Double getProgressProp() {
-        return progress.get();
-    }
-
-    public final void setProgressProp(Double value) {
-        progress.set(value);
-    }
-
-    public boolean isAbbrechenProp() {
-        return abbrechen.get();
-    }
-
-    public void setAbbrechenProp(boolean value) {
-        abbrechen.set(value);
-    }
-
-    public BooleanProperty AbbrechenPropProperty() {
-        return abbrechen;
-    }
-
     /**
      * Fehlermeldung anzeigen.
      *
@@ -440,4 +413,7 @@ public class GeneralController {
         tfMsg.setStyle("-fx-text-inner-color: green;");
     }
 
+    public Stage getStage() {
+        return stage;
+    }
 }

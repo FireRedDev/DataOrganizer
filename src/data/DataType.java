@@ -55,7 +55,6 @@ public class DataType {
                     System.out.println(ex.getMessage());
                 }
             }
-        } else {
         }
     }
 

@@ -5,11 +5,22 @@ import data.RegexRule;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.sql.SQLException;
 import java.time.*;
 import java.util.*;
+import javafx.beans.property.*;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.image.Image;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.apache.commons.io.*;
 import org.apache.commons.io.filefilter.RegexFileFilter;
-import viewController.GeneralController;
+import viewController.*;
 
 /**
  * DataMover
@@ -26,9 +37,18 @@ public class DataMover {
     private List<DataType> datatype;
     private List<RegexRule> regexrules;
 
+    public DoubleProperty progress = new SimpleDoubleProperty();
+    private final BooleanProperty abbrechen = new SimpleBooleanProperty();
+
     GeneralController controller;
     private int anz;
     private int files = 0;
+
+    private static Stage stage;
+    private final static String VIEWNAME = "progressV.fxml";
+
+    @FXML
+    private ProgressBar progressbar;
 
     /**
      * Standardkonstruktor, Benötigt einen Controller und einen Datentyp
@@ -42,13 +62,81 @@ public class DataMover {
         this.controller = controller;
     }
 
+    public static void show(Stage parentStage, Stage stage, ResourceBundle bundle) {
+        try {
+            // View und Controller erstellen
+            FXMLLoader loader = new FXMLLoader(DataMover.class.getResource(VIEWNAME), bundle);
+            Parent root = (Parent) loader.load();
+
+            // Scene erstellen
+            Scene scene = new Scene(root);
+
+            // Stage: Entweder übergebene Stage verwenden (Primary Stage) oder neue erzeugen
+            if (stage == null) {
+                stage = new Stage();
+            }
+            stage.setScene(scene);
+            stage.setTitle(bundle.getString("DataOrganizer"));
+
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(parentStage);
+            stage.getIcons().add(new Image(DataMover.class.getResourceAsStream("icon.png")));
+            stage.setResizable(false);
+
+            // Controller ermitteln
+            DataMover controller = (DataMover) loader.getController();
+
+            // View initialisieren
+            controller.init(stage);
+
+            // Anzeigen
+            stage.show();
+        } catch (IOException | SQLException ex) {
+            System.err.println(bundle.getString("Fensterladefehler"));
+            ex.printStackTrace(System.out);
+            System.exit(1);
+        }
+    }
+
+    /**
+     * Init
+     *
+     * @param stage
+     * @param mover
+     * @throws SQLException
+     */
+    private void init(Stage stage) throws SQLException {
+        this.stage = stage;
+
+        progressbar.progressProperty().bindBidirectional(progress);
+    }
+
+    public static void hide() {
+        stage.close();
+    }
+
+    @FXML
+    private void abbrechen(ActionEvent event) {
+        abbrechen();
+    }
+
+    private void abbrechen() {
+        setAbbrechenProp(true);
+    }
+
     /**
      * sortieren nach Monat aufrufen
      */
     public void order() {
         try {
-            for (DataType typ : datatype) {
-                typ.order(controller);
+            if (controller.issortviaRegexProp()) {
+                for (RegexRule r : regexrules) {
+                    r.order(controller);
+                }
+            } else {
+                for (DataType typ : datatype) {
+                    typ.order(controller);
+                }
             }
         } catch (IOException ex) {
             controller.showErrorMessage("Fehler beim sortieren nach Datum!");
@@ -62,28 +150,47 @@ public class DataMover {
      * @throws IOException
      */
     public void sortbyRegex(File[] directoryListing) throws IOException {
-//        Instant start = Instant.now();
         boolean subfolder = controller.issortSubFolderProp();
         boolean verschieben = controller.isVerschiebenProp();
         FileFilter fileFilter;
+        File f;
         File dir = new File(controller.getAusProp());
+
         for (RegexRule rule : regexrules) {
             if (controller.isexpertenmodusProp()) {
                 fileFilter = new RegexFileFilter(rule.getRegex());
             } else {
                 fileFilter = new RegexFileFilter("^.*" + rule.getRegex() + ".*$");
             }
-            File[] files = dir.listFiles(fileFilter);
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].isDirectory() && subfolder) {
-                    this.sortbyRegex(files[i].listFiles());
+            File[] filelist = dir.listFiles(fileFilter);
+            for (int i = 0; i < filelist.length; i++) {
+                if (isAbbrechenProp()) {
+                    break;
                 }
-                this.verschiebenToDirectory(verschieben, files[i], new File(rule.getOrdner()));
-                controller.progress.set((double) i * 1.0 / files.length);
+                if (filelist[i].isDirectory() && subfolder) {
+                    this.sortbyRegex(filelist[i].listFiles());
+                }
+                if (controller.isDateNamingProp()) {
+                    String filename = datum(filelist[i]);
+                    filename = rule.getOrdner() + "\\" + filename + "." + FilenameUtils.getExtension(filelist[i].getName());
+                    if (new File(filename).exists()) {
+                        f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(filelist[i].getName()));
+                        anz++;
+                    } else {
+                        f = new File(filename);
+                    }
+
+                } else {
+                    f = new File(rule.getOrdner() + "\\" + filelist[i].getName());
+                }
+                if (f.exists()) {
+                    f = new File(rule.getOrdner() + "\\" + f.getAbsoluteFile().toString().substring(0, filelist[i].getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(filelist[i].getName()));
+                    anz++;
+                }
+                verschieben(verschieben, filelist[i], f);
+                progress.set((double) i * 1.0 / filelist.length);
             }
-//            Instant end = Instant.now();
-//            System.out.println("Sortierzeit: " + Duration.between(start, end).toNanos());
-            controller.showSuccessMessage("Dateien von " + controller.getAusProp() + " sortiert!");
+            controller.showSuccessMessage(controller.getBundle().getString("DataVon") + controller.getAusProp() + controller.getBundle().getString("sortiert"));
         }
     }
 
@@ -91,10 +198,17 @@ public class DataMover {
      * sortieren nach Dateityp
      *
      * @param directoryListing
-     * @throws IOException
      */
-    public void sort(File[] directoryListing) throws IOException {
-        //Offene Fragen: Brauche ich eine FIlexistsexception?
+    public void sort(File[] directoryListing) {
+        this.setAbbrechenProp(false);
+        show(controller.getStage(), null, controller.getBundle());
+
+        sortieren(directoryListing);
+        hide();
+        this.setProgressProp(0.0);
+    }
+
+    private void sortieren(File[] directoryListing) {
         boolean rename = controller.isDateNamingProp();
         boolean verschieben = controller.isVerschiebenProp();
         boolean subfolder = controller.issortSubFolderProp();
@@ -103,23 +217,27 @@ public class DataMover {
         File f;
 
         if (sortviaRegex) {
-            sortbyRegex(directoryListing);
+            try {
+                sortbyRegex(directoryListing);
+            } catch (IOException ex) {
+                controller.showErrorMessage(controller.getBundle().getString("FehlerSort"));
+            }
         } else {
             String aus = controller.getAusProp();
             if (aus != null) {
 //                Instant start = Instant.now();
                 if (directoryListing != null) {
                     for (File child : directoryListing) {
+                        if (isAbbrechenProp()) {
+                            break;
+                        }
                         int length = directoryListing.length;
                         if (child.isDirectory() && subfolder) {
-                            this.sort(child.listFiles());
+                            this.sortieren(child.listFiles());
                         } else {
                             for (DataType type : datatype) {
                                 if (type.search(FilenameUtils.getExtension(child.getName()))) {
                                     try {
-                                        //property adden nd vagessn
-                                        //fehler
-
                                         if (rename) {
                                             String filename = datum(child);
                                             filename = type.toString() + "\\" + filename + "." + FilenameUtils.getExtension(child.getName());
@@ -138,10 +256,6 @@ public class DataMover {
                                             anz++;
                                         }
                                         verschieben(verschieben, child, f);
-                                    } catch (FileExistsException ex) {
-                                        f = new File(type.toString() + "\\" + child.getName().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
-                                        anz++;
-                                        verschieben(verschieben, child, f);
                                     } catch (IOException ex) {
                                         controller.showErrorMessage(controller.getBundle().getString("FehlerSort"));
                                     }
@@ -151,11 +265,12 @@ public class DataMover {
                             }
                         }
                         files++;
-                        controller.progress.set((double) files * 1.0 / length);
+                        this.setProgressProp((double) files * 1.0 / length);
 
                     }
-//                    Instant end = Instant.now();
-//                    System.out.println("Sortierzeit: " + Duration.between(start, end).toNanos());
+                    if (controller.isOrderByDateProp()) {
+                        order();
+                    }
                     controller.showSuccessMessage(controller.getBundle().getString("DataVon") + controller.getAusProp() + controller.getBundle().getString("sortiert"));
                 } else {
                     controller.showErrorMessage(controller.getBundle().getString("AusgangsordnerUndefiniert"));
@@ -178,41 +293,6 @@ public class DataMover {
 
     public void setRegexrules(List<RegexRule> regexrules) {
         this.regexrules = regexrules;
-    }
-
-    private void verschiebenToDirectory(boolean verschieben, File child, File f) throws IOException {
-        if (verschieben) {
-            FileUtils.moveFileToDirectory(child, f, true);
-
-        } else {
-            FileUtils.copyFileToDirectory(child, f);
-        }
-    }
-
-    private File exists(File f, DataType type, File child) {
-        if (f.exists()) {
-            f = new File(type.toString() + "\\" + f.getAbsoluteFile().toString().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
-            anz++;
-        }
-        return f;
-    }
-
-    private File rename(boolean rename, File child, DataType type) throws IOException {
-        File f;
-        if (rename) {
-            String filename = datum(child);
-            filename = type.toString() + "\\" + filename + "." + FilenameUtils.getExtension(child.getName());
-            if (new File(filename).exists()) {
-                f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
-                anz++;
-            } else {
-                f = new File(filename);
-            }
-
-        } else {
-            f = new File(type.toString() + "\\" + child.getName());
-        }
-        return f;
     }
 
     /**
@@ -287,7 +367,7 @@ public class DataMover {
     public void removeRegexRule(RegexRule regex) {
         if (regexrules.contains(regex)) {
             regexrules.remove(regex);
-//            regex.setMover(this);
+            regex.setMover(this);
         }
     }
 
@@ -296,5 +376,25 @@ public class DataMover {
             regexrules.add(regexRule);
             regexRule.setMover(this);
         }
+    }
+
+    public Double getProgressProp() {
+        return progress.get();
+    }
+
+    public final void setProgressProp(Double value) {
+        progress.set(value);
+    }
+
+    public boolean isAbbrechenProp() {
+        return abbrechen.get();
+    }
+
+    public void setAbbrechenProp(boolean value) {
+        abbrechen.set(value);
+    }
+
+    public BooleanProperty AbbrechenPropProperty() {
+        return abbrechen;
     }
 }

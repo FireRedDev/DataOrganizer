@@ -4,8 +4,6 @@ import data.*;
 import java.io.*;
 import java.sql.*;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
@@ -132,15 +130,15 @@ public class ErweiterterControllerRegex {
                             int selectedIndex = tvWarten.getSelectionModel().getSelectedIndex();
 
                             RegexRule end = mover.getRegexRule(list.get(selectedIndex).getRegex());
-                            end.setOrdner(file);
-
-                            end.editOrdner(statement);
+                            end.editOrdner(statement,file);
                             end.setRegex(tvWarten.getItems().get(selectedIndex).getRegex());
                             tvWarten.getItems().set(selectedIndex, end);
 
                             showSuccessMessage(bundle.getString("OKRegex"));
                         } catch (SQLException ex) {
-                            Logger.getLogger(ErweiterterControllerRegex.class.getName()).log(Level.SEVERE, null, ex);
+                            showErrorMessage(bundle.getString("Fehler"));
+                        } catch (IllegalArgumentException ex) {
+                            showErrorMessage(ex.getMessage());
                         }
                     }
                 }
@@ -151,12 +149,12 @@ public class ErweiterterControllerRegex {
         tcFilter.setOnEditCommit((TableColumn.CellEditEvent<RegexRule, String> event) -> {
             try {
                 ((RegexRule) event.getTableView().getItems().get(
-                        event.getTablePosition().getRow())).setRegex(event.getNewValue());
-                ((RegexRule) event.getTableView().getItems().get(
-                        event.getTablePosition().getRow())).editRegex(statement);
+                        event.getTablePosition().getRow())).editRegex(statement,event.getNewValue());
                 showSuccessMessage(bundle.getString("OKRegex"));
             } catch (SQLException ex) {
-                Logger.getLogger(ErweiterterControllerRegex.class.getName()).log(Level.SEVERE, null, ex);
+                showErrorMessage(bundle.getString("Fehler"));
+            } catch (IllegalArgumentException ex) {
+                showErrorMessage(ex.getMessage());
             }
         });
 

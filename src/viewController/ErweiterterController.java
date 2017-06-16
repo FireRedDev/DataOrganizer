@@ -4,8 +4,6 @@ import data.*;
 import java.io.*;
 import java.sql.*;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
@@ -46,7 +44,7 @@ public class ErweiterterController {
     public static void show(Stage parentStage, Stage stage, DataMover mover, Statement statement, ResourceBundle bundle) {
         try {
             // View und Controller erstellen
-            FXMLLoader loader = new FXMLLoader(ErweiterterController.class.getResource(VIEWNAME),bundle);
+            FXMLLoader loader = new FXMLLoader(ErweiterterController.class.getResource(VIEWNAME), bundle);
             Parent root = (Parent) loader.load();
 
             // Scene erstellen
@@ -135,14 +133,15 @@ public class ErweiterterController {
                             DataType d = mover.getDataType(tvWarten.getItems().get(selectedIndex).getOrdner());
 
                             Dateiendung end = new Dateiendung(d);
-                            end.setOrdner(file);
-                            end.editOrdner(statement);
+                            end.editOrdner(statement, file);
                             end.setExtension(tvWarten.getItems().get(selectedIndex).getExtension());
                             tvWarten.getItems().set(selectedIndex, end);
 
                             showSuccessMessage(bundle.getString("Dateitypgespeichert"));
                         } catch (SQLException ex) {
-                            Logger.getLogger(ErweiterterController.class.getName()).log(Level.SEVERE, null, ex);
+                            showErrorMessage(bundle.getString("Fehler"));
+                        } catch (IllegalArgumentException ex) {
+                            showErrorMessage(ex.getMessage());
                         }
                     }
                 }
@@ -153,12 +152,12 @@ public class ErweiterterController {
         tcEndung.setOnEditCommit((TableColumn.CellEditEvent<Dateiendung, String> event) -> {
             try {
                 ((Dateiendung) event.getTableView().getItems().get(
-                        event.getTablePosition().getRow())).setExtension(event.getNewValue());
-                ((Dateiendung) event.getTableView().getItems().get(
-                        event.getTablePosition().getRow())).editExtension(statement);
+                        event.getTablePosition().getRow())).editExtension(statement, event.getNewValue());
                 showSuccessMessage(bundle.getString("Dateitypgespeichert"));
             } catch (SQLException ex) {
-                Logger.getLogger(ErweiterterController.class.getName()).log(Level.SEVERE, null, ex);
+                showErrorMessage(bundle.getString("Fehler"));
+            } catch (IllegalArgumentException ex) {
+                showErrorMessage(ex.getMessage());
             }
         });
 
