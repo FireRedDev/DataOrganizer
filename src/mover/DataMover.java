@@ -5,19 +5,8 @@ import data.RegexRule;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.sql.SQLException;
 import java.time.*;
 import java.util.*;
-import javafx.beans.property.*;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.image.Image;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import org.apache.commons.io.*;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import viewController.*;
@@ -37,18 +26,9 @@ public class DataMover {
     private List<DataType> datatype;
     private List<RegexRule> regexrules;
 
-    public DoubleProperty progress = new SimpleDoubleProperty();
-    private final BooleanProperty abbrechen = new SimpleBooleanProperty();
-
     GeneralController controller;
     private int anz;
     private int files = 0;
-
-    private static Stage stage;
-    private final static String VIEWNAME = "progressV.fxml";
-
-    @FXML
-    private ProgressBar progressbar;
 
     /**
      * Standardkonstruktor, Benötigt einen Controller und einen Datentyp
@@ -60,68 +40,6 @@ public class DataMover {
         regexrules = new LinkedList<>();
 
         this.controller = controller;
-    }
-
-    public static void show(Stage parentStage, Stage stage, ResourceBundle bundle) {
-        try {
-            // View und Controller erstellen
-            FXMLLoader loader = new FXMLLoader(DataMover.class.getResource(VIEWNAME), bundle);
-            Parent root = (Parent) loader.load();
-
-            // Scene erstellen
-            Scene scene = new Scene(root);
-
-            // Stage: Entweder übergebene Stage verwenden (Primary Stage) oder neue erzeugen
-            if (stage == null) {
-                stage = new Stage();
-            }
-            stage.setScene(scene);
-            stage.setTitle(bundle.getString("DataOrganizer"));
-
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(parentStage);
-            stage.getIcons().add(new Image(DataMover.class.getResourceAsStream("icon.png")));
-            stage.setResizable(false);
-
-            // Controller ermitteln
-            DataMover controller = (DataMover) loader.getController();
-
-            // View initialisieren
-            controller.init(stage);
-
-            // Anzeigen
-            stage.show();
-        } catch (IOException | SQLException ex) {
-            System.err.println(bundle.getString("Fensterladefehler"));
-            ex.printStackTrace(System.out);
-            System.exit(1);
-        }
-    }
-
-    /**
-     * Init
-     *
-     * @param stage
-     * @param mover
-     * @throws SQLException
-     */
-    private void init(Stage stage) throws SQLException {
-        this.stage = stage;
-
-        progressbar.progressProperty().bindBidirectional(progress);
-    }
-
-    public static void hide() {
-        stage.close();
-    }
-
-    @FXML
-    private void abbrechen(ActionEvent event) {
-        abbrechen();
-    }
-
-    private void abbrechen() {
-        setAbbrechenProp(true);
     }
 
     /**
@@ -139,7 +57,7 @@ public class DataMover {
                 }
             }
         } catch (IOException ex) {
-            controller.showErrorMessage("Fehler beim sortieren nach Datum!");
+            controller.showErrorMessage(controller.getBundle().getString("FehlerSort"));
         }
     }
 
@@ -164,7 +82,7 @@ public class DataMover {
             }
             File[] filelist = dir.listFiles(fileFilter);
             for (int i = 0; i < filelist.length; i++) {
-                if (isAbbrechenProp()) {
+                if (controller.isAbbrechenProp()) {
                     break;
                 }
                 if (filelist[i].isDirectory() && subfolder) {
@@ -188,9 +106,12 @@ public class DataMover {
                     anz++;
                 }
                 verschieben(verschieben, filelist[i], f);
-                progress.set((double) i * 1.0 / filelist.length);
+                controller.setProgressProp((i + 1) * 1.0 / filelist.length);
             }
-            controller.showSuccessMessage(controller.getBundle().getString("DataVon") + controller.getAusProp() + controller.getBundle().getString("sortiert"));
+            if (controller.isOrderByDateProp()) {
+                order();
+            }
+            controller.showSuccessMessage(controller.getBundle().getString("DataVon") + controller.getAusProp() + " " + controller.getBundle().getString("sortiert"));
         }
     }
 
@@ -200,12 +121,13 @@ public class DataMover {
      * @param directoryListing
      */
     public void sort(File[] directoryListing) {
-        this.setAbbrechenProp(false);
-        show(controller.getStage(), null, controller.getBundle());
+        controller.setProgressProp(0.0);
+        controller.setAbbrechenProp(false);
+//        show(controller.getStage(), null, controller.getBundle());
 
         sortieren(directoryListing);
-        hide();
-        this.setProgressProp(0.0);
+//        hide();
+//        setProgressProp(0.0);
     }
 
     private void sortieren(File[] directoryListing) {
@@ -228,7 +150,7 @@ public class DataMover {
 //                Instant start = Instant.now();
                 if (directoryListing != null) {
                     for (File child : directoryListing) {
-                        if (isAbbrechenProp()) {
+                        if (controller.isAbbrechenProp()) {
                             break;
                         }
                         int length = directoryListing.length;
@@ -265,13 +187,13 @@ public class DataMover {
                             }
                         }
                         files++;
-                        this.setProgressProp((double) files * 1.0 / length);
+                        controller.setProgressProp(files * 1.0 / length);
 
                     }
                     if (controller.isOrderByDateProp()) {
                         order();
                     }
-                    controller.showSuccessMessage(controller.getBundle().getString("DataVon") + controller.getAusProp() + controller.getBundle().getString("sortiert"));
+                    controller.showSuccessMessage(controller.getBundle().getString("DataVon") + controller.getAusProp() + " " + controller.getBundle().getString("sortiert"));
                 } else {
                     controller.showErrorMessage(controller.getBundle().getString("AusgangsordnerUndefiniert"));
                 }
@@ -376,25 +298,5 @@ public class DataMover {
             regexrules.add(regexRule);
             regexRule.setMover(this);
         }
-    }
-
-    public Double getProgressProp() {
-        return progress.get();
-    }
-
-    public final void setProgressProp(Double value) {
-        progress.set(value);
-    }
-
-    public boolean isAbbrechenProp() {
-        return abbrechen.get();
-    }
-
-    public void setAbbrechenProp(boolean value) {
-        abbrechen.set(value);
-    }
-
-    public BooleanProperty AbbrechenPropProperty() {
-        return abbrechen;
     }
 }

@@ -4,27 +4,23 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.fxml.*;
+import javafx.scene.*;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import mover.DataMover;
+import javafx.stage.*;
 
 public class ProgressController {
 
     private static Stage stage;
     private final static String VIEWNAME = "progressV.fxml";
-    private DataMover mover;
+    private GeneralController Gcontroller;
     private ResourceBundle bundle;
 
     @FXML
     private ProgressBar progressbar;
 
-    public static void show(Stage parentStage, Stage stage, DataMover mover, ResourceBundle bundle) {
+    public static void show(Stage parentStage, Stage stage, GeneralController Gcontroller, ResourceBundle bundle) {
         try {
             // View und Controller erstellen
             FXMLLoader loader = new FXMLLoader(ProgressController.class.getResource(VIEWNAME), bundle);
@@ -43,14 +39,13 @@ public class ProgressController {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(parentStage);
             stage.getIcons().add(new Image(ProgressController.class.getResourceAsStream("icon.png")));
-            stage.setResizable(false);
 
             // Controller ermitteln
             ProgressController controller = (ProgressController) loader.getController();
             controller.bundle = bundle;
 
             // View initialisieren
-            controller.init(stage, mover);
+            controller.init(stage, Gcontroller);
 
             // Anzeigen
             stage.show();
@@ -68,23 +63,15 @@ public class ProgressController {
      * @param mover
      * @throws SQLException
      */
-    private void init(Stage stage, DataMover mover) throws SQLException {
-        this.mover = mover;
+    private void init(Stage stage, GeneralController Gcontroller) throws SQLException {
+        this.Gcontroller = Gcontroller;
         this.stage = stage;
 
-        progressbar.progressProperty().bindBidirectional(mover.progress);
-    }
-
-    public static void hide() {
-        stage.close();
+        progressbar.progressProperty().bind(Gcontroller.progress);
     }
 
     @FXML
     private void abbrechen(ActionEvent event) {
-        abbrechen();
-    }
-
-    private void abbrechen() {
-        mover.setAbbrechenProp(true);
+        Gcontroller.setAbbrechenProp(true);
     }
 }

@@ -18,15 +18,15 @@
                 <Button fx:id="sortBt" layoutX="474.0" layoutY="173.0" mnemonicParsing="false" onAction="#sort" prefHeight="25.0" prefWidth="74.0" text="%Sortieren" />
                 <Button fx:id="erweiternBt" layoutX="321.0" layoutY="173.0" mnemonicParsing="false" onAction="#erweitern" text="%Erweiterte_Einstellungen" />
             </children>
-        </AnchorPane>                
+        </AnchorPane>       
         <AnchorPane fx:id="apErweitert" layoutX="0.0" prefHeight="261.0" prefWidth="548.0">
             <children>
                 <Button fx:id="speichern" layoutX="488.0" layoutY="173.0" mnemonicParsing="false" onAction="#speichern" prefHeight="25.0" prefWidth="74.0" text="%Speichern" />
                 <Button fx:id="abbrechen" layoutX="404.0" layoutY="173.0" mnemonicParsing="false" onAction="#abbrechen" text="%Abbrechen" />
-                <CheckBox fx:id="dateNaming" layoutX="27.0" layoutY="24.0" mnemonicParsing="false" text="%Dateibennenung_nach_Datum" />
                 <Button fx:id="tableView" layoutX="307.0" layoutY="173.0" mnemonicParsing="false" onAction="#tableView" text="%Sortierregeln" />
-                <CheckBox fx:id="verschieben" layoutX="27.0" layoutY="51.0" mnemonicParsing="false" text="%Verschieben" />
-                <CheckBox fx:id="orderByDate" layoutX="27.0" layoutY="80.0" mnemonicParsing="false" text="%nach_Monat_ordnen" />
+                <CheckBox fx:id="dateNaming" layoutX="27.0" layoutY="19.0" mnemonicParsing="false" text="%Dateibennenung_nach_Datum" />
+                <CheckBox fx:id="verschieben" layoutX="27.0" layoutY="49.0" mnemonicParsing="false" text="%Verschieben" />
+                <CheckBox fx:id="orderByDate" layoutX="27.0" layoutY="79.0" mnemonicParsing="false" text="%nach_Monat_ordnen" />
                 <CheckBox fx:id="sortByName" layoutX="27.0" layoutY="109.0" mnemonicParsing="false" text="%sortieren_nach_Dateinamen" />
                 <CheckBox fx:id="sortSubFolder" layoutX="27.0" layoutY="139.0" mnemonicParsing="false" text="%Unterordner_auch_sortieren" />
                 <CheckBox fx:id="regex" layoutX="27.0" layoutY="169.0" mnemonicParsing="false" text="Regular-Expressions statt Namenssuche nutzen" />           

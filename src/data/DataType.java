@@ -1,12 +1,9 @@
 package data;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.LinkedList;
 import mover.DataMover;
 import org.apache.commons.io.FileUtils;
@@ -63,9 +60,10 @@ public class DataType {
      * <p>
      * Mithilfe dieser Funktion bekommt man das Datum als String YYYY_MM zurück
      * </p>
+     *
      * @param child File zum auslesen des Datums
      * @return String YYYY_MM
-     * @throws IOException 
+     * @throws IOException
      */
     private String datum(File child) throws IOException {
         BasicFileAttributes attr = Files.readAttributes(child.toPath(), BasicFileAttributes.class);

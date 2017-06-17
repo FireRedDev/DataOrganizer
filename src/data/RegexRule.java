@@ -55,11 +55,11 @@ public class RegexRule {
 
     public void editRegex(Statement statement, String value) throws SQLException, IllegalArgumentException {
         if (value == null || value.length() == 0) {
-            throw new IllegalArgumentException("Extension muss eingegeben werden!");
+            throw new IllegalArgumentException("Regex muss eingegeben werden!");
         }
 
         if (value.length() < 2) {
-            throw new IllegalArgumentException("Extension muss länger als 2 Zeichen sein!");
+            throw new IllegalArgumentException("Regex muss länger als 2 Zeichen sein!");
         }
         this.setRegex(value);
 

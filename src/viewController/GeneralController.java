@@ -6,14 +6,13 @@ import javafx.fxml.*;
 import javafx.scene.Parent;
 import mover.DataMover;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Properties;
-import java.util.ResourceBundle;
+import java.io.*;
+import java.sql.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
 import javafx.beans.property.*;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -40,6 +39,8 @@ public class GeneralController {
     Properties props = new Properties();
 
     private final BooleanProperty generalDisplay = new SimpleBooleanProperty();
+    private final BooleanProperty abbrechen = new SimpleBooleanProperty();
+    public DoubleProperty progress = new SimpleDoubleProperty();
 
     String propertyFile = "DOproperties.properties";
 
@@ -119,6 +120,7 @@ public class GeneralController {
     public void init(Stage stage) throws IOException, SQLException {
         getApGeneral().visibleProperty().bind(GeneralDisplayProperty());
         getApErweitert().visibleProperty().bind(GeneralDisplayProperty().not());
+
         generalDisplay.set(true);
 
         ausOrdner.setEditable(false);
@@ -132,33 +134,35 @@ public class GeneralController {
         sortSubFolderPropProperty().bindBidirectional(sortSubFolder.selectedProperty());
         expertenmodusProperty().bindBidirectional(regex.selectedProperty());
 
-        props.load(new FileInputStream(propertyFile));
-        
-        // Properties File laden
-        String datenaming = props.getProperty("dateNaming");
-        String orderbydate = props.getProperty("orderbydate");
-        String move = props.getProperty("verschieben");
-        String unterordner = props.getProperty("unterordner");
-        String dateinamenSortieren = props.getProperty("regex");
-        String experte = props.getProperty("experte");
+        if (new File(propertyFile).exists()) {
+            props.load(new FileInputStream(propertyFile));
 
-        if ("true".equals(datenaming)) {
-            DateNamingPropProperty().set(true);
-        }
-        if ("true".equals(orderbydate)) {
-            OrderByDatePropProperty().set(true);
-        }
-        if ("true".equals(move)) {
-            VerschiebenPropProperty().set(true);
-        }
-        if ("true".equals(unterordner)) {
-            sortSubFolderPropProperty().set(true);
-        }
-        if ("true".equals(dateinamenSortieren)) {
-            sortviaRegexPropProperty().set(true);
-        }
-        if ("true".equals(experte)) {
-            expertenmodusProperty().set(true);
+            // Properties File laden
+            String datenaming = props.getProperty("dateNaming");
+            String orderbydate = props.getProperty("orderbydate");
+            String move = props.getProperty("verschieben");
+            String unterordner = props.getProperty("unterordner");
+            String dateinamenSortieren = props.getProperty("regex");
+            String experte = props.getProperty("experte");
+
+            if ("true".equals(datenaming)) {
+                DateNamingPropProperty().set(true);
+            }
+            if ("true".equals(orderbydate)) {
+                OrderByDatePropProperty().set(true);
+            }
+            if ("true".equals(move)) {
+                VerschiebenPropProperty().set(true);
+            }
+            if ("true".equals(unterordner)) {
+                sortSubFolderPropProperty().set(true);
+            }
+            if ("true".equals(dateinamenSortieren)) {
+                sortviaRegexPropProperty().set(true);
+            }
+            if ("true".equals(experte)) {
+                expertenmodusProperty().set(true);
+            }
         }
 
         String sqlQuery = "select datatype, extension from dateiendung";
@@ -266,12 +270,23 @@ public class GeneralController {
 
     private void sortieren() {
         if (this.getAusProp() != null) {
-//            this.setAbbrechenProp(false);
-//            ProgressController.show(stage, null, this, bundle);
-            mover.sort(new File(this.getAusProp()).listFiles());
-//            ProgressController.hide();
-//            this.setProgressProp(0.0);
-           
+            Task<String> tkSort = new Task<String>() {
+                @Override
+                protected String call() throws Exception {
+                    // Beginn merken
+                    Instant beginn = Instant.now();
+
+                    mover.sort(new File(getAusProp()).listFiles());
+
+                    // Laufzeit berechnen
+                    return "Calculation Time: " + Duration.between(beginn, Instant.now()).toMillis() + " ms";
+                }
+            };
+            setAbbrechenProp(false);
+
+            ProgressController.show(stage, null, this, bundle);
+            Thread thread = new Thread(tkSort);
+            thread.start();
         } else {
             showErrorMessage(bundle.getString("FehlerSort"));
         }
@@ -393,6 +408,30 @@ public class GeneralController {
         return expertenmodus;
     }
 
+    public boolean isAbbrechenProp() {
+        return abbrechen.get();
+    }
+
+    public void setAbbrechenProp(boolean value) {
+        abbrechen.set(value);
+    }
+
+    public BooleanProperty AbbrechenPropProperty() {
+        return abbrechen;
+    }
+
+    public Double getProgressProp() {
+        return progress.get();
+    }
+
+    public final void setProgressProp(Double value) {
+        progress.set(value);
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
     /**
      * Fehlermeldung anzeigen.
      *
@@ -411,9 +450,5 @@ public class GeneralController {
     public void showSuccessMessage(String message) {
         tfMsg.setText(message);
         tfMsg.setStyle("-fx-text-inner-color: green;");
-    }
-
-    public Stage getStage() {
-        return stage;
     }
 }

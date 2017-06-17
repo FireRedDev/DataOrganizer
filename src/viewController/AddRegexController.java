@@ -1,24 +1,16 @@
 package viewController;
 
 import data.RegexRule;
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.ResourceBundle;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import java.io.*;
+import java.sql.*;
+import java.util.*;
+import javafx.beans.property.*;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.fxml.*;
+import javafx.scene.*;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.stage.*;
 import mover.DataMover;
 
 /**
