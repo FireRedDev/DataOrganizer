@@ -1,7 +1,6 @@
 package mover;
 
-import data.DataType;
-import data.RegexRule;
+import data.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -28,7 +27,6 @@ public class DataMover {
 
     GeneralController controller;
     private int anz;
-    private int files = 0;
 
     /**
      * Standardkonstruktor, Benötigt einen Controller und einen Datentyp
@@ -70,49 +68,56 @@ public class DataMover {
     public void sortbyRegex(File[] directoryListing) throws IOException {
         boolean subfolder = controller.issortSubFolderProp();
         boolean verschieben = controller.isVerschiebenProp();
+        int files = 0;
         FileFilter fileFilter;
         File f;
         File dir = new File(controller.getAusProp());
 
         for (RegexRule rule : regexrules) {
-            if (controller.isexpertenmodusProp()) {
-                fileFilter = new RegexFileFilter(rule.getRegex());
-            } else {
-                fileFilter = new RegexFileFilter("^.*" + rule.getRegex() + ".*$");
-            }
-            File[] filelist = dir.listFiles(fileFilter);
-            for (int i = 0; i < filelist.length; i++) {
-                if (controller.isAbbrechenProp()) {
-                    break;
-                }
-                if (filelist[i].isDirectory() && subfolder) {
-                    this.sortbyRegex(filelist[i].listFiles());
-                }
-                if (controller.isDateNamingProp()) {
-                    String filename = datum(filelist[i]);
-                    filename = rule.getOrdner() + "\\" + filename + "." + FilenameUtils.getExtension(filelist[i].getName());
-                    if (new File(filename).exists()) {
-                        f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(filelist[i].getName()));
-                        anz++;
-                    } else {
-                        f = new File(filename);
-                    }
+            String[] array = rule.getRegex().split(",");
 
+            for (String r : array) {
+                if (controller.isexpertenmodusProp()) {
+                    fileFilter = new RegexFileFilter(r);
                 } else {
-                    f = new File(rule.getOrdner() + "\\" + filelist[i].getName());
+                    fileFilter = new RegexFileFilter("^.*" + r + ".*$");
                 }
-                if (f.exists()) {
-                    f = new File(rule.getOrdner() + "\\" + f.getAbsoluteFile().toString().substring(0, filelist[i].getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(filelist[i].getName()));
-                    anz++;
+                File[] filelist = dir.listFiles(fileFilter);
+                for (int i = 0; i < filelist.length; i++) {
+                    if (controller.isAbbrechenProp()) {
+                        break;
+                    }
+                    if (filelist[i].isDirectory() && subfolder) {
+                        this.sortbyRegex(filelist[i].listFiles());
+                    }
+                    if (controller.isDateNamingProp()) {
+                        String filename = datum(filelist[i]);
+                        filename = rule.getOrdner() + "\\" + filename + "." + FilenameUtils.getExtension(filelist[i].getName());
+                        if (new File(filename).exists()) {
+                            f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(filelist[i].getName()));
+                            anz++;
+                        } else {
+                            f = new File(filename);
+                        }
+
+                    } else {
+                        f = new File(rule.getOrdner() + "\\" + filelist[i].getName());
+                    }
+                    if (f.exists()) {
+                        f = new File(rule.getOrdner() + "\\" + f.getAbsoluteFile().toString().substring(0, filelist[i].getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(filelist[i].getName()));
+                        anz++;
+                    }
+                    verschieben(verschieben, filelist[i], f);
+
                 }
-                verschieben(verschieben, filelist[i], f);
-                controller.setProgressProp((i + 1) * 1.0 / filelist.length);
             }
-            if (controller.isOrderByDateProp()) {
-                order();
-            }
-            controller.showSuccessMessage(controller.getBundle().getString("DataVon") + controller.getAusProp() + " " + controller.getBundle().getString("sortiert"));
+            files++;
+            controller.setProgressProp(files * 1.0 / regexrules.size());
         }
+        if (controller.isOrderByDateProp()) {
+            order();
+        }
+        controller.showSuccessMessage(controller.getBundle().getString("DataVon") + controller.getAusProp() + " " + controller.getBundle().getString("sortiert"));
     }
 
     /**
@@ -137,6 +142,7 @@ public class DataMover {
         boolean sortviaRegex = controller.issortviaRegexProp();
         anz = 0;
         File f;
+        int files = 0;
 
         if (sortviaRegex) {
             try {
@@ -155,36 +161,14 @@ public class DataMover {
                         }
                         int length = directoryListing.length;
                         if (child.isDirectory() && subfolder) {
-                            this.sortieren(child.listFiles());
-                        } else {
-                            for (DataType type : datatype) {
-                                if (type.search(FilenameUtils.getExtension(child.getName()))) {
-                                    try {
-                                        if (rename) {
-                                            String filename = datum(child);
-                                            filename = type.toString() + "\\" + filename + "." + FilenameUtils.getExtension(child.getName());
-                                            if (new File(filename).exists()) {
-                                                f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
-                                                anz++;
-                                            } else {
-                                                f = new File(filename);
-                                            }
-
-                                        } else {
-                                            f = new File(type.toString() + "\\" + child.getName());
-                                        }
-                                        if (f.exists()) {
-                                            f = new File(type.toString() + "\\" + f.getAbsoluteFile().toString().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
-                                            anz++;
-                                        }
-                                        verschieben(verschieben, child, f);
-                                    } catch (IOException ex) {
-                                        controller.showErrorMessage(controller.getBundle().getString("FehlerSort"));
-                                    }
+                            for (File childS : child.listFiles()) {
+                                if (controller.isAbbrechenProp()) {
                                     break;
                                 }
-
+                                sortDataType(child, rename, verschieben);
                             }
+                        } else {
+                            sortDataType(child, rename, verschieben);
                         }
                         files++;
                         controller.setProgressProp(files * 1.0 / length);
@@ -198,6 +182,38 @@ public class DataMover {
                     controller.showErrorMessage(controller.getBundle().getString("AusgangsordnerUndefiniert"));
                 }
             }
+        }
+    }
+
+    private void sortDataType(File child, boolean rename, boolean verschieben) {
+        File f;
+        for (DataType type : datatype) {
+            if (type.search(FilenameUtils.getExtension(child.getName()))) {
+                try {
+                    if (rename) {
+                        String filename = datum(child);
+                        filename = type.toString() + "\\" + filename + "." + FilenameUtils.getExtension(child.getName());
+                        if (new File(filename).exists()) {
+                            f = new File(filename.substring(0, filename.indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+                            anz++;
+                        } else {
+                            f = new File(filename);
+                        }
+
+                    } else {
+                        f = new File(type.toString() + "\\" + child.getName());
+                    }
+                    if (f.exists()) {
+                        f = new File(type.toString() + "\\" + f.getAbsoluteFile().toString().substring(0, child.getName().indexOf(".")) + "(" + anz + ")." + FilenameUtils.getExtension(child.getName()));
+                        anz++;
+                    }
+                    verschieben(verschieben, child, f);
+                } catch (IOException ex) {
+                    controller.showErrorMessage(controller.getBundle().getString("FehlerSort"));
+                }
+                break;
+            }
+
         }
     }
 
@@ -215,6 +231,7 @@ public class DataMover {
 
     public void setRegexrules(List<RegexRule> regexrules) {
         this.regexrules = regexrules;
+
     }
 
     /**
@@ -264,10 +281,6 @@ public class DataMover {
         return datatype;
     }
 
-    public boolean contains(DataType d) {
-        return datatype.contains(d);
-    }
-
     public DataType getDataType(String d) {
         for (DataType type : datatype) {
             if (type.toString().equals(d)) {
@@ -292,7 +305,17 @@ public class DataMover {
             regex.setMover(this);
         }
     }
-
+    
+    public void removeRegexRule(String regex) {
+        List<RegexRule> regexrulesNew = new LinkedList<>();
+        for (RegexRule rule : regexrules) {
+            if (!rule.getOrdner().equals(regex)) {
+                regexrulesNew.add(rule);
+            }
+        }
+        regexrules = regexrulesNew;
+    }
+    
     public void addRegexRule(RegexRule regexRule) {
         if (!regexrules.contains(regexRule)) {
             regexrules.add(regexRule);

@@ -130,7 +130,7 @@ public class ErweiterterControllerRegex {
                             int selectedIndex = tvWarten.getSelectionModel().getSelectedIndex();
 
                             RegexRule end = mover.getRegexRule(list.get(selectedIndex).getRegex());
-                            end.editOrdner(statement,file);
+                            end.editOrdner(statement, file);
                             end.setRegex(tvWarten.getItems().get(selectedIndex).getRegex());
                             tvWarten.getItems().set(selectedIndex, end);
 
@@ -149,7 +149,7 @@ public class ErweiterterControllerRegex {
         tcFilter.setOnEditCommit((TableColumn.CellEditEvent<RegexRule, String> event) -> {
             try {
                 ((RegexRule) event.getTableView().getItems().get(
-                        event.getTablePosition().getRow())).editRegex(statement,event.getNewValue());
+                        event.getTablePosition().getRow())).editRegex(statement, event.getNewValue());
                 showSuccessMessage(bundle.getString("OKRegex"));
             } catch (SQLException ex) {
                 showErrorMessage(bundle.getString("Fehler"));
@@ -187,7 +187,7 @@ public class ErweiterterControllerRegex {
 
             // Datenbankzugriff
             statement.executeUpdate(sql);
-            mover.removeRegexRule(mover.getRegexRule(tvWarten.getItems().get(selectedIndex).getOrdner()));
+            mover.removeRegexRule(tvWarten.getItems().get(selectedIndex).getOrdner());
 
             tvWarten.getItems().remove(selectedIndex);
 
