@@ -1,6 +1,7 @@
 package main;
 
 import java.sql.*;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
