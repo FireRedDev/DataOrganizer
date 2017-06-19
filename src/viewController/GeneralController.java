@@ -11,6 +11,9 @@ import java.sql.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -86,6 +89,7 @@ public class GeneralController {
             if (stage == null) {
                 stage = new Stage();
             }
+            stage.initStyle(StageStyle.UNIFIED);
             stage.setScene(scene);
             stage.setTitle(bundle.getString("DataOrganizer"));
             stage.getIcons().add(new Image(GeneralController.class.getResourceAsStream("icon.png")));
@@ -277,14 +281,11 @@ public class GeneralController {
                     Instant beginn = Instant.now();
 
                     mover.sort(new File(getAusProp()).listFiles());
-
-                    ProgressController.hide();
                     // Laufzeit berechnen
                     return "Calculation Time: " + Duration.between(beginn, Instant.now()).toMillis() + " ms";
                 }
-            };
+            };         
             setAbbrechenProp(false);
-
             ProgressController.show(stage, null, this, bundle);
             Thread thread = new Thread(tkSort);
             thread.start();

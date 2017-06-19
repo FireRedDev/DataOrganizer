@@ -54,6 +54,7 @@ public class AddRegexController {
             if (stage == null) {
                 stage = new Stage();
             }
+            stage.initStyle(StageStyle.UNIFIED);
             stage.setScene(scene);
             stage.setTitle(bundle.getString("DataOrganizer"));
             stage.getIcons().add(new Image(AddRegexController.class.getResourceAsStream("icon.png")));

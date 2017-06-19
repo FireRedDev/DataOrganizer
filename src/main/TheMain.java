@@ -40,7 +40,6 @@ public class TheMain extends Application {
             Connection connection = DriverManager.getConnection(dbURL);
             Statement statement = connection.createStatement();
             if (tableExist(connection, "regexrules")) {
-//                statement.executeUpdate("CREATE SCHEMA DATAORGANIZER");
                 String sqlQuery2 = "create table regexrules ("
                         + "    ordner varchar(100) not null,"
                         + "    regex varchar(132) not null"

@@ -34,6 +34,7 @@ public class ProgressController {
             if (stage == null) {
                 stage = new Stage();
             }
+            stage.initStyle(StageStyle.UNIFIED);
             stage.setScene(scene);
             stage.setTitle(bundle.getString("DataOrganizer"));
 

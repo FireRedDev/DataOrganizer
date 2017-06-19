@@ -54,6 +54,7 @@ public class ErweiterterControllerRegex {
             if (stage == null) {
                 stage = new Stage();
             }
+            stage.initStyle(StageStyle.UNIFIED);
             stage.setScene(scene);
             stage.setTitle(bundle.getString("DataOrganizer"));
 
@@ -160,7 +161,7 @@ public class ErweiterterControllerRegex {
         showSuccessMessage(bundle.getString("alleDaten"));
     }
 
-   private String chooseFile(String value) {
+    private String chooseFile(String value) {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle(bundle.getString("DataOrganizer"));
         chooser.setInitialDirectory(new File(value));

@@ -56,6 +56,7 @@ public class ErweiterterController {
             if (stage == null) {
                 stage = new Stage();
             }
+            stage.initStyle(StageStyle.UNIFIED);
             stage.setScene(scene);
             stage.setTitle(bundle.getString("DataOrganizer"));
             stage.getIcons().add(new Image(ErweiterterController.class.getResourceAsStream("icon.png")));
