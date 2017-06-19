@@ -1,8 +1,8 @@
 package main;
 
+import java.io.File;
 import java.sql.*;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.stage.Stage;
@@ -30,6 +30,13 @@ public class TheMain extends Application {
             ResourceBundle bundle = ResourceBundle.getBundle(baseName);
             DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
 
+            new File("gui").mkdir();
+            new File("imag").mkdir();
+            new File("Bilder").mkdir();
+            new File("Dokumente").mkdir();
+            new File("Video").mkdir();
+            new File("Audio").mkdir();
+
             Connection connection = DriverManager.getConnection(dbURL);
             Statement statement = connection.createStatement();
             if (tableExist(connection, "regexrules")) {
@@ -41,7 +48,6 @@ public class TheMain extends Application {
                 statement.executeUpdate(sqlQuery2);
                 statement.executeUpdate("insert into regexrules(ordner,regex) values ('gui','gui')");
                 statement.executeUpdate("insert into regexrules(ordner,regex) values ('imag','imag')");
-
             }
             if (tableExist(connection, "dateiendung")) {
                 String sqlQuery = "create table dateiendung ("
@@ -53,7 +59,6 @@ public class TheMain extends Application {
                 statement.executeUpdate("insert into dateiendung (datatype,extension) values ('Dokumente','pdf,docx,xlxs,zip')");
                 statement.executeUpdate("insert into dateiendung (datatype,extension) values ('Video','mp4,avi,wmv')");
                 statement.executeUpdate("insert into dateiendung (datatype,extension) values ('Audio','mp3,wma,ogg,flac')");
-
             }
             GeneralController.show(stage, statement, bundle);
 

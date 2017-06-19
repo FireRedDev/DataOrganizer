@@ -122,13 +122,11 @@ public class ErweiterterControllerRegex {
             };
             cell.setOnMouseClicked(e -> {
                 if (!cell.isEmpty()) {
-                    String userId = cell.getItem();
+                    int selectedIndex = tvWarten.getSelectionModel().getSelectedIndex();
                     DirectoryChooser chooser = new DirectoryChooser();
-                    String file = chooseFile();
+                    String file = chooseFile(tvWarten.getItems().get(selectedIndex).getOrdner());
                     if (file != null) {
                         try {
-                            int selectedIndex = tvWarten.getSelectionModel().getSelectedIndex();
-
                             RegexRule end = mover.getRegexRule(list.get(selectedIndex).getRegex());
                             end.editOrdner(statement, file);
                             end.setRegex(tvWarten.getItems().get(selectedIndex).getRegex());
@@ -162,9 +160,10 @@ public class ErweiterterControllerRegex {
         showSuccessMessage(bundle.getString("alleDaten"));
     }
 
-    private String chooseFile() {
+   private String chooseFile(String value) {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle(bundle.getString("DataOrganizer"));
+        chooser.setInitialDirectory(new File(value));
         File selectedDirectory = chooser.showDialog(stage);
         if (selectedDirectory != null) {
             return selectedDirectory.toString();

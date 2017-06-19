@@ -2,11 +2,13 @@ package viewController;
 
 import data.*;
 import java.io.*;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ResourceBundle;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
+import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
@@ -125,11 +127,11 @@ public class ErweiterterController {
             cell.setOnMouseClicked(e -> {
                 if (!cell.isEmpty()) {
                     String userId = cell.getItem();
+                    int selectedIndex = tvWarten.getSelectionModel().getSelectedIndex();
                     DirectoryChooser chooser = new DirectoryChooser();
-                    String file = chooseFile();
+                    String file = chooseFile(tvWarten.getItems().get(selectedIndex).getOrdner());
                     if (file != null) {
                         try {
-                            int selectedIndex = tvWarten.getSelectionModel().getSelectedIndex();
                             DataType d = mover.getDataType(tvWarten.getItems().get(selectedIndex).getOrdner());
 
                             Dateiendung end = new Dateiendung(d);
@@ -165,9 +167,10 @@ public class ErweiterterController {
         showSuccessMessage(bundle.getString("alleDaten"));
     }
 
-    private String chooseFile() {
+    private String chooseFile(String value) {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle(bundle.getString("DataOrganizer"));
+        chooser.setInitialDirectory(new File(value));
         File selectedDirectory = chooser.showDialog(stage);
         if (selectedDirectory != null) {
             return selectedDirectory.toString();

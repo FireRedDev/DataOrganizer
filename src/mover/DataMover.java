@@ -128,11 +128,7 @@ public class DataMover {
     public void sort(File[] directoryListing) {
         controller.setProgressProp(0.0);
         controller.setAbbrechenProp(false);
-//        show(controller.getStage(), null, controller.getBundle());
-
         sortieren(directoryListing);
-//        hide();
-//        setProgressProp(0.0);
     }
 
     private void sortieren(File[] directoryListing) {
@@ -161,12 +157,7 @@ public class DataMover {
                         }
                         int length = directoryListing.length;
                         if (child.isDirectory() && subfolder) {
-                            for (File childS : child.listFiles()) {
-                                if (controller.isAbbrechenProp()) {
-                                    break;
-                                }
-                                sortDataType(child, rename, verschieben);
-                            }
+                            subfolder(child, rename, verschieben);
                         } else {
                             sortDataType(child, rename, verschieben);
                         }
@@ -181,6 +172,19 @@ public class DataMover {
                 } else {
                     controller.showErrorMessage(controller.getBundle().getString("AusgangsordnerUndefiniert"));
                 }
+            }
+        }
+    }
+
+    private void subfolder(File child, boolean rename, boolean verschieben) {
+        for (File childS : child.listFiles()) {
+            if (controller.isAbbrechenProp()) {
+                break;
+            }
+            if (childS.isDirectory() && controller.issortSubFolderProp()) {
+                subfolder(childS, rename, verschieben);
+            } else {
+                sortDataType(childS, rename, verschieben);
             }
         }
     }
@@ -211,7 +215,6 @@ public class DataMover {
                 } catch (IOException ex) {
                     controller.showErrorMessage(controller.getBundle().getString("FehlerSort"));
                 }
-                break;
             }
 
         }
@@ -305,7 +308,7 @@ public class DataMover {
             regex.setMover(this);
         }
     }
-    
+
     public void removeRegexRule(String regex) {
         List<RegexRule> regexrulesNew = new LinkedList<>();
         for (RegexRule rule : regexrules) {
@@ -315,7 +318,7 @@ public class DataMover {
         }
         regexrules = regexrulesNew;
     }
-    
+
     public void addRegexRule(RegexRule regexRule) {
         if (!regexrules.contains(regexRule)) {
             regexrules.add(regexRule);
