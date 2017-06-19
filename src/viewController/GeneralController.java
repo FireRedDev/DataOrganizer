@@ -278,6 +278,7 @@ public class GeneralController {
 
                     mover.sort(new File(getAusProp()).listFiles());
 
+                    ProgressController.hide();
                     // Laufzeit berechnen
                     return "Calculation Time: " + Duration.between(beginn, Instant.now()).toMillis() + " ms";
                 }

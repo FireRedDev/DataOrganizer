@@ -14,6 +14,7 @@ public class ProgressController {
 
     private static Stage stage;
     private final static String VIEWNAME = "progressV.fxml";
+
     private GeneralController Gcontroller;
     private ResourceBundle bundle;
 
@@ -73,5 +74,10 @@ public class ProgressController {
     @FXML
     private void abbrechen(ActionEvent event) {
         Gcontroller.setAbbrechenProp(true);
+        stage.hide();
+    }
+
+    public static void hide() {
+        stage.hide();
     }
 }
