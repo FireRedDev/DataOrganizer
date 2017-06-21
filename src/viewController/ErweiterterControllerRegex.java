@@ -41,6 +41,20 @@ public class ErweiterterControllerRegex {
     @FXML
     private TableColumn<RegexRule, String> tcFilter;
 
+    /**
+     * Anzeige der View.
+     * <br>
+     * Diese Methode erstellt eine Instanz der View und dieses Controllers
+     * (FXML-Loader) und richtet alles (also vor allem den Controller) so weit
+     * ein, dass es angezeigt werden kann.
+     *
+     * @param parentStage Stage des Aufrufenden Controllers
+     * @param stage Stage, in der die View angezeigt werden soll; null, wenn
+     * neue erstellt werden soll.
+     * @param mover Mover
+     * @param statement Datenbankverbindung
+     * @param bundle ResourceBundle, wird benötigt für die Internationalisierung
+     */
     public static void show(Stage parentStage, Stage stage, DataMover mover, Statement statement, ResourceBundle bundle) {
         try {
             // View und Controller erstellen
@@ -85,10 +99,15 @@ public class ErweiterterControllerRegex {
     }
 
     /**
-     * Init
+     * Initialisieren.
+     * <br>
+     * Diese Methode wird nur von show() verwendet, um den Controller zu
+     * initialisieren. Das umfasst u.a. die Konfiguration der Controls, die
+     * Verbindung der Controls mit den Model-Feldern, etc.
      *
-     * @param stage
-     * @param mover
+     * @param stage Stage, in der die View angezeigt werden soll; null, wenn
+     * neue erstellt werden soll.
+     * @param mover DataMover
      * @throws SQLException
      */
     private void init(Stage stage, DataMover mover) throws SQLException {
@@ -98,7 +117,6 @@ public class ErweiterterControllerRegex {
         list = FXCollections.observableArrayList();
 
         for (RegexRule e : mover.getRegexrules()) {
-
             list.add(e);
         }
 
@@ -145,6 +163,7 @@ public class ErweiterterControllerRegex {
             return cell;
         });
 
+        // Änderungen sichern
         tcFilter.setOnEditCommit((TableColumn.CellEditEvent<RegexRule, String> event) -> {
             try {
                 ((RegexRule) event.getTableView().getItems().get(
@@ -161,6 +180,14 @@ public class ErweiterterControllerRegex {
         showSuccessMessage(bundle.getString("alleDaten"));
     }
 
+    /**
+     * Ordner auswählen
+     * <br>
+     * Ordner mithilfe des Directory-Chosser auswählen.
+     *
+     * @param value Ausgangsordner
+     * @return Ordnerpfad
+     */
     private String chooseFile(String value) {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle(bundle.getString("DataOrganizer"));
@@ -202,20 +229,39 @@ public class ErweiterterControllerRegex {
         }
     }
 
+    /**
+     * Regex-löschen
+     *
+     * @param event
+     * @throws SQLException
+     */
     @FXML
     private void deleteRegex(ActionEvent event) throws SQLException {
         handleDeleteRegex();
     }
 
+    /**
+     * Regex hinzufügen
+     *
+     * @param event
+     */
     @FXML
     private void addRegex(ActionEvent event) {
         AddRegexController.show(stage, null, mover, this, statement, bundle);
     }
 
+    /**
+     * in Liste hinzufügen
+     *
+     * @param end Regexrule
+     */
     public void addList(RegexRule end) {
         list.add(end);
     }
 
+    /**
+     * Liste updaten
+     */
     public void updateList() {
         list = FXCollections.observableArrayList();
 

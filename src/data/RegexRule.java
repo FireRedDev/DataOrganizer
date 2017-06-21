@@ -12,7 +12,9 @@ import org.apache.commons.io.FileUtils;
 import viewController.GeneralController;
 
 /**
- * C.G
+ * Regex-Regel
+ *
+ * @author Isabella
  */
 public class RegexRule {
 
@@ -28,7 +30,7 @@ public class RegexRule {
     /**
      * Order
      * <p>
-     * Mithilfe dieser Funktion werden Dateien in den Dateitypordnern in
+     * Mithilfe dieser Funktion werden Dateien in den Regexpordnern in
      * Monatsordner sortiert.
      * </p>
      *
@@ -53,6 +55,14 @@ public class RegexRule {
         }
     }
 
+    /**
+     * Regex-bearbeiten
+     *
+     * @param statement Datenbankstatement
+     * @param value Value
+     * @throws SQLException Exception
+     * @throws IllegalArgumentException Exception
+     */
     public void editRegex(Statement statement, String value) throws SQLException, IllegalArgumentException {
         if (value == null || value.length() == 0) {
             throw new IllegalArgumentException("Regex muss eingegeben werden!");
@@ -68,6 +78,14 @@ public class RegexRule {
         statement.executeUpdate(sql);
     }
 
+    /**
+     * Ordner-bearbeiten
+     *
+     * @param statement Datenbankstatement
+     * @param value value
+     * @throws SQLException Exception
+     * @throws IllegalArgumentException Exception
+     */
     public void editOrdner(Statement statement, String value) throws SQLException, IllegalArgumentException {
         if (value == null || value.length() == 0) {
             throw new IllegalArgumentException("Pfad muss eingegeben werden!");
@@ -85,6 +103,11 @@ public class RegexRule {
 
     }
 
+    /**
+     * Mover setzen
+     *
+     * @param neu zu setzender DataMover
+     */
     public void setMover(DataMover neu) {
         if (mover != neu) {
             if (mover != null) {
@@ -100,9 +123,8 @@ public class RegexRule {
 
     /**
      * Datum für Ordnername
-     * <p>
+     * <br>
      * Mithilfe dieser Funktion bekommt man das Datum als String YYYY_MM zurück
-     * </p>
      *
      * @param child File zum auslesen des Datums
      * @return String YYYY_MM
@@ -143,5 +165,4 @@ public class RegexRule {
     public StringProperty regexProperty() {
         return Regex;
     }
-
 }

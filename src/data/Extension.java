@@ -2,10 +2,9 @@ package data;
 
 /**
  * Extension
- * <p>
+ * <br>
  * Dateiendung als String speichern und merken zu welchen Datentyp die
  * Dateiendung gehört.
- * </p>
  */
 public final class Extension {
 
@@ -16,29 +15,14 @@ public final class Extension {
         setExtension(Extension);
     }
 
-    /**
-     * Get Extension
-     *
-     * @return extension
-     */
     public String getExtension() {
         return extension;
     }
 
-    /**
-     * Set the extension, jpg is possible
-     *
-     * @param extension
-     */
     public void setExtension(String extension) {
         this.extension = extension;
     }
 
-    /**
-     * Set DataTyp
-     *
-     * @param neu
-     */
     public void setDataTyp(DataType neu) {
         if (dataType != neu) {
             if (dataType != null) {
@@ -52,11 +36,6 @@ public final class Extension {
         }
     }
 
-    /**
-     * ToString
-     *
-     * @return Extension
-     */
     @Override
     public String toString() {
         return extension;

@@ -10,6 +10,15 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.stage.*;
 
+/**
+ * ProgressController
+ * <br>
+ * Objekte dieser Klasse werden vom FXML-Loader erstellt. Dabei füllt dieser
+ * auch die mit @FXML markiertenen Referenzen auf die Controls der View und
+ * verknüpft die mit @FXML gekennzeichneten Methoden als Actions, etc.
+ *
+ * @author Isabella
+ */
 public class ProgressController {
 
     private static Stage stage;
@@ -21,6 +30,19 @@ public class ProgressController {
     @FXML
     private ProgressBar progressbar;
 
+    /**
+     * Anzeige der View.
+     * <br>
+     * Diese Methode erstellt eine Instanz der View und dieses Controllers
+     * (FXML-Loader) und richtet alles (also vor allem den Controller) so weit
+     * ein, dass es angezeigt werden kann.
+     *
+     * @param parentStage Stage des Aufrufenden Controllers
+     * @param stage Stage, in der die View angezeigt werden soll; null, wenn
+     * neue erstellt werden soll.
+     * @param Gcontroller GeneralController
+     * @param bundle ResourceBundle, wird benötigt für die Internationalisierung
+     */
     public static void show(Stage parentStage, Stage stage, GeneralController Gcontroller, ResourceBundle bundle) {
         try {
             // View und Controller erstellen
@@ -59,11 +81,16 @@ public class ProgressController {
     }
 
     /**
-     * Init
+     * Initialisieren.
+     * <br>
+     * Diese Methode wird nur von show() verwendet, um den Controller zu
+     * initialisieren. Das umfasst u.a. die Konfiguration der Controls, die
+     * Verbindung der Controls mit den Model-Feldern, etc.
      *
-     * @param stage
-     * @param mover
-     * @throws SQLException
+     * @param stage Stage, in der die View angezeigt werden soll; null, wenn
+     * neue erstellt werden soll.
+     * @param Gcontroller GeneralController
+     * @throws SQLException Exception
      */
     private void init(Stage stage, GeneralController Gcontroller) throws SQLException {
         this.Gcontroller = Gcontroller;
@@ -72,12 +99,24 @@ public class ProgressController {
         progressbar.progressProperty().bind(Gcontroller.progress);
     }
 
+    /**
+     * abbrechen
+     * <br>
+     * Diese Methode wird aufgerufen, wenn der Abbrechen-Button gedrückt wurde.
+     *
+     * @param event
+     */
     @FXML
     private void abbrechen(ActionEvent event) {
         Gcontroller.setAbbrechenProp(true);
         stage.hide();
     }
 
+    /**
+     * hide
+     * <br>
+     * Diese Methode wird aufgerufen um die Stage zu hidden.
+     */
     public static void hide() {
         stage.hide();
     }

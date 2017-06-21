@@ -20,10 +20,18 @@ public class TheMain extends Application {
         launch(args);
     }
 
+    /**
+     * Start
+     * <br>
+     * Datenbank wird erstellt und der GeneralController aufgerufen.
+     *
+     * @param stage Stage
+     */
     @Override
-    public void start(Stage stage) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public void start(Stage stage) {
         try {
             baseName = "resources.dataorganizer";
+//          zum Testen der anderen Sprachen
 //            Locale locale = new Locale("en", "UK");
 //            Locale locale = new Locale("ge", "GE");
 //            ResourceBundle bundle = ResourceBundle.getBundle(baseName,locale);
@@ -66,6 +74,14 @@ public class TheMain extends Application {
         }
     }
 
+    /**
+     * Existiert Tabelle
+     *
+     * @param conn Connection
+     * @param tableName Tabellenname
+     * @return existiert Tabelle
+     * @throws SQLException Exception
+     */
     public static boolean tableExist(Connection conn, String tableName) throws SQLException {
         boolean tExists = false;
         try (ResultSet rs = conn.getMetaData().getTables(null, null, tableName, null)) {

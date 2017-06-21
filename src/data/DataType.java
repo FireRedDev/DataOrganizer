@@ -11,10 +11,9 @@ import viewController.GeneralController;
 
 /**
  * DataType
- * <p>
+ * <br>
  * Datentyp ist eine Sammlung von Extensions. Der Name vom Datentyp ist
  * gleichzeitig der Ordnername nach dem sortieren.
- * </p>
  */
 public class DataType {
 
@@ -29,10 +28,9 @@ public class DataType {
 
     /**
      * Order
-     * <p>
+     * <br>
      * Mithilfe dieser Funktion werden Dateien in den Dateitypordnern in
      * Monatsordner sortiert.
-     * </p>
      *
      * @param controller
      * @throws java.io.IOException
@@ -57,9 +55,8 @@ public class DataType {
 
     /**
      * Datum für Ordnername
-     * <p>
+     * <br>
      * Mithilfe dieser Funktion bekommt man das Datum als String YYYY_MM zurück
-     * </p>
      *
      * @param child File zum auslesen des Datums
      * @return String YYYY_MM
@@ -77,6 +74,11 @@ public class DataType {
         return filename;
     }
 
+    /**
+     * Extension hinzufügen
+     *
+     * @param neu neue Extension
+     */
     public void addExtension(Extension neu) {
         if (!extensionlist.contains(neu)) {
             extensionlist.add(neu);
@@ -84,6 +86,11 @@ public class DataType {
         }
     }
 
+    /**
+     * Extension löschen
+     *
+     * @param ex zu löschende Extension
+     */
     public void removeExtension(Extension ex) {
         if (extensionlist.contains(ex)) {
             extensionlist.remove(ex);
@@ -112,14 +119,25 @@ public class DataType {
         return Ordner.getAbsolutePath();
     }
 
+    /**
+     * Extensionliste
+     *
+     * @return Extensionliste als String mit Beistrichen
+     */
     public String Extensions() {
         String s = "";
         for (Extension e : extensionlist) {
-            s += e.toString() + ", ";
+            s += e.toString() + ",";
         }
         return s;
     }
 
+    /**
+     * Extension vorhanden?
+     *
+     * @param e Extension
+     * @return true/false
+     */
     public boolean contains(Extension e) {
         return extensionlist.contains(e);
     }
@@ -141,6 +159,12 @@ public class DataType {
         }
     }
 
+    /**
+     * Extension vorhanden?
+     *
+     * @param ex Extension
+     * @return true/false
+     */
     public boolean search(String ex) {
         for (Extension e : extensionlist) {
             if (e.toString().equals(ex)) {
@@ -150,6 +174,9 @@ public class DataType {
         return false;
     }
 
+    /**
+     * Extensionliste löschen
+     */
     public void clearExtensionlist() {
         extensionlist.clear();
     }

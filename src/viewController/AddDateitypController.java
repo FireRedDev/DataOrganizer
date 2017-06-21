@@ -16,9 +16,8 @@ import mover.DataMover;
 
 /**
  * Dateityp hinzufügen
- * <p>
+ * <br>
  * Fenster zum hinzufügen von Datentypen
- * </p>
  *
  * @author Isabella
  */
@@ -43,6 +42,21 @@ public class AddDateitypController {
     private final StringProperty ausOrdnerTypProp = new SimpleStringProperty();
     private final StringProperty typProp = new SimpleStringProperty();
 
+    /**
+     * Anzeige der View.
+     * <br>
+     * Diese Methode erstellt eine Instanz der View und dieses Controllers
+     * (FXML-Loader) und richtet alles (also vor allem den Controller) so weit
+     * ein, dass es angezeigt werden kann.
+     *
+     * @param parentStage Stage des Aufrufenden Controllers
+     * @param stage Stage, in der die View angezeigt werden soll; null, wenn
+     * neue erstellt werden soll.
+     * @param mover Mover
+     * @param statement Datenbankverbindung
+     * @param bundle ResourceBundle, wird benötigt für die Internationalisierung
+     * @param ec ErweiterterControllerRegegex
+     */
     public static void show(Stage parentStage, Stage stage, DataMover mover, ErweiterterController ec, Statement statement, ResourceBundle bundle) {
         try {
             // View und Controller erstellen
@@ -85,6 +99,18 @@ public class AddDateitypController {
         }
     }
 
+    /**
+     * Initialisieren.
+     * <br>
+     * Diese Methode wird nur von show() verwendet, um den Controller zu
+     * initialisieren. Das umfasst u.a. die Konfiguration der Controls, die
+     * Verbindung der Controls mit den Model-Feldern, etc.
+     *
+     * @param stage Stage, in der die View angezeigt werden soll; null, wenn
+     * neue erstellt werden soll.
+     * @param mover DataMover
+     * @param ec ErweiterterController
+     */
     private void init(Stage stage, DataMover mover, ErweiterterController ec) {
         this.mover = mover;
         this.stage = stage;
@@ -96,11 +122,26 @@ public class AddDateitypController {
         showSuccessMessage(bundle.getString("DatentypHinzufuegen"));
     }
 
+    /**
+     * Abbrechen
+     * <br>
+     * Fenster schließen.
+     *
+     * @param event
+     */
     @FXML
     private void abbrechenD(ActionEvent event) {
         stage.close();
     }
 
+    /**
+     * Ordner auswählen
+     * <br>
+     * Ordner mithilfe des Directory-Chosser auswählen. Es wird der eingelesene
+     * Pfad auf die Variable selectedDirectory gespeichert.
+     *
+     * @param event
+     */
     @FXML
     private void ordnerAusTyp(ActionEvent event) {
         DirectoryChooser chooser = new DirectoryChooser();
@@ -111,6 +152,12 @@ public class AddDateitypController {
         }
     }
 
+    /**
+     * Speichern
+     *
+     * @param event
+     * @throws SQLException
+     */
     @FXML
     private void speichernD(ActionEvent event) throws SQLException {
         speichernD();
@@ -118,9 +165,8 @@ public class AddDateitypController {
 
     /**
      * Speichern neuer Dateiendung
-     * <p>
+     * <br>
      * Einfügen neuer Dateiendungen.
-     * </p>
      *
      * @throws SQLException
      */

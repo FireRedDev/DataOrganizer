@@ -8,12 +8,8 @@ import mover.DataMover;
 import java.io.File;
 import java.io.*;
 import java.sql.*;
-import java.time.Duration;
-import java.time.Instant;
+import java.time.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -25,9 +21,10 @@ import javafx.stage.*;
 
 /**
  * GeneralController
- * <p>
- * Controller zur ersten einfachen View.
- * </p>
+ * <br>
+ * Objekte dieser Klasse werden vom FXML-Loader erstellt. Dabei füllt dieser
+ * auch die mit @FXML markiertenen Referenzen auf die Controls der View und
+ * verknüpft die mit @FXML gekennzeichneten Methoden als Actions, etc.
  */
 public class GeneralController {
 
@@ -76,6 +73,18 @@ public class GeneralController {
     @FXML
     private CheckBox regex;
 
+    /**
+     * Anzeige der View.
+     * <br>
+     * Diese Methode erstellt eine Instanz der View und dieses Controllers
+     * (FXML-Loader) und richtet alles (also vor allem den Controller) so weit
+     * ein, dass es angezeigt werden kann.
+     *
+     * @param stage Stage, in der die View angezeigt werden soll; null, wenn
+     * neue erstellt werden soll.
+     * @param statement Datenbankverbindung
+     * @param bundle ResourceBundle, wird benötigt für die Internationalisierung
+     */
     public static void show(Stage stage, Statement statement, ResourceBundle bundle) {
         try {
             // View und Controller erstellen
@@ -115,13 +124,17 @@ public class GeneralController {
     }
 
     /**
-     * Initialisierungsfunktion, Füllt einen DataMover mit einem StandardSet aus
-     * Dateitypen.: Bilder,Dokumente,Videos,Audio
+     * Initialisieren.
+     * <br>
+     * Diese Methode wird nur von show() verwendet, um den Controller zu
+     * initialisieren. Das umfasst u.a. die Konfiguration der Controls, die
+     * Verbindung der Controls mit den Model-Feldern, etc.
      *
-     * @param stage
-     * @throws IOException
+     * @param stage Stage, in der die View angezeigt werden soll; null, wenn
+     * neue erstellt werden soll.
+     * @throws IOException Exception
      */
-    public void init(Stage stage) throws IOException, SQLException {
+    private void init(Stage stage) throws IOException, SQLException {
         getApGeneral().visibleProperty().bind(GeneralDisplayProperty());
         getApErweitert().visibleProperty().bind(GeneralDisplayProperty().not());
 
@@ -138,6 +151,7 @@ public class GeneralController {
         sortSubFolderPropProperty().bindBidirectional(sortSubFolder.selectedProperty());
         expertenmodusProperty().bindBidirectional(regex.selectedProperty());
 
+        //Existiert PropertyDatei?
         if (new File(propertyFile).exists()) {
             props.load(new FileInputStream(propertyFile));
 
@@ -149,6 +163,7 @@ public class GeneralController {
             String dateinamenSortieren = props.getProperty("regex");
             String experte = props.getProperty("experte");
 
+            //ausgelesene Werte setzen
             if ("true".equals(datenaming)) {
                 DateNamingPropProperty().set(true);
             }
@@ -170,9 +185,9 @@ public class GeneralController {
         }
 
         String sqlQuery = "select datatype, extension from dateiendung";
-
         ResultSet rSet = statement.executeQuery(sqlQuery);
 
+        //Ausgelesene Werte verwenden
         mover = new DataMover(this);
         while (rSet.next()) {
             String typ = rSet.getString("datatype");
@@ -204,16 +219,36 @@ public class GeneralController {
         this.showSuccessMessage(bundle.getString("DataOrganizer"));
     }
 
+    /**
+     * Erweitern aufrufen
+     * <br>
+     * Das Erweitere-Einstellungen-Fenster wird geöffnet.
+     *
+     * @param event
+     */
     @FXML
     private void erweitern(ActionEvent event) {
-        erweitern();
+        generalDisplay.set(false);
     }
 
+    /**
+     * Sort aufrufen
+     *
+     * @param event
+     */
     @FXML
     private void sort(ActionEvent event) {
         sortieren();
     }
 
+    /**
+     * Ordner auswählen
+     * <br>
+     * Ordner mithilfe des Directory-Chosser auswählen. Es wird die AusProp
+     * gesetzt.
+     *
+     * @param event
+     */
     @FXML
     private void ordnerBtAus(ActionEvent event) {
         DirectoryChooser chooser = new DirectoryChooser();
@@ -224,6 +259,14 @@ public class GeneralController {
         }
     }
 
+    /**
+     * Table-View aufrufen
+     * <br>
+     * Aufrufen der TableView je nachdem ob sortieren nach Namen ausgewählt ist,
+     * oder nicht, wird eine andere View aufgerufen.
+     *
+     * @param event
+     */
     @FXML
     private void tableView(ActionEvent event) {
         if (issortviaRegexProp()) {
@@ -233,21 +276,41 @@ public class GeneralController {
         }
     }
 
+    /**
+     * Speichern
+     * <br>
+     * Wenn speichern aufgerufen ist, wird das Sortierfenster geschlossen und
+     * speichern aufgerufen.
+     *
+     * @param event
+     * @throws Exception
+     */
     @FXML
     private void speichern(ActionEvent event) throws Exception {
         speichern();
         generalDisplay.set(true);
     }
 
+    /**
+     * Abbrechen
+     * <br>
+     * Wenn abbrechen aufgerufen ist, wird das Sortierfenster geschlossen.
+     *
+     * @param event
+     */
     @FXML
     private void abbrechen(ActionEvent event) {
-        abbrechen();
+        generalDisplay.set(true);
     }
 
-    private void erweitern() {
-        generalDisplay.set(false);
-    }
-
+    /**
+     * speichern
+     * <br>
+     * Die Einstellungen werden ausgelesen und in die Property-Datei
+     * geschrieben.
+     *
+     * @throws Exception Exception
+     */
     private void speichern() throws Exception {
         Boolean date = this.isDateNamingProp();
         Boolean orderbydate = this.isOrderByDateProp();
@@ -268,10 +331,12 @@ public class GeneralController {
         props.store(out, null);
     }
 
-    private void abbrechen() {
-        generalDisplay.set(true);
-    }
-
+    /**
+     * sortieren
+     * <br>
+     * Mithilfe dieser Funktion werden Dateien sortiert und der
+     * Fortschrittsbalken aufgerufen.
+     */
     private void sortieren() {
         if (this.getAusProp() != null) {
             Task<String> tkSort = new Task<String>() {
@@ -284,7 +349,7 @@ public class GeneralController {
                     // Laufzeit berechnen
                     return "Calculation Time: " + Duration.between(beginn, Instant.now()).toMillis() + " ms";
                 }
-            };         
+            };
             setAbbrechenProp(false);
             ProgressController.show(stage, null, this, bundle);
             Thread thread = new Thread(tkSort);

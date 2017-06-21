@@ -15,9 +15,8 @@ import mover.DataMover;
 
 /**
  * Regex-Filter hinzufügen
- * <p>
+ * <br>
  * Fenster zum hinzufügen von Regex-Filtern
- * </p>
  *
  * @author Isabella
  */
@@ -42,6 +41,21 @@ public class AddRegexController {
     private final StringProperty ausOrdnerTypProp = new SimpleStringProperty();
     private final StringProperty typProp = new SimpleStringProperty();
 
+    /**
+     * Anzeige der View.
+     * <br>
+     * Diese Methode erstellt eine Instanz der View und dieses Controllers
+     * (FXML-Loader) und richtet alles (also vor allem den Controller) so weit
+     * ein, dass es angezeigt werden kann.
+     *
+     * @param parentStage Stage des Aufrufenden Controllers
+     * @param stage Stage, in der die View angezeigt werden soll; null, wenn
+     * neue erstellt werden soll.
+     * @param mover Mover
+     * @param statement Datenbankverbindung
+     * @param bundle ResourceBundle, wird benötigt für die Internationalisierung
+     * @param ec ErweiterterControllerRegegex
+     */
     public static void show(Stage parentStage, Stage stage, DataMover mover, ErweiterterControllerRegex ec, Statement statement, ResourceBundle bundle) {
         try {
             // View und Controller erstellen
@@ -84,6 +98,18 @@ public class AddRegexController {
         }
     }
 
+    /**
+     * Initialisieren.
+     * <br>
+     * Diese Methode wird nur von show() verwendet, um den Controller zu
+     * initialisieren. Das umfasst u.a. die Konfiguration der Controls, die
+     * Verbindung der Controls mit den Model-Feldern, etc.
+     *
+     * @param stage Stage, in der die View angezeigt werden soll; null, wenn
+     * neue erstellt werden soll.
+     * @param mover DataMover
+     * @param ec ErweiterterController
+     */
     private void init(Stage stage, DataMover mover, ErweiterterControllerRegex ec) {
         this.mover = mover;
         this.stage = stage;
@@ -95,11 +121,26 @@ public class AddRegexController {
         showSuccessMessage(bundle.getString("RegexHinzufuegen"));
     }
 
+    /**
+     * Abbrechen
+     * <br>
+     * Fenster schließen.
+     *
+     * @param event
+     */
     @FXML
     private void abbrechenD(ActionEvent event) {
         stage.close();
     }
 
+    /**
+     * Ordner auswählen
+     * <br>
+     * Ordner mithilfe des Directory-Chosser auswählen. Es wird der eingelesene
+     * Pfad auf die Variable selectedDirectory gespeichert.
+     *
+     * @param event
+     */
     @FXML
     private void ordnerAusTyp(ActionEvent event) {
         DirectoryChooser chooser = new DirectoryChooser();
@@ -110,16 +151,21 @@ public class AddRegexController {
         }
     }
 
+    /**
+     * Speichern
+     *
+     * @param event
+     * @throws SQLException
+     */
     @FXML
     private void speichernD(ActionEvent event) throws SQLException {
         speichernD();
     }
 
     /**
-     * Speichern neuer Dateiendung
-     * <p>
-     * Einfügen neuer Dateiendungen.
-     * </p>
+     * Speichern neuer RegexRule
+     * <br>
+     * Einfügen neuer RegexRule. Es wird die Regel auf Fehler überprüft.
      *
      * @throws SQLException
      */

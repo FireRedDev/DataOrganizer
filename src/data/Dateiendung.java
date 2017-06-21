@@ -16,10 +16,23 @@ public class Dateiendung {
     private final DataType type;
     private final StringProperty Ordner = new SimpleStringProperty();
 
+    /**
+     * Konstruktor
+     * 
+     * @param type DataType
+     */
     public Dateiendung(DataType type) {
         this.type = type;
     }
 
+    /**
+     * Extension bearbeiten
+     * 
+     * @param statement Datenbankstatement
+     * @param value Value
+     * @throws IllegalArgumentException Exception
+     * @throws SQLException Exception
+     */
     public void editExtension(Statement statement, String value) throws IllegalArgumentException,SQLException {
         if (value == null ||value.length() == 0) {
             throw new IllegalArgumentException("Extension muss eingegeben werden!");
@@ -44,6 +57,14 @@ public class Dateiendung {
 
     }
 
+    /**
+     * Ordner bearbeiten
+     * 
+     * @param statement Datenbankstatement
+     * @param value Value
+     * @throws SQLException Exception
+     * @throws IllegalArgumentException Exception
+     */
     public void editOrdner(Statement statement, String value) throws SQLException, IllegalArgumentException {
         if (value == null ||value.length() == 0) {
             throw new IllegalArgumentException("Pfad muss eingegeben werden!");
@@ -62,6 +83,11 @@ public class Dateiendung {
 
     }
 
+    /**
+     * DataType löschen
+     * 
+     * @param d DataType
+     */
     public void removeDataType(DataType d) {
         type.setExtensionlist(null);
     }
@@ -89,5 +115,4 @@ public class Dateiendung {
     public StringProperty extensionProperty() {
         return Extension;
     }
-
 }

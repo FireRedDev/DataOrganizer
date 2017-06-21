@@ -2,13 +2,11 @@ package viewController;
 
 import data.*;
 import java.io.*;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ResourceBundle;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
-import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
@@ -19,9 +17,8 @@ import mover.DataMover;
 
 /**
  * ErweiterterController
- * <p>
+ * <br>
  * Tableviewübersicht über alle Dateiendungen.
- * </p>
  *
  * @author Isabella
  */
@@ -43,6 +40,20 @@ public class ErweiterterController {
     @FXML
     private TableColumn<Dateiendung, String> tcEndung;
 
+    /**
+     * Anzeige der View.
+     * <br>
+     * Diese Methode erstellt eine Instanz der View und dieses Controllers
+     * (FXML-Loader) und richtet alles (also vor allem den Controller) so weit
+     * ein, dass es angezeigt werden kann.
+     *
+     * @param parentStage Stage des Aufrufenden Controllers
+     * @param stage Stage, in der die View angezeigt werden soll; null, wenn
+     * neue erstellt werden soll.
+     * @param mover Mover
+     * @param statement Datenbankverbindung
+     * @param bundle ResourceBundle, wird benötigt für die Internationalisierung
+     */
     public static void show(Stage parentStage, Stage stage, DataMover mover, Statement statement, ResourceBundle bundle) {
         try {
             // View und Controller erstellen
@@ -87,10 +98,15 @@ public class ErweiterterController {
     }
 
     /**
-     * Init
+     * Initialisieren.
+     * <br>
+     * Diese Methode wird nur von show() verwendet, um den Controller zu
+     * initialisieren. Das umfasst u.a. die Konfiguration der Controls, die
+     * Verbindung der Controls mit den Model-Feldern, etc.
      *
-     * @param stage
-     * @param mover
+     * @param stage Stage, in der die View angezeigt werden soll; null, wenn
+     * neue erstellt werden soll.
+     * @param mover DataMover
      * @throws SQLException
      */
     private void init(Stage stage, DataMover mover) throws SQLException {
@@ -152,6 +168,7 @@ public class ErweiterterController {
             return cell;
         });
 
+        // Änderungen sichern
         tcEndung.setOnEditCommit((TableColumn.CellEditEvent<Dateiendung, String> event) -> {
             try {
                 ((Dateiendung) event.getTableView().getItems().get(
@@ -168,6 +185,14 @@ public class ErweiterterController {
         showSuccessMessage(bundle.getString("alleDaten"));
     }
 
+    /**
+     * Ordner auswählen
+     * <br>
+     * Ordner mithilfe des Directory-Chosser auswählen.
+     *
+     * @param value Ausgangsordner
+     * @return Ordnerpfad
+     */
     private String chooseFile(String value) {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle(bundle.getString("DataOrganizer"));
@@ -181,9 +206,8 @@ public class ErweiterterController {
 
     /**
      * Dateiendungen löschen
-     * <p>
+     * <br>
      * Ausgewählte Dateiendung löschen.
-     * </p>
      *
      * @throws SQLException
      */
@@ -210,20 +234,39 @@ public class ErweiterterController {
         }
     }
 
+    /**
+     * Dateiendung löschen
+     *
+     * @param event
+     * @throws SQLException Exception
+     */
     @FXML
     private void deleteDateiendung(ActionEvent event) throws SQLException {
         handleDeleteDateiendung();
     }
 
+    /**
+     * Dateiendung hinzufügen
+     *
+     * @param event
+     */
     @FXML
     private void addDateiendung(ActionEvent event) {
         AddDateitypController.show(stage, null, mover, this, statement, bundle);
     }
 
+    /**
+     * Dateiendung in Liste hinzufügen
+     *
+     * @param end Dateiendung
+     */
     public void addList(Dateiendung end) {
         list.add(end);
     }
 
+    /**
+     * Liste updaten
+     */
     public void updateList() {
         list = FXCollections.observableArrayList();
 
@@ -233,7 +276,6 @@ public class ErweiterterController {
             end.setOrdner(e.getOrdner().toString());
             list.add(end);
         }
-
         tvWarten.setItems(list);
     }
 

@@ -12,13 +12,12 @@ import viewController.*;
 
 /**
  * DataMover
- * <p>
+ * <br>
  * DataMover ist das Herzstück von Dataorganizer, da hier Dateien sortiert
  * werden. DataMover kennt eine Dateitypliste. Es werden Dateien aus dem Ordner
  * ZusortieredeDateien sortiert. Alle Dateien aus diesem Ordner werden je nach
  * Extension und somit Dateityp in einen eigenen Ordner (Dokumente,Bilder,..)
  * verschoben.
- * </p>
  */
 public class DataMover {
 
@@ -131,6 +130,14 @@ public class DataMover {
         sortieren(directoryListing);
     }
 
+    /**
+     * sortieren
+     * <br>
+     * Einstellungen auslesen und sortieren je nach dem ob sortieren nach Namen
+     * gewählt ist aufrufen.
+     *
+     * @param directoryListing Fileliste
+     */
     private void sortieren(File[] directoryListing) {
         boolean rename = controller.isDateNamingProp();
         boolean verschieben = controller.isVerschiebenProp();
@@ -149,7 +156,6 @@ public class DataMover {
         } else {
             String aus = controller.getAusProp();
             if (aus != null) {
-//                Instant start = Instant.now();
                 if (directoryListing != null) {
                     for (File child : directoryListing) {
                         if (controller.isAbbrechenProp()) {
@@ -176,6 +182,16 @@ public class DataMover {
         }
     }
 
+    /**
+     * Unterordner
+     * <br>
+     * Unterordner durchgehen und entweder gliech sortieren oder wieder
+     * Unterorder-Funktion aufrufen.
+     *
+     * @param child Directorypfad
+     * @param rename umbennen
+     * @param verschieben verschieben
+     */
     private void subfolder(File child, boolean rename, boolean verschieben) {
         for (File childS : child.listFiles()) {
             if (controller.isAbbrechenProp()) {
@@ -189,6 +205,15 @@ public class DataMover {
         }
     }
 
+    /**
+     * sortieren nach Dateityp
+     * <br>
+     * sortieren nach Dateityp
+     *
+     * @param child Filepfad
+     * @param rename umbennen
+     * @param verschieben verschieben
+     */
     private void sortDataType(File child, boolean rename, boolean verschieben) {
         File f;
         for (DataType type : datatype) {
@@ -220,6 +245,16 @@ public class DataMover {
         }
     }
 
+    /**
+     * verschieben
+     * <br>
+     * Dateien verschieben oder kopieren.
+     *
+     * @param verschieben verschieben
+     * @param child Datei
+     * @param f Zieldatei
+     * @throws IOException Exception
+     */
     private void verschieben(boolean verschieben, File child, File f) throws IOException {
         if (verschieben) {
             FileUtils.moveFile(child, f);
@@ -228,20 +263,13 @@ public class DataMover {
         }
     }
 
-    public List<RegexRule> getRegexrules() {
-        return regexrules;
-    }
-
-    public void setRegexrules(List<RegexRule> regexrules) {
-        this.regexrules = regexrules;
-
-    }
-
     /**
      * Datum auslesen
+     * <br>
+     * Datum der Datei auswählen um Dateien auf das Datum umzubenennen.
      *
      * @param child File
-     * @return YYYY_MM_DD
+     * @return Datum im Format YYYY_MM_DD
      * @throws IOException Exception
      */
     private String datum(File child) throws IOException {
@@ -262,7 +290,7 @@ public class DataMover {
     }
 
     /**
-     * Add DataTyp
+     * DataType hinzufügen
      *
      * @param typ DataType
      */
@@ -273,6 +301,11 @@ public class DataMover {
         }
     }
 
+    /**
+     * DataType löschen
+     *
+     * @param typ DataType
+     */
     public void removeDataType(DataType typ) {
         if (datatype.contains(typ)) {
             datatype.remove(typ);
@@ -324,5 +357,14 @@ public class DataMover {
             regexrules.add(regexRule);
             regexRule.setMover(this);
         }
+    }
+
+    public List<RegexRule> getRegexrules() {
+        return regexrules;
+    }
+
+    public void setRegexrules(List<RegexRule> regexrules) {
+        this.regexrules = regexrules;
+
     }
 }
