@@ -38,13 +38,6 @@ public class TheMain extends Application {
             ResourceBundle bundle = ResourceBundle.getBundle(baseName);
             DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
 
-            new File("gui").mkdir();
-            new File("imag").mkdir();
-            new File("Bilder").mkdir();
-            new File("Dokumente").mkdir();
-            new File("Video").mkdir();
-            new File("Audio").mkdir();
-
             Connection connection = DriverManager.getConnection(dbURL);
             Statement statement = connection.createStatement();
             if (tableExist(connection, "regexrules")) {

@@ -146,6 +146,7 @@ public class ErweiterterController {
                     String userId = cell.getItem();
                     int selectedIndex = tvWarten.getSelectionModel().getSelectedIndex();
                     DirectoryChooser chooser = new DirectoryChooser();
+                    new File(tvWarten.getItems().get(selectedIndex).getOrdner()).mkdir();
                     String file = chooseFile(tvWarten.getItems().get(selectedIndex).getOrdner());
                     if (file != null) {
                         try {
