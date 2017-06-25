@@ -7,7 +7,7 @@ import java.time.*;
 import java.util.LinkedList;
 import mover.DataMover;
 import org.apache.commons.io.FileUtils;
-import viewController.GeneralController;
+import GeneralViewController.GeneralController;
 
 /**
  * DataType

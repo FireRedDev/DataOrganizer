@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Sun Jun 25 20:38:52 CEST 2017:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance a816c00e-015c-e08c-a169-000002d9a290 
+on database directory C:\Users\Isabella\Documents\Schule\3 HTL\3\ITP\Projekt\dataorganizer\Georgische_Version\Dataorganizer with class loader sun.misc.Launcher$AppClassLoader@70dea4e 
+Loaded from file:/C:/Users/Isabella/Documents/Schule/3%20HTL/3/ITP/Projekt/dataorganizer/Georgische_Version/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_131-b11
+user.dir=C:\Users\Isabella\Documents\Schule\3 HTL\3\ITP\Projekt\dataorganizer\Georgische_Version
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

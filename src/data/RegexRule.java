@@ -9,7 +9,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import mover.DataMover;
 import org.apache.commons.io.FileUtils;
-import viewController.GeneralController;
+import GeneralViewController.GeneralController;
 
 /**
  * Regex-Regel

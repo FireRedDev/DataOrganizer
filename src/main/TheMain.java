@@ -1,12 +1,11 @@
 package main;
 
-import java.io.File;
 import java.sql.*;
 import java.util.*;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.stage.Stage;
-import viewController.GeneralController;
+import GeneralViewController.GeneralController;
 
 /**
  * TheMain
@@ -34,7 +33,7 @@ public class TheMain extends Application {
 //          zum Testen der anderen Sprachen
 //            Locale locale = new Locale("en", "UK");
 //            Locale locale = new Locale("ge", "GE");
-//            ResourceBundle bundle = ResourceBundle.getBundle(baseName,locale);
+//            ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale);
             ResourceBundle bundle = ResourceBundle.getBundle(baseName);
             DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
 
