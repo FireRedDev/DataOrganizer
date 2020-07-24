@@ -31,10 +31,10 @@ public class TheMain extends Application {
         try {
             baseName = "resources.dataorganizer";
 //          zum Testen der anderen Sprachen
-//            Locale locale = new Locale("en", "UK");
+           Locale locale = new Locale("en", "UK");
 //            Locale locale = new Locale("ge", "GE");
-//            ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale);
-            ResourceBundle bundle = ResourceBundle.getBundle(baseName);
+            ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale);
+ //           ResourceBundle bundle = ResourceBundle.getBundle(baseName);
             DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
 
             Connection connection = DriverManager.getConnection(dbURL);
