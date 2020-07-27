@@ -10,4 +10,4 @@ erstellten) Ordner verschoben werden.
 Die Software soll eine moderne Benutzeroberfläche haben und soll den Benutzer
 die Möglichkeit geben eigene Sortierkriterien einzustellen.
 
-Warning While this project is fully functional it was the first group project of several at the time beginner developers and doesnt follow the most up to date or best coding practices
+Warning: While this project is fully functional it was the first group project of several at the time beginner developers and doesnt follow the most up to date or best coding practices
